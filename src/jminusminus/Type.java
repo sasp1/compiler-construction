@@ -40,25 +40,25 @@ class Type {
     public final static Type BOOLEAN = typeFor(boolean.class);
 
     /** java.lang.Integer. */
-    public final static Type BOXED_INT = typeFor(java.lang.Integer.class);
+    public final static Type BOXED_INT = typeFor(Integer.class);
 
     /** java.lang.Character. */
-    public final static Type BOXED_CHAR = typeFor(java.lang.Character.class);
+    public final static Type BOXED_CHAR = typeFor(Character.class);
 
     /** java.lang.Boolean. */
-    public final static Type BOXED_BOOLEAN = typeFor(java.lang.Boolean.class);
+    public final static Type BOXED_BOOLEAN = typeFor(Boolean.class);
 
     /** The type java.lang.String. */
-    public static Type STRING = typeFor(java.lang.String.class);
+    public static Type STRING = typeFor(String.class);
 
     /** The type java.lang.Object. */
-    public static Type OBJECT = typeFor(java.lang.Object.class);
+    public static Type OBJECT = typeFor(Object.class);
 
     /** The void type. */
     public final static Type VOID = typeFor(void.class);
 
     /** The null void. */
-    public final static Type NULLTYPE = new Type(java.lang.Object.class);
+    public final static Type NULLTYPE = new Type(Object.class);
 
     /**
      * A type marker indicating a constructor (having no return type).
@@ -597,8 +597,8 @@ class Type {
         if (member.isPublic()) {
             return true;
         }
-        java.lang.Package p1 = classRep.getPackage();
-        java.lang.Package p2 = member.declaringType().classRep.getPackage();
+        Package p1 = classRep.getPackage();
+        Package p2 = member.declaringType().classRep.getPackage();
         if ((p1 == null ? "" : p1.getName()).equals((p2 == null ? "" : p2
                 .getName()))) {
             return true;
@@ -674,8 +674,8 @@ class Type {
 
     public static boolean checkAccess(int line, Class referencingType,
             Class type) {
-        java.lang.Package p1 = referencingType.getPackage();
-        java.lang.Package p2 = type.getPackage();
+        Package p1 = referencingType.getPackage();
+        Package p2 = type.getPackage();
         if (Modifier.isPublic(type.getModifiers())
                 || (p1 == null ? "" : p1.getName()).equals((p2 == null ? ""
                         : p2.getName()))) {
