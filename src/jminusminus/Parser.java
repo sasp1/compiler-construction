@@ -1044,11 +1044,23 @@ public class Parser {
 
 	private JExpression relationalExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = additiveExpression();
+		JExpression lhs = relationalExpression();
 		if (have(GT)) {
-			return new JGreaterThanOp(line, lhs, additiveExpression());
+			return new JGreaterThanOp(line, lhs, relationalExpression());
 		} else if (have(LE)) {
-			return new JLessEqualOp(line, lhs, additiveExpression());
+			return new JLessEqualOp(line, lhs, relationalExpression());
+		} else if (have(INSTANCEOF)) {
+			return new JInstanceOfOp(line, lhs, referenceType());
+		} else {
+			return lhs;
+		}
+	}
+
+	private JExpression shiftExpression() {
+		int line = scanner.token().line();
+		JExpression lhs = additiveExpression();
+		if (have(SHIT_LEFT)) {
+			return new JShiftLeftOp(line, lhs, additiveExpression());
 		} else if (have(INSTANCEOF)) {
 			return new JInstanceOfOp(line, lhs, referenceType());
 		} else {
@@ -1084,15 +1096,15 @@ public class Parser {
 	}
 
 	/**
-     * Parse a multiplicative expression.
-     * 
-     * <pre>
-     *   multiplicativeExpression ::= unaryExpression  // level 2
-     *                                  {STAR unaryExpression}
-     * </pre>
-     * 
-     * @return an AST for a multiplicativeExpression.
-     */
+	 * Parse a multiplicative expression.
+	 * 
+	 * <pre>
+	 *   multiplicativeExpression ::= unaryExpression  // level 2
+	 *                                  {STAR unaryExpression}
+	 * </pre>
+	 * 
+	 * @return an AST for a multiplicativeExpression.
+	 */
 
 	private JExpression multiplicativeExpression() {
 		int line = scanner.token().line();
