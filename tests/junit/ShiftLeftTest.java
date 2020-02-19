@@ -15,9 +15,9 @@ public class ShiftLeftTest extends TestCase {
 		super.tearDown();
 	}
 
-	public void testDivide() {
-		this.assertEquals(shifleft.shiftLeft(10, 5), 320);
-		this.assertEquals(shifleft.shiftLeft(33, 2), 132);
-		this.assertEquals(shifleft.shiftLeft(3, 1), 6);
+	public void testShiftLeft() {
+		this.assertEquals(shiftLeft.shiftLeft(10, 5), 320);
+		this.assertEquals(shiftLeft.shiftLeft(33, 2), 132);
+		this.assertEquals(shiftLeft.shiftLeft(3, 1), 6);
 	}
 }

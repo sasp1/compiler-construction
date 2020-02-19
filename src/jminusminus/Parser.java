@@ -1044,11 +1044,11 @@ public class Parser {
 
 	private JExpression relationalExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = relationalExpression();
+		JExpression lhs = shiftExpression();
 		if (have(GT)) {
-			return new JGreaterThanOp(line, lhs, relationalExpression());
+			return new JGreaterThanOp(line, lhs, shiftExpression());
 		} else if (have(LE)) {
-			return new JLessEqualOp(line, lhs, relationalExpression());
+			return new JLessEqualOp(line, lhs, shiftExpression());
 		} else if (have(INSTANCEOF)) {
 			return new JInstanceOfOp(line, lhs, referenceType());
 		} else {
@@ -1059,7 +1059,7 @@ public class Parser {
 	private JExpression shiftExpression() {
 		int line = scanner.token().line();
 		JExpression lhs = additiveExpression();
-		if (have(SHIT_LEFT)) {
+		if (have(SHIFT_LEFT)) {
 			return new JShiftLeftOp(line, lhs, additiveExpression());
 		} else if (have(INSTANCEOF)) {
 			return new JInstanceOfOp(line, lhs, referenceType());
