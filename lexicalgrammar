@@ -48,7 +48,7 @@ STAR        ::= "*"
 DIV         ::= "/"
 REM         ::= "%"
 SHIFT_LEFT  ::= "<<"
-
+SHIFT_RIGHT ::= ">>"
 
 // Separators
 COMMA       ::= ","

@@ -183,7 +183,13 @@ class Scanner {
 			}
 		case '>':
 			nextCh();
-			return new TokenInfo(GT, line);
+			if (ch == '>') {
+				nextCh();
+				return new TokenInfo(SHIFT_RIGHT, line);
+			} else {
+				nextCh();
+				return new TokenInfo(GT, line);
+			}
 		case '<':
 			nextCh();
 			if (ch == '=') {
