@@ -276,6 +276,7 @@ class JRemainderOp extends JBinaryExpression {
 }
 
 class JShiftLeftOp extends JBinaryExpression {
+
 	public JShiftLeftOp(int line, JExpression lhs, JExpression rhs) {
 		super(line, "<<", lhs, rhs);
 	}
@@ -290,5 +291,8 @@ class JShiftLeftOp extends JBinaryExpression {
 	}
 
 	public void codegen(CLEmitter output) {
+		lhs.codegen(output);
+		rhs.codegen(output);
+		output.addNoArgInstruction(ISHL);
 	}
 }
