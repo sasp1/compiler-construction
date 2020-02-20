@@ -49,6 +49,9 @@ DIV         ::= "/"
 REM         ::= "%"
 SHIFT_LEFT  ::= "<<"
 SHIFT_RIGHT ::= ">>"
+AND         ::= "&"
+OR          ::= "|"
+XOR         ::= "^"
 
 // Separators
 COMMA       ::= ","

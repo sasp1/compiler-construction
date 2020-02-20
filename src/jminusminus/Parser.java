@@ -1119,6 +1119,12 @@ public class Parser {
 				lhs = new JDivideOp(line, lhs, unaryExpression());
 			} else if (have(REM)) {
 				lhs = new JRemainderOp(line, lhs, unaryExpression());
+			} else if (have(AND)) {
+				lhs = new JIAndOp(line, lhs, unaryExpression());
+			}else if (have(OR)) {
+				lhs = new JIOrOp(line, lhs, unaryExpression());
+			}else if (have(XOR)) {
+				lhs = new JIXorOp(line, lhs, unaryExpression());
 			} else {
 				more = false;
 			}
