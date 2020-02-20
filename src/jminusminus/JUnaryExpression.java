@@ -107,6 +107,24 @@ class JNegateOp extends JUnaryExpression {
 
 }
 
+class JPosOp extends JUnaryExpression {
+	public JPosOp(int line, JExpression arg) {
+		super(line,"+",arg);
+	}
+	
+	public JExpression analyze(Context context) {
+		arg = arg.analyze(context);
+		arg.type().mustMatchOneOf(line(), Type.INT, Type.CHAR);
+		type = Type.INT;
+		return this;
+	}
+	
+	public void codegen(CLEmitter output) {
+		arg.codegen(output);
+		output.addNoArgInstruction(NOP);
+	}
+}
+
 /**
  * The AST node for a logical NOT (!) expression.
  */
