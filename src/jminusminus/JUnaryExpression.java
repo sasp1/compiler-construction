@@ -114,7 +114,7 @@ class JPosOp extends JUnaryExpression {
 	
 	public JExpression analyze(Context context) {
 		arg = arg.analyze(context);
-		arg.type().mustMatchOneOf(line(), Type.INT, Type.CHAR);
+		arg.type().mustMatchOneOf(line(), Type.INT);
 		type = Type.INT;
 		return this;
 	}
@@ -360,3 +360,23 @@ class JPreIncrementOp extends JUnaryExpression {
     }
 
 }
+
+class JIUComOp extends JUnaryExpression {	
+    public JIUComOp(int line, JExpression arg) {
+        super(line, "~", arg);
+    }
+
+    public JExpression analyze(Context context) {
+        arg = arg.analyze(context);
+        arg.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        arg.codegen(output);
+        output.addOneArgInstruction(SIPUSH, 65535);
+        output.addNoArgInstruction(IXOR);
+    }
+}
+

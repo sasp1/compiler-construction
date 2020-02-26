@@ -16,9 +16,7 @@ public class UnaryPlusTest extends TestCase {
 	}
 	
 	public void testUnaryPlus() {
-		int i = 10;
-		char ch = 'Z';
-		this.assertEquals(unaryPlus.unaryplus(+i), 10);
-		this.assertEquals(unaryPlus.unaryplus(+ch), 90);
+		this.assertEquals(unaryPlus.unaryPlus(30), 30);
+		this.assertEquals(unaryPlus.unaryPlus(-30), -30);
 	}
 }
