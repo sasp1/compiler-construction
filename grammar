@@ -97,6 +97,7 @@ unaryExpression ::= INC unaryExpression  // level 1
 				  | PLUS unaryExpression
                   | MINUS unaryExpression
                   | simpleUnaryExpression
+                  | UCOM unaryExpression
 
 simpleUnaryExpression ::= LNOT unaryExpression
                         | LPAREN basicType RPAREN unaryExpression //casted

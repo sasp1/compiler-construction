@@ -52,6 +52,7 @@ SHIFT_RIGHT ::= ">>"
 AND         ::= "&"
 OR          ::= "|"
 XOR         ::= "^"
+UCOM		::= "~"
 
 // Separators
 COMMA       ::= ","

@@ -186,6 +186,9 @@ class Scanner {
 		case '^':
 			nextCh();
 			return new TokenInfo(XOR, line);
+		case '~':
+			nextCh();
+			return new TokenInfo(UCOM, line);
 		case '>':
 			nextCh();
 			if (ch == '>') {

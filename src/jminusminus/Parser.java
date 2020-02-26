@@ -1125,6 +1125,8 @@ public class Parser {
 				lhs = new JIOrOp(line, lhs, unaryExpression());
 			}else if (have(XOR)) {
 				lhs = new JIXorOp(line, lhs, unaryExpression());
+			} else if (have(UCOM)) {
+				lhs = new JIUComOp(line, lhs, unaryExpression());
 			} else {
 				more = false;
 			}
