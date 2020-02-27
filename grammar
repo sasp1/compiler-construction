@@ -7,13 +7,22 @@ compilationUnit ::= [PACKAGE qualifiedIdentifier SEMI]
 
 qualifiedIdentifier ::= IDENTIFIER {DOT IDENTIFIER}
 
-typeDeclaration ::= modifiers classDeclaration
+interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
 
-modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT}
+typeDeclaration ::= modifiers classTypeDeclaration
+
+modifiers ::= { PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT }
+
+classTypeDeclaration ::= classDeclaration | interfaceDeclaration
 
 classDeclaration ::= CLASS IDENTIFIER 
-                       [EXTENDS qualifiedIdentifier] 
+                       [EXTENDS  qualifiedIdentifier]
+                       [IMPLEMENTS interfaceIdentifier]
                        classBody
+
+interfaceDeclaration ::= INTERFACE IDENTIFIER 
+							[EXTENDS interfaceIdentifier]
+							classBody 
 
 classBody ::= LCURLY {modifiers memberDecl} RCURLY
 
@@ -60,7 +69,7 @@ arguments ::= LPAREN [expression {COMMA expression}] RPAREN
 
 type ::= referenceType | basicType
 
-basicType ::= BOOLEAN | CHAR | INT 
+basicType ::= BOOLEAN | CHAR | INT | BYTE | SHORT | DOUBLE | LONG 
 
 referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
                 | qualifiedIdentifier {LBRACK RBRACK}
