@@ -29,10 +29,17 @@ enum TokenKind {
 	
 	//Seperators
 	LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), RBRACK("]"),
-	SEMI(";"), COMMA(","), DOT("."), 
+	SEMI(";"), COLON(":"), COMMA(","), DOT("."),
 	
 	
 	IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"),
+	EOF("<EOF>"), ABSTRACT("abstract"), BOOLEAN("boolean"), CHAR("char"), CLASS("class"), ELSE("else"),
+	EXTENDS("extends"), FALSE("false"), IF("if"), IMPORT("import"), INSTANCEOF("instanceof"), INT("int"), NEW("new"),
+	NULL("null"), PACKAGE("package"), PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"), RETURN("return"),
+	STATIC("static"), SUPER("super"), THIS("this"), TRUE("true"), VOID("void"), WHILE("while"), PLUS("+"), ASSIGN("="),
+	DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), LE("<="), LNOT("!"), MINUS("-"), PLUS_ASSIGN("+="),
+	STAR("*"), DIV("/"), REM("%"), SHIFT_LEFT("<<"), SHIFT_RIGHT(">>"), AND("&"), OR("|"), XOR("^"), UCOM("~"), LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), RBRACK("]"),
+	SEMI(";"), COLON(":"), COMMA(","), DOT("."), IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"),
 	CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>");
 
 	/** The token's string representation. */
