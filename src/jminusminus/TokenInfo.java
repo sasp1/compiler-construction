@@ -18,7 +18,7 @@ enum TokenKind {
 	DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), LE("<="), LNOT("!"), MINUS("-"), PLUS_ASSIGN("+="),
 	STAR("*"), DIV("/"), REM("%"), SHIFT_LEFT("<<"), SHIFT_RIGHT(">>"), AND("&"), OR("|"), XOR("^"), UCOM("~"), LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), RBRACK("]"),
 	SEMI(";"), COMMA(","), DOT("."), IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"),
-	CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>"), COND("?");
+	CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>"), COND("?"), NEQUAL("!=");
 
 	/** The token's string representation. */
 	private String image;

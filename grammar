@@ -79,7 +79,7 @@ conditionalAndExpression ::= equalityExpression // level 10
                                {LAND equalityExpression}
 
 equalityExpression ::= relationalExpression  // level 6
-                         {EQUAL relationalExpression}                   
+                         {(EQUAL | NEQUAL) relationalExpression}                   
 
 relationalExpression ::= shiftExpression       // level 5
                            [(GT | LE) shiftExpression

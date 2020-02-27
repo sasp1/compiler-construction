@@ -146,6 +146,10 @@ class Scanner {
 			}
 		case '!':
 			nextCh();
+			if (ch == '=') {
+				nextCh();
+				return new TokenInfo(NEQUAL, line);
+			}
 			return new TokenInfo(LNOT, line);
 		case '*':
 			nextCh();

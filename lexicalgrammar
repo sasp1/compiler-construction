@@ -54,6 +54,7 @@ OR          ::= "|"
 XOR         ::= "^"
 UCOM		::= "~"
 COND		::= "?"
+NEQUAL		::= "!="
 
 // Separators
 COMMA       ::= ","
