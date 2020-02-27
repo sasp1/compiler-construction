@@ -186,6 +186,10 @@ class Scanner {
 			}
 		case '%':
 			nextCh();
+			if (ch == '='){
+				nextCh();
+				return new TokenInfo(REM_ASSIGN, line);
+			}
 			return new TokenInfo(REM, line);
 		case '&':
 			nextCh();
