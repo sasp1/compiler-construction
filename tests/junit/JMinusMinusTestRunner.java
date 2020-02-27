@@ -30,6 +30,7 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IXorTest.class);
 		suite.addTestSuite(IOrTest.class);
 		suite.addTestSuite(IUComTest.class);
+		suite.addTestSuite(NotEqualTest.class);
 		return suite;
 	}
 
