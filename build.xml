@@ -459,7 +459,6 @@
         <delete dir="${JAVADOC_DIR}" />
         <delete dir="${J2H_DIR}" />
     </target>
-
 </project>
 
 
