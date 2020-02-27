@@ -53,6 +53,7 @@ AND         ::= "&"
 OR          ::= "|"
 XOR         ::= "^"
 UCOM		::= "~"
+COND		::= "?"
 
 // Separators
 COMMA       ::= ","
