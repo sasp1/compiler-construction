@@ -17,7 +17,7 @@ public class NotEqualTest extends TestCase {
 	}
 
 	public void testNotEqual() {
-		assertTrue(notEqual.notEqual(2,3));
+		assertFalse(notEqual.notEqual(23,3));
 //		this.assertEquals(notEqual.divide(10, 20), 0);
 //		this.assertEquals(notEqual.divide(10, 10), 1);
 	}

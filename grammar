@@ -70,8 +70,9 @@ statementExpression ::= expression // but must have side-effect, eg i++
 expression ::= assignmentExpression
 
 assignmentExpression ::= conditionalCondExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN) assignmentExpression]
-                           
+                           [(ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN) assignmentExpression]
+
+
 conditionalCondExpression ::= conditionalAndExpression // level 10
                                {COND conditionalAndExpression}
 

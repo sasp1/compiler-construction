@@ -2,11 +2,9 @@
 
 package junit;
 
-import java.io.File;
-import junit.framework.TestCase;
+import fail.PlusEqual;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import pass.*;
 
 /**
  * JUnit test suite for running the j-- programs in tests/pass.
@@ -31,6 +29,8 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IOrTest.class);
 		suite.addTestSuite(IUComTest.class);
 		suite.addTestSuite(NotEqualTest.class);
+		suite.addTestSuite(PlusEqual.class);
+
 		return suite;
 	}
 
