@@ -212,22 +212,42 @@ class Scanner {
 			nextCh();
 			if (ch == '>') {
 				nextCh();
-				return new TokenInfo(SHIFT_RIGHT, line);
+				if (ch == '=') {
+					nextCh();
+					return new TokenInfo(SHIFT_RIGHT_ASSIGN, line);
+				} else if (ch == '>' ){
+					nextCh();
+					if (ch == '=') {
+						nextCh();
+						return new TokenInfo(SHIFT_RIGHT_UNSIGN_ASSIGN, line);
+					} else {
+						return new TokenInfo(SHIFT_RIGHT_UNSIGN, line);
+					}
+				} else {
+					return new TokenInfo(SHIFT_RIGHT, line);
+				}
+			} else if (ch == '='){
+				nextCh();
+				return new TokenInfo(GTE, line);
 			} else {
 				nextCh();
 				return new TokenInfo(GT, line);
 			}
 		case '<':
 			nextCh();
-			if (ch == '=') {
+			if (ch == '<') {
+				nextCh();
+				if (ch == '=') {
+					nextCh();
+					return new TokenInfo(SHIFT_LEFT_ASSIGN, line);
+				} else {
+					return new TokenInfo(SHIFT_LEFT, line);
+				}
+			} else if (ch == '=') {
 				nextCh();
 				return new TokenInfo(LE, line);
-			} else if (ch == '<') {
-				nextCh();
-				return new TokenInfo(SHIFT_LEFT, line);
 			} else {
-				reportScannerError("Operator < is not supported in j--.");
-				return getNextToken();
+				return new TokenInfo(LT, line);
 			}
 		case '\'':
 			buffer = new StringBuffer();
