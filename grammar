@@ -72,7 +72,7 @@ expression ::= assignmentExpression
 assignmentExpression ::= conditionalCondExpression  // must be a valid lhs
                            [(ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | REM_ASSIGN
                            | SHIFT_RIGHT_ASSIGN | SHIFT_RIGHT_UNSIGN | SHIFT_RIGHT_UNSIGN_ASSIGN
-                           | SHIFT_LEFT_ASSIGN) assignmentExpression]
+                           | SHIFT_LEFT_ASSIGN | XOR_ASSIGN, OR_ASSIGN) assignmentExpression]
 
 
 conditionalCondExpression ::= conditionalAndExpression // level 10

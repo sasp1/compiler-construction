@@ -201,10 +201,20 @@ class Scanner {
 			}
 		case '|':
 			nextCh();
-			return new TokenInfo(OR, line);
+			if (ch == '=') {
+				nextCh();
+				return new TokenInfo(OR_ASSIGN, line);
+			} else {
+				return new TokenInfo(OR, line);
+			}
 		case '^':
 			nextCh();
-			return new TokenInfo(XOR, line);
+			if (ch == '=') {
+				nextCh();
+				return new TokenInfo(XOR_ASSIGN, line);
+			} else {
+				return new TokenInfo(XOR, line);
+			}
 		case '~':
 			nextCh();
 			return new TokenInfo(UCOM, line);
