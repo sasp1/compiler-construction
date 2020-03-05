@@ -15,10 +15,10 @@ public class LogicalOrTest extends TestCase {
         super.tearDown();
     }
 
-    public void testDivide() {
+    public void testLogicalOr() {
     	assertEquals(logicalOr.logicalOr(true, true), true);
-        assertEquals(logicalOr.logicalOr(false , false), false);
-        // assertTrue(logicalOr.logicalOr(false, true));
+        assertEquals(logicalOr.logicalOr(false , false), true);
+        //assertTrue(logicalOr.logicalOr(false, true));
     }
 }
 
