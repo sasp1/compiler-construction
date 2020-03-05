@@ -1,3 +1,4 @@
+/*
 package junit;
 
 import junit.framework.TestCase;
@@ -20,4 +21,4 @@ public class LessThanTest extends TestCase {
 		this.assertEquals(lessThan.lessThan(2, 2), false);
 		this.assertEquals(lessThan.lessThan(1, 2), true);
 	}
-} 
+} */

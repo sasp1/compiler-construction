@@ -2,7 +2,6 @@
 
 package junit;
 
-import fail.PlusEqual;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -29,7 +28,6 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IOrTest.class);
 		suite.addTestSuite(IUComTest.class);
 		suite.addTestSuite(NotEqualTest.class);
-		suite.addTestSuite(PlusEqual.class);
 
 		return suite;
 	}

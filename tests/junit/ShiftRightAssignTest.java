@@ -1,3 +1,4 @@
+/*
 package junit;
 
 import junit.framework.TestCase;
@@ -19,4 +20,4 @@ public class ShiftRightAssignTest extends TestCase {
 		this.assertEquals(shiftRightAssign.shiftRightAssign(33, 2), 8);
 		this.assertEquals(shiftRightAssign.shiftRightAssign(123, 6), 1);
 	}
-}
+}*/
