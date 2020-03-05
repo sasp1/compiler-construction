@@ -10,19 +10,7 @@ package jminusminus;
  * enum specifying the kind and image of the new token.
  */
 
-enum TokenKind {
-<<<<<<< HEAD
-	EOF("<EOF>"), ABSTRACT("abstract"), BOOLEAN("boolean"), CHAR("char"), CLASS("class"), ELSE("else"),
-	EXTENDS("extends"), FALSE("false"), IF("if"), IMPORT("import"), INSTANCEOF("instanceof"), INT("int"), NEW("new"),
-	NULL("null"), PACKAGE("package"), PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"), RETURN("return"),
-	STATIC("static"), SUPER("super"), THIS("this"), TRUE("true"), VOID("void"), WHILE("while"), PLUS("+"), ASSIGN("="),
-	DEC("--"), EQUAL("=="), GT(">"), GTE(">="), INC("++"), LAND("&&"), LOR("||"), LT("<"), LE("<="), LNOT("!"), MINUS("-"), PLUS_ASSIGN("+="), MINUS_ASSIGN("-="),
-	MULT_ASSIGN("*="), DIV_ASSIGN("/="), REM_ASSIGN("%="), ANDEQ("&="), STAR("*"), DIV("/"), REM("%"), SHIFT_LEFT("<<"), SHIFT_RIGHT(">>"),
-	SHIFT_RIGHT_ASSIGN(">>="), SHIFT_RIGHT_UNSIGN(">>>"), SHIFT_RIGHT_UNSIGN_ASSIGN(">>>="), SHIFT_LEFT_ASSIGN("<<="), AND("&"), OR("|"), XOR("^"), 
-	UCOM("~"), LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), RBRACK("]"), XOR_ASSIGN("^="), OR_ASSIGN("|="),
-	SEMI(";"), COMMA(","), DOT("."), IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"),
-	CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>"), COND("?"), NEQUAL("!=");
-=======
+enum TokenKind {	
 	//Keywords
 	EOF("<EOF>"),ABSTRACT("abstract"), BOOLEAN("boolean"), BREAK("break"), BYTE("byte"), 
 	CASE("case"), CATCH("catch"), CHAR("char"), CLASS("class"), CONST("const"), CONTINUE("continue"), 
@@ -34,18 +22,17 @@ enum TokenKind {
 	RETURN("return"), SHORT("short"), STATIC("static"), STRICTFP("strictfp"), SUPER("super"), 
 	SWITCH("switch"), SYNCHRONIZED("synchronized"), THIS("this"), THROW("throw"), THROWS("throws"), 
 	TRANSIENT("transient"), TRUE("true"), TRY("try"), VOID("void"), VOLATILE("volatile"), WHILE("while"),
+	IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"), CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>"),
 	
-	//Operators
-	PLUS("+"), ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), LE("<="), LNOT("!"), MINUS("-"), PLUS_ASSIGN("+="),
-	STAR("*"), DIV("/"), REM("%"), SHIFT_LEFT("<<"), SHIFT_RIGHT(">>"), AND("&"), OR("|"), XOR("^"), UCOM("~"), 
+	//Operators:
+	PLUS("+"), ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), GTE(">="), INC("++"), LAND("&&"), LOR("||"), LT("<"), LE("<="), LNOT("!"), MINUS("-"), PLUS_ASSIGN("+="), MINUS_ASSIGN("-="),
+	MULT_ASSIGN("*="), DIV_ASSIGN("/="), REM_ASSIGN("%="), ANDEQ("&="), STAR("*"), DIV("/"), REM("%"), SHIFT_LEFT("<<"), SHIFT_RIGHT(">>"),
+	SHIFT_RIGHT_ASSIGN(">>="), SHIFT_RIGHT_UNSIGN(">>>"), SHIFT_RIGHT_UNSIGN_ASSIGN(">>>="), SHIFT_LEFT_ASSIGN("<<="), AND("&"), OR("|"), XOR("^"), 
+	UCOM("~"), XOR_ASSIGN("^="), OR_ASSIGN("|="), COND("?"), NEQUAL("!="),
 	
 	//Seperators
 	LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), RBRACK("]"),
-	SEMI(";"), COLON(":"), COMMA(","), DOT("."),
-	
-	IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"),
-	CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>");
->>>>>>> d81ba3b5327d9a99d1c377c93d08d6fb03993e23
+	SEMI(";"), COLON(":"), COMMA(","), DOT(".");
 
 	/** The token's string representation. */
 	private String image;
