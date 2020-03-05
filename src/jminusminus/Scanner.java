@@ -56,15 +56,33 @@ class Scanner {
 		reserved = new Hashtable<String, TokenKind>();
 		reserved.put(ABSTRACT.image(), ABSTRACT);
 		reserved.put(BOOLEAN.image(), BOOLEAN);
+		reserved.put(BREAK.image(), BREAK); //ADDED
+		reserved.put(BYTE.image(), BYTE); //ADDED
+		reserved.put(CASE.image(), CASE); //ADDED
+		reserved.put(CATCH.image(), CATCH); //ADDED
 		reserved.put(CHAR.image(), CHAR);
 		reserved.put(CLASS.image(), CLASS);
+		reserved.put(CONST.image(), CONST); //ADDED
+		reserved.put(CONTINUE.image(), CONTINUE); //ADDED
+		reserved.put(DEFAULT.image(), DEFAULT); //ADDED
+		reserved.put(DO.image(), DO); //ADDED
+		reserved.put(DOUBLE.image(), DOUBLE); //ADDED
 		reserved.put(ELSE.image(), ELSE);
 		reserved.put(EXTENDS.image(), EXTENDS);
 		reserved.put(FALSE.image(), FALSE);
+		reserved.put(FINAL.image(), FINAL); //ADDED
+		reserved.put(FINALLY.image(), FINALLY); //ADDED
+		reserved.put(FLOAT.image(), FLOAT); //ADDED
+		reserved.put(FOR.image(), FOR); //ADDED
+		reserved.put(GOTO.image(), GOTO); //ADDED
 		reserved.put(IF.image(), IF);
+		reserved.put(IMPLEMENTS.image(), IMPLEMENTS); //ADDED
 		reserved.put(IMPORT.image(), IMPORT);
 		reserved.put(INSTANCEOF.image(), INSTANCEOF);
 		reserved.put(INT.image(), INT);
+		reserved.put(INTERFACE.image(), INTERFACE); //ADDED
+		reserved.put(LONG.image(), LONG); //ADDED
+		reserved.put(NATIVE.image(), NATIVE); //ADDED
 		reserved.put(NEW.image(), NEW);
 		reserved.put(NULL.image(), NULL);
 		reserved.put(PACKAGE.image(), PACKAGE);
@@ -72,11 +90,20 @@ class Scanner {
 		reserved.put(PROTECTED.image(), PROTECTED);
 		reserved.put(PUBLIC.image(), PUBLIC);
 		reserved.put(RETURN.image(), RETURN);
+		reserved.put(SHORT.image(), SHORT); //ADDED
 		reserved.put(STATIC.image(), STATIC);
+		reserved.put(STRICTFP.image(), STRICTFP); //ADDED
 		reserved.put(SUPER.image(), SUPER);
+		reserved.put(SWITCH.image(), SWITCH); //ADDED
+		reserved.put(SYNCHRONIZED.image(), SYNCHRONIZED); //ADDED
 		reserved.put(THIS.image(), THIS);
+		reserved.put(THROW.image(), THROW); //ADDED
+		reserved.put(THROWS.image(), THROWS); //ADDED
+		reserved.put(TRANSIENT.image(), TRANSIENT); //ADDED
 		reserved.put(TRUE.image(), TRUE);
+		reserved.put(TRY.image(), TRY); //ADDED
 		reserved.put(VOID.image(), VOID);
+		reserved.put(VOLATILE.image(), VOLATILE); //ADDED
 		reserved.put(WHILE.image(), WHILE);
 
 		// Prime the pump.
@@ -136,6 +163,9 @@ class Scanner {
 		case ';':
 			nextCh();
 			return new TokenInfo(SEMI, line);
+		case ':':
+			nextCh();
+			return new TokenInfo(COLON, line);
 		case ',':
 			nextCh();
 			return new TokenInfo(COMMA, line);

@@ -11,6 +11,7 @@ package jminusminus;
  */
 
 enum TokenKind {
+<<<<<<< HEAD
 	EOF("<EOF>"), ABSTRACT("abstract"), BOOLEAN("boolean"), CHAR("char"), CLASS("class"), ELSE("else"),
 	EXTENDS("extends"), FALSE("false"), IF("if"), IMPORT("import"), INSTANCEOF("instanceof"), INT("int"), NEW("new"),
 	NULL("null"), PACKAGE("package"), PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"), RETURN("return"),
@@ -21,6 +22,30 @@ enum TokenKind {
 	UCOM("~"), LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), RBRACK("]"), XOR_ASSIGN("^="), OR_ASSIGN("|="),
 	SEMI(";"), COMMA(","), DOT("."), IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"),
 	CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>"), COND("?"), NEQUAL("!=");
+=======
+	//Keywords
+	EOF("<EOF>"),ABSTRACT("abstract"), BOOLEAN("boolean"), BREAK("break"), BYTE("byte"), 
+	CASE("case"), CATCH("catch"), CHAR("char"), CLASS("class"), CONST("const"), CONTINUE("continue"), 
+	DEFAULT("default"), DO("do"), DOUBLE("double"), ELSE("else"), EXTENDS("extends"), 
+	FALSE("false"), FINAL("final"), FINALLY("finally"), FLOAT("float"), FOR("for"), GOTO("goto"), 
+	IF("if"), IMPLEMENTS("implements"), IMPORT("import"), INSTANCEOF("instanceof"), INT("int"), INTERFACE("interface"), 
+	LONG("long"), NATIVE("native"), NEW("new"), NULL("null"), 
+	PACKAGE("package"), PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"),
+	RETURN("return"), SHORT("short"), STATIC("static"), STRICTFP("strictfp"), SUPER("super"), 
+	SWITCH("switch"), SYNCHRONIZED("synchronized"), THIS("this"), THROW("throw"), THROWS("throws"), 
+	TRANSIENT("transient"), TRUE("true"), TRY("try"), VOID("void"), VOLATILE("volatile"), WHILE("while"),
+	
+	//Operators
+	PLUS("+"), ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), LE("<="), LNOT("!"), MINUS("-"), PLUS_ASSIGN("+="),
+	STAR("*"), DIV("/"), REM("%"), SHIFT_LEFT("<<"), SHIFT_RIGHT(">>"), AND("&"), OR("|"), XOR("^"), UCOM("~"), 
+	
+	//Seperators
+	LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), RBRACK("]"),
+	SEMI(";"), COLON(":"), COMMA(","), DOT("."),
+	
+	IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"),
+	CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>");
+>>>>>>> d81ba3b5327d9a99d1c377c93d08d6fb03993e23
 
 	/** The token's string representation. */
 	private String image;
