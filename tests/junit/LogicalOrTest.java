@@ -1,4 +1,3 @@
-/*
 package junit;
 
 import junit.framework.TestCase;
@@ -17,9 +16,9 @@ public class LogicalOrTest extends TestCase {
     }
 
     public void testDivide() {
-        assertTrue(logicalOr.logicalOr(true, false));
-        assertFalse(logicalOr.logicalOr(false , false));
-        assertTrue(logicalOr.logicalOr(false, true));
+    	assertEquals(logicalOr.logicalOr(true, true), true);
+        assertEquals(logicalOr.logicalOr(false , false), false);
+        // assertTrue(logicalOr.logicalOr(false, true));
     }
 }
-*/
+

@@ -7,12 +7,10 @@ public class LogicalOr {
     }
 
     private boolean operation1(boolean input){
-        System.out.println("operation1");
         return input;
     }
 
     private boolean operation2(boolean input){
-        System.out.println("operation2");
         return input;
     }
 }
