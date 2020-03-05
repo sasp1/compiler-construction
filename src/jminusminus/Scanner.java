@@ -11,7 +11,7 @@ import static jminusminus.TokenKind.*;
 
 /**
  * A lexical analyzer for j--, that has no backtracking mechanism.
- * 
+ *
  * When you add a new token to the scanner, you must also add an entry in the
  * TokenKind enum in TokenInfo.java specifying the kind and image of the new
  * token.
@@ -42,7 +42,7 @@ class Scanner {
 
 	/**
 	 * Construct a Scanner object.
-	 * 
+	 *
 	 * @param fileName the name of the file containing the source.
 	 * @exception FileNotFoundException when the named file cannot be found.
 	 */
@@ -56,15 +56,33 @@ class Scanner {
 		reserved = new Hashtable<String, TokenKind>();
 		reserved.put(ABSTRACT.image(), ABSTRACT);
 		reserved.put(BOOLEAN.image(), BOOLEAN);
+		reserved.put(BREAK.image(), BREAK); //ADDED
+		reserved.put(BYTE.image(), BYTE); //ADDED
+		reserved.put(CASE.image(), CASE); //ADDED
+		reserved.put(CATCH.image(), CATCH); //ADDED
 		reserved.put(CHAR.image(), CHAR);
 		reserved.put(CLASS.image(), CLASS);
+		reserved.put(CONST.image(), CONST); //ADDED
+		reserved.put(CONTINUE.image(), CONTINUE); //ADDED
+		reserved.put(DEFAULT.image(), DEFAULT); //ADDED
+		reserved.put(DO.image(), DO); //ADDED
+		reserved.put(DOUBLE.image(), DOUBLE); //ADDED
 		reserved.put(ELSE.image(), ELSE);
 		reserved.put(EXTENDS.image(), EXTENDS);
 		reserved.put(FALSE.image(), FALSE);
+		reserved.put(FINAL.image(), FINAL); //ADDED
+		reserved.put(FINALLY.image(), FINALLY); //ADDED
+		reserved.put(FLOAT.image(), FLOAT); //ADDED
+		reserved.put(FOR.image(), FOR); //ADDED
+		reserved.put(GOTO.image(), GOTO); //ADDED
 		reserved.put(IF.image(), IF);
+		reserved.put(IMPLEMENTS.image(), IMPLEMENTS); //ADDED
 		reserved.put(IMPORT.image(), IMPORT);
 		reserved.put(INSTANCEOF.image(), INSTANCEOF);
 		reserved.put(INT.image(), INT);
+		reserved.put(INTERFACE.image(), INTERFACE); //ADDED
+		reserved.put(LONG.image(), LONG); //ADDED
+		reserved.put(NATIVE.image(), NATIVE); //ADDED
 		reserved.put(NEW.image(), NEW);
 		reserved.put(NULL.image(), NULL);
 		reserved.put(PACKAGE.image(), PACKAGE);
@@ -72,11 +90,20 @@ class Scanner {
 		reserved.put(PROTECTED.image(), PROTECTED);
 		reserved.put(PUBLIC.image(), PUBLIC);
 		reserved.put(RETURN.image(), RETURN);
+		reserved.put(SHORT.image(), SHORT); //ADDED
 		reserved.put(STATIC.image(), STATIC);
+		reserved.put(STRICTFP.image(), STRICTFP); //ADDED
 		reserved.put(SUPER.image(), SUPER);
+		reserved.put(SWITCH.image(), SWITCH); //ADDED
+		reserved.put(SYNCHRONIZED.image(), SYNCHRONIZED); //ADDED
 		reserved.put(THIS.image(), THIS);
+		reserved.put(THROW.image(), THROW); //ADDED
+		reserved.put(THROWS.image(), THROWS); //ADDED
+		reserved.put(TRANSIENT.image(), TRANSIENT); //ADDED
 		reserved.put(TRUE.image(), TRUE);
+		reserved.put(TRY.image(), TRY); //ADDED
 		reserved.put(VOID.image(), VOID);
+		reserved.put(VOLATILE.image(), VOLATILE); //ADDED
 		reserved.put(WHILE.image(), WHILE);
 
 		// Prime the pump.
@@ -85,7 +112,7 @@ class Scanner {
 
 	/**
 	 * Scan the next token from input.
-	 * 
+	 *
 	 * @return the the next scanned token.
 	 */
 
@@ -103,6 +130,9 @@ class Scanner {
 					while (ch != '\n' && ch != EOFCH) {
 						nextCh();
 					}
+				} else if (ch == '='){
+					nextCh();
+					return new TokenInfo(DIV_ASSIGN, line);
 				} else {
 					return new TokenInfo(DIV, line);
 				}
@@ -133,6 +163,9 @@ class Scanner {
 		case ';':
 			nextCh();
 			return new TokenInfo(SEMI, line);
+		case ':':
+			nextCh();
+			return new TokenInfo(COLON, line);
 		case ',':
 			nextCh();
 			return new TokenInfo(COMMA, line);
@@ -146,9 +179,17 @@ class Scanner {
 			}
 		case '!':
 			nextCh();
+			if (ch == '=') {
+				nextCh();
+				return new TokenInfo(NEQUAL, line);
+			}
 			return new TokenInfo(LNOT, line);
 		case '*':
 			nextCh();
+			if (ch == '='){
+				nextCh();
+				return new TokenInfo(MULT_ASSIGN, line);
+			}
 			return new TokenInfo(STAR, line);
 		case '+':
 			nextCh();
@@ -166,11 +207,19 @@ class Scanner {
 			if (ch == '-') {
 				nextCh();
 				return new TokenInfo(DEC, line);
+			}
+            else if (ch == '=') {
+                nextCh();
+                return new TokenInfo(MINUS_ASSIGN, line);
 			} else {
 				return new TokenInfo(MINUS, line);
 			}
 		case '%':
 			nextCh();
+			if (ch == '='){
+				nextCh();
+				return new TokenInfo(REM_ASSIGN, line);
+			}
 			return new TokenInfo(REM, line);
 		case '&':
 			nextCh();
@@ -182,10 +231,23 @@ class Scanner {
 			}
 		case '|':
 			nextCh();
-			return new TokenInfo(OR, line);
+			if (ch == '=') {
+				nextCh();
+				return new TokenInfo(OR_ASSIGN, line);
+			} else if (ch == '|') {
+				nextCh();
+				return new TokenInfo(LOR, line);
+			} else {
+				return new TokenInfo(OR, line);
+			}
 		case '^':
 			nextCh();
-			return new TokenInfo(XOR, line);
+			if (ch == '=') {
+				nextCh();
+				return new TokenInfo(XOR_ASSIGN, line);
+			} else {
+				return new TokenInfo(XOR, line);
+			}
 		case '~':
 			nextCh();
 			return new TokenInfo(UCOM, line);
@@ -193,22 +255,42 @@ class Scanner {
 			nextCh();
 			if (ch == '>') {
 				nextCh();
-				return new TokenInfo(SHIFT_RIGHT, line);
+				if (ch == '=') {
+					nextCh();
+					return new TokenInfo(SHIFT_RIGHT_ASSIGN, line);
+				} else if (ch == '>' ){
+					nextCh();
+					if (ch == '=') {
+						nextCh();
+						return new TokenInfo(SHIFT_RIGHT_UNSIGN_ASSIGN, line);
+					} else {
+						return new TokenInfo(SHIFT_RIGHT_UNSIGN, line);
+					}
+				} else {
+					return new TokenInfo(SHIFT_RIGHT, line);
+				}
+			} else if (ch == '='){
+				nextCh();
+				return new TokenInfo(GTE, line);
 			} else {
 				nextCh();
 				return new TokenInfo(GT, line);
 			}
 		case '<':
 			nextCh();
-			if (ch == '=') {
+			if (ch == '<') {
+				nextCh();
+				if (ch == '=') {
+					nextCh();
+					return new TokenInfo(SHIFT_LEFT_ASSIGN, line);
+				} else {
+					return new TokenInfo(SHIFT_LEFT, line);
+				}
+			} else if (ch == '=') {
 				nextCh();
 				return new TokenInfo(LE, line);
-			} else if (ch == '<') {
-				nextCh();
-				return new TokenInfo(SHIFT_LEFT, line);
 			} else {
-				reportScannerError("Operator < is not supported in j--.");
-				return getNextToken();
+				return new TokenInfo(LT, line);
 			}
 		case '\'':
 			buffer = new StringBuffer();
@@ -260,6 +342,9 @@ class Scanner {
 		case '.':
 			nextCh();
 			return new TokenInfo(DOT, line);
+		case '?':
+			nextCh();
+			return new TokenInfo(COND, line);
 		case EOFCH:
 			return new TokenInfo(EOF, line);
 		case '0':
@@ -304,7 +389,7 @@ class Scanner {
 
 	/**
 	 * Scan and return an escaped character.
-	 * 
+	 *
 	 * @return escaped character.
 	 */
 
@@ -358,7 +443,7 @@ class Scanner {
 	 * Report a lexcial error and record the fact that an error has occured. This
 	 * fact can be ascertained from the Scanner by sending it an errorHasOccurred()
 	 * message.
-	 * 
+	 *
 	 * @param message message identifying the error.
 	 * @param args    related values.
 	 */
@@ -372,7 +457,7 @@ class Scanner {
 
 	/**
 	 * Return true if the specified character is a digit (0-9); false otherwise.
-	 * 
+	 *
 	 * @param c character.
 	 * @return true or false.
 	 */
@@ -383,7 +468,7 @@ class Scanner {
 
 	/**
 	 * Return true if the specified character is a whitespace; false otherwise.
-	 * 
+	 *
 	 * @param c character.
 	 * @return true or false.
 	 */
@@ -402,7 +487,7 @@ class Scanner {
 	/**
 	 * Return true if the specified character can start an identifier name; false
 	 * otherwise.
-	 * 
+	 *
 	 * @param c character.
 	 * @return true or false.
 	 */
@@ -414,7 +499,7 @@ class Scanner {
 	/**
 	 * Return true if the specified character can be part of an identifier name;
 	 * false otherwise.
-	 * 
+	 *
 	 * @param c character.
 	 * @return true or false.
 	 */
@@ -425,7 +510,7 @@ class Scanner {
 
 	/**
 	 * Has an error occurred up to now in lexical analysis?
-	 * 
+	 *
 	 * @return true or false.
 	 */
 
@@ -435,7 +520,7 @@ class Scanner {
 
 	/**
 	 * The name of the source file.
-	 * 
+	 *
 	 * @return name of the source file.
 	 */
 
@@ -464,7 +549,7 @@ class CharReader {
 
 	/**
 	 * Construct a CharReader from a file name.
-	 * 
+	 *
 	 * @param fileName the name of the input file.
 	 * @exception FileNotFoundException if the file is not found.
 	 */
@@ -476,7 +561,7 @@ class CharReader {
 
 	/**
 	 * Scan the next character.
-	 * 
+	 *
 	 * @return the character scanned.
 	 * @exception IOException if an I/O error occurs.
 	 */
@@ -487,7 +572,7 @@ class CharReader {
 
 	/**
 	 * The current line number in the source file, starting at 1.
-	 * 
+	 *
 	 * @return the current line number.
 	 */
 
@@ -498,7 +583,7 @@ class CharReader {
 
 	/**
 	 * Return the file name.
-	 * 
+	 *
 	 * @return the file name.
 	 */
 
@@ -508,7 +593,7 @@ class CharReader {
 
 	/**
 	 * Close the file.
-	 * 
+	 *
 	 * @exception IOException if an I/O error occurs.
 	 */
 

@@ -7,13 +7,22 @@ compilationUnit ::= [PACKAGE qualifiedIdentifier SEMI]
 
 qualifiedIdentifier ::= IDENTIFIER {DOT IDENTIFIER}
 
-typeDeclaration ::= modifiers classDeclaration
+interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
 
-modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT}
+typeDeclaration ::= modifiers classTypeDeclaration
+
+modifiers ::= { PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT }
+
+classTypeDeclaration ::= classDeclaration | interfaceDeclaration
 
 classDeclaration ::= CLASS IDENTIFIER 
-                       [EXTENDS qualifiedIdentifier] 
+                       [EXTENDS  qualifiedIdentifier]
+                       [IMPLEMENTS interfaceIdentifier]
                        classBody
+
+interfaceDeclaration ::= INTERFACE IDENTIFIER 
+							[EXTENDS interfaceIdentifier]
+							classBody 
 
 classBody ::= LCURLY {modifiers memberDecl} RCURLY
 
@@ -60,7 +69,7 @@ arguments ::= LPAREN [expression {COMMA expression}] RPAREN
 
 type ::= referenceType | basicType
 
-basicType ::= BOOLEAN | CHAR | INT 
+basicType ::= BOOLEAN | CHAR | INT | BYTE | SHORT | DOUBLE | LONG 
 
 referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
                 | qualifiedIdentifier {LBRACK RBRACK}
@@ -69,17 +78,22 @@ statementExpression ::= expression // but must have side-effect, eg i++
 
 expression ::= assignmentExpression
 
-assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN) assignmentExpression]
+assignmentExpression ::= conditionalCondExpression  // must be a valid lhs
+                           [(ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | REM_ASSIGN
+                           | SHIFT_RIGHT_ASSIGN | SHIFT_RIGHT_UNSIGN | SHIFT_RIGHT_UNSIGN_ASSIGN
+                           | SHIFT_LEFT_ASSIGN | XOR_ASSIGN | OR_ASSIGN | ANDEQ) assignmentExpression]
+
+conditionalCondExpression ::= conditionalAndExpression // level 10
+                               {COND conditionalAndExpression}
 
 conditionalAndExpression ::= equalityExpression // level 10
-                               {LAND equalityExpression}
+                               {(LAND | LOR) equalityExpression}
 
 equalityExpression ::= relationalExpression  // level 6
-                         {EQUAL relationalExpression}                   
+                         {(EQUAL | NEQUAL) relationalExpression}                   
 
 relationalExpression ::= shiftExpression       // level 5
-                           [(GT | LE) shiftExpression
+                           [(GT | LE | GTE | LT) shiftExpression
                            | INSTANCEOF referenceType]
                            
 shiftExpression ::= additiveExpression       // level 4
