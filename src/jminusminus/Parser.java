@@ -1006,6 +1006,22 @@ public class Parser {
 		}
 		return lhs;
 	}
+	
+	private JExpression conditionalCondExpression() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = conditionalAndExpression();
+		while (more) {
+			if (have(COND)) {
+				lhs = new JCondOp(line, lhs, conditionalAndExpression());
+			} else if (have(COLON)) {
+				lhs = new JColonOp(line, lhs, conditionalAndExpression());
+			} else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
 
 	/**
 	 * Parse an equality expression.

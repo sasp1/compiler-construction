@@ -84,7 +84,7 @@ assignmentExpression ::= conditionalCondExpression  // must be a valid lhs
                            | SHIFT_LEFT_ASSIGN | XOR_ASSIGN | OR_ASSIGN | ANDEQ) assignmentExpression]
 
 conditionalCondExpression ::= conditionalAndExpression // level 10
-                               {COND conditionalAndExpression}
+                               {COND conditionalAndExpression COLON conditionalAndExpression}
 
 conditionalAndExpression ::= equalityExpression // level 10
                                {(LAND | LOR) equalityExpression}
