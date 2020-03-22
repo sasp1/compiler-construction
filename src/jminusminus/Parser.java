@@ -549,9 +549,9 @@ public class Parser {
 				mustBe(IDENTIFIER);
 				String name = scanner.previousToken().image();
 				ArrayList<JFormalParameter> params = formalParameters();
-				if (have(THROWS)) {
-					ArrayList<JTypeDecl> methodThrows =
-				}
+//				if (have(THROWS)) {
+//					ArrayList<JTypeDecl> methodThrows =
+//				}
 				JBlock body = have(SEMI) ? null : block();
 				memberDecl = new JMethodDeclaration(line, mods, name, type, params, body);
 			} else {
