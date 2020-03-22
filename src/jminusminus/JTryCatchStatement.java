@@ -23,14 +23,15 @@ public class JTryCatchStatement extends JStatement{
      *
      * @param catchBody body of catch block
      */
-
-
     protected JTryCatchStatement(int line, JStatement tryBody, JFormalParameter exceptionDeclaration, JStatement catchBody) {
         super(line);
         this.tryBody = tryBody;
         this.exceptionDeclaration = exceptionDeclaration;
         this.catchBody = catchBody;
+
+
     }
+
 
     @Override
     public JAST analyze(Context context) {

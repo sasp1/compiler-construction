@@ -42,6 +42,7 @@ statement ::= block
             | IF parExpression statement [ELSE statement]
             | WHILE parExpression statement 
             | RETURN [expression] SEMI
+            | TRY statement CATCH formalParameters statement
             | SEMI 
             | statementExpression SEMI
 
@@ -115,12 +116,16 @@ unaryExpression ::= INC unaryExpression  // level 1
 
 simpleUnaryExpression ::= LNOT unaryExpression
                         | LPAREN basicType RPAREN unaryExpression //casted
-                        | LPAREN // casted               
+                        | LPAREN // casted
                             referenceType
                           RPAREN simpleUnaryExpression
-                        | postfixExpression 
+                        | postfixExpression
+
+
 
 postfixExpression ::= primary {selector} {DEC}
+
+
 
 selector ::= DOT qualifiedIdentifier [arguments]
            | LBRACK expression RBRACK
