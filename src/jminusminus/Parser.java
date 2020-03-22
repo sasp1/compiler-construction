@@ -2,6 +2,7 @@
 
 package jminusminus;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import static jminusminus.TokenKind.*;
 
@@ -377,6 +378,16 @@ public class Parser {
 		return new TypeName(line, qualifiedIdentifier);
 	}
 
+	private ArrayList<TypeName> typeIdentifiers() {
+		ArrayList<TypeName> types = new ArrayList<>();
+		types.add(qualifiedIdentifier());
+
+		while (have(COMMA)) {
+			types.add(qualifiedIdentifier());
+		}
+		return types;
+	}
+
 	/**
 	 * Parse a type declaration.
 	 * 
@@ -540,7 +551,8 @@ public class Parser {
 			String name = scanner.previousToken().image();
 			ArrayList<JFormalParameter> params = formalParameters();
 			JBlock body = block();
-			memberDecl = new JConstructorDeclaration(line, mods, name, params, body);
+			/* TODO: Add throws block */
+			memberDecl = new JConstructorDeclaration(line, mods, name, params, body, null);
 		} else {
 			Type type = null;
 			if (have(VOID)) {
@@ -549,11 +561,13 @@ public class Parser {
 				mustBe(IDENTIFIER);
 				String name = scanner.previousToken().image();
 				ArrayList<JFormalParameter> params = formalParameters();
-//				if (have(THROWS)) {
-//					ArrayList<JTypeDecl> methodThrows =
-//				}
+				ArrayList<TypeName> throwTypes = null;
+				if (have(THROWS)) {
+					throwTypes = typeIdentifiers();
+
+				}
 				JBlock body = have(SEMI) ? null : block();
-				memberDecl = new JMethodDeclaration(line, mods, name, type, params, body);
+				memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
 			} else {
 				type = type();
 				if (seeIdentLParen()) {
@@ -561,8 +575,13 @@ public class Parser {
 					mustBe(IDENTIFIER);
 					String name = scanner.previousToken().image();
 					ArrayList<JFormalParameter> params = formalParameters();
+					ArrayList<TypeName> throwTypes = null;
+					if (have(THROWS)) {
+						throwTypes = typeIdentifiers();
+
+					}
 					JBlock body = have(SEMI) ? null : block();
-					memberDecl = new JMethodDeclaration(line, mods, name, type, params, body);
+					memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
 				} else {
 					// Field
 					memberDecl = new JFieldDeclaration(line, mods, variableDeclarators(type));

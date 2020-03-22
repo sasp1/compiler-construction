@@ -1,7 +1,7 @@
 package pass;
 
 public class ExceptionHandling {
-    public void throwMethod() throws Exception {
+    public void throwMethod() throws Exception, java.lang.NullPointerException {
         throw new Exception("hej");
     }
 
