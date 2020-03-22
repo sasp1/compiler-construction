@@ -490,6 +490,8 @@ public class Parser {
 		return new JClassDeclaration(line, mods, name, superClass, classBody());
 	}
 
+
+
 	/**
 	 * Parse a class body.
 	 * 
@@ -644,6 +646,15 @@ public class Parser {
 				mustBe(SEMI);
 				return new JReturnStatement(line, expr);
 			}
+		} else if (have(TRY)){
+			JStatement tryBody = statement();
+//			JBlock tryBlock = block();
+			mustBe(CATCH);
+			mustBe(LPAREN);
+			JFormalParameter exceptionDecl = formalParameter();
+			mustBe(RPAREN);
+			JStatement catchBody = statement();
+			return new JTryCatchStatement(line, tryBody, exceptionDecl, catchBody);
 		} else if (have(SEMI)) {
 			return new JEmptyStatement(line);
 		} else { // Must be a statementExpression
@@ -695,6 +706,13 @@ public class Parser {
 		String name = scanner.previousToken().image();
 		return new JFormalParameter(line, name, type);
 	}
+
+//	private JParDeclaration parDeclaration() {
+//		mustBe(LPAREN);
+//		Type type = type();
+//		mustBe(IDENTIFIER);
+//
+//	}
 
 	/**
 	 * Parse a parenthesized expression.
