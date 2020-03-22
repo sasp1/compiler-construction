@@ -2,7 +2,6 @@ package junit;
 
 import junit.framework.TestCase;
 import pass.NotEqual;
-import pass.Division;
 
 public class NotEqualTest extends TestCase {
 	private NotEqual notEqual;

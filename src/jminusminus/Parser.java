@@ -970,7 +970,7 @@ public class Parser {
 
 	private JExpression assignmentExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = conditionalAndExpression();
+		JExpression lhs = conditionalCondExpression();
 		if (have(ASSIGN)) {
 			return new JAssignOp(line, lhs, assignmentExpression());
 		} else if (have(PLUS_ASSIGN)) {
@@ -1006,21 +1006,18 @@ public class Parser {
 		}
 		return lhs;
 	}
-	
+
 	private JExpression conditionalCondExpression() {
 		int line = scanner.token().line();
-		boolean more = true;
 		JExpression lhs = conditionalAndExpression();
-		while (more) {
-			if (have(COND)) {
-				lhs = new JCondOp(line, lhs, conditionalAndExpression());
-			} else if (have(COLON)) {
-				lhs = new JColonOp(line, lhs, conditionalAndExpression());
-			} else {
-				more = false;
-			}
+		if (have(COND)) {
+			JExpression consequent = assignmentExpression();
+			mustBe(COLON);
+			JExpression alternate = conditionalCondExpression();
+			return new JConditionalExpression(line, lhs, consequent, alternate);
+		} else {
+			return lhs;
 		}
-		return lhs;
 	}
 
 	/**
@@ -1041,8 +1038,7 @@ public class Parser {
 		while (more) {
 			if (have(EQUAL)) {
 				lhs = new JEqualOp(line, lhs, relationalExpression());
-			}
-			else if (have(NEQUAL)) {
+			} else if (have(NEQUAL)) {
 				lhs = new JNotEqualOp(line, lhs, relationalExpression());
 			} else {
 				more = false;
@@ -1142,9 +1138,9 @@ public class Parser {
 				lhs = new JRemainderOp(line, lhs, unaryExpression());
 			} else if (have(AND)) {
 				lhs = new JIAndOp(line, lhs, unaryExpression());
-			}else if (have(OR)) {
+			} else if (have(OR)) {
 				lhs = new JIOrOp(line, lhs, unaryExpression());
-			}else if (have(XOR)) {
+			} else if (have(XOR)) {
 				lhs = new JIXorOp(line, lhs, unaryExpression());
 			} else {
 				more = false;
@@ -1176,8 +1172,7 @@ public class Parser {
 			return new JPosOp(line, unaryExpression());
 		} else if (have(UCOM)) {
 			return new JIUComOp(line, unaryExpression());
-		}
-		else {
+		} else {
 			return simpleUnaryExpression();
 		}
 	}

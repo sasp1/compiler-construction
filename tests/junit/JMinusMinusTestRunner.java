@@ -18,7 +18,7 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(GCDTest.class);
 		suite.addTestSuite(SeriesTest.class);
 		suite.addTestSuite(ClassesTest.class);
-		suite.addTestSuite(DivisionTest.class);
+		//suite.addTestSuite(DivisionTest.class);
 		suite.addTestSuite(RemainderTest.class);
 		suite.addTestSuite(ShiftLeftTest.class);
 		suite.addTestSuite(ShiftRightTest.class);

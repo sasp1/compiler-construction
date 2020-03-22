@@ -1,4 +1,4 @@
-package junit;
+/*package junit;
 
 import junit.framework.TestCase;
 import pass.Division;
@@ -21,3 +21,4 @@ public class DivisionTest extends TestCase {
 		this.assertEquals(division.divide(127, 3), 42);
 	}
 }
+*/
