@@ -676,7 +676,11 @@ public class Parser {
 			JFormalParameter exceptionDecl = formalParameter();
 			mustBe(RPAREN);
 			JStatement catchBody = statement();
-			return new JTryCatchStatement(line, tryBody, exceptionDecl, catchBody);
+			JStatement finallyBody = null;
+			if (have(FINALLY)) {
+				finallyBody = statement();
+			}
+			return new JTryCatchStatement(line, tryBody, exceptionDecl, catchBody, finallyBody);
 		} else if (have(SEMI)) {
 			return new JEmptyStatement(line);
 		} else { // Must be a statementExpression
