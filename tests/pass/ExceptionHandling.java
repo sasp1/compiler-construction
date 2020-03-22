@@ -1,7 +1,12 @@
 package pass;
 
 public class ExceptionHandling {
+    public void throwMethod() throws Exception {
+        throw new Exception("hej");
+    }
+
     public int catchMethod() {
+
         String hey;
         hey = new String("hej");
 

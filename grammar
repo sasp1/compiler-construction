@@ -30,6 +30,7 @@ memberDecl ::= IDENTIFIER            // constructor
                  formalParameters block
              | (VOID | type) IDENTIFIER  // method
                  formalParameters
+                 [THROWS type]
                  (block | SEMI)
              | type variableDeclarators SEMI // field
 
@@ -123,9 +124,9 @@ simpleUnaryExpression ::= LNOT unaryExpression
 
 
 
-postfixExpression ::= primary {selector} {DEC}
+postfixExpression ::= throwExpression {selector} {DEC}
 
-
+throwExpression ::= {THROW} primary
 
 selector ::= DOT qualifiedIdentifier [arguments]
            | LBRACK expression RBRACK

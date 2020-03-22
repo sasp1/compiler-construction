@@ -549,6 +549,9 @@ public class Parser {
 				mustBe(IDENTIFIER);
 				String name = scanner.previousToken().image();
 				ArrayList<JFormalParameter> params = formalParameters();
+				if (have(THROWS)) {
+					ArrayList<JTypeDecl> methodThrows =
+				}
 				JBlock body = have(SEMI) ? null : block();
 				memberDecl = new JMethodDeclaration(line, mods, name, type, params, body);
 			} else {
@@ -1226,15 +1229,26 @@ public class Parser {
 
 	private JExpression postfixExpression() {
 		int line = scanner.token().line();
-		JExpression primaryExpr = primary();
+
+		JExpression throwExpression = throwExpression();
 		while (see(DOT) || see(LBRACK)) {
-			primaryExpr = selector(primaryExpr);
+			throwExpression = selector(throwExpression);
 		}
 		while (have(DEC)) {
-			primaryExpr = new JPostDecrementOp(line, primaryExpr);
+			throwExpression = new JPostDecrementOp(line, throwExpression);
 		}
-		return primaryExpr;
+		return throwExpression;
 	}
+
+	private JExpression throwExpression() {
+		int line = scanner.token().line();
+
+		if (have(THROW)) {
+			return new JThrowExpression(line, primary());
+		}
+		return primary();
+	}
+
 
 	/**
 	 * Parse a selector.
