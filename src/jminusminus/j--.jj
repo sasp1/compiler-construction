@@ -220,6 +220,8 @@ TOKEN:
 | < #ESC: "\\" ["n","t","b","r","f","\\","'","\""] >
 }
 
+
+
 // For anything else, we return an ERROR token. Without this 
 // definition the TokenManager will throw an Error when a lexical 
 // error occurs, making it impossible to recover from it. So we 
@@ -308,7 +310,8 @@ private TypeName qualifiedIdentifier(): {
             line = token.beginLine; 
             qualifiedIdentifier = token.image; 
         }
-        ( 
+        (
+
             <DOT> <IDENTIFIER> 
             { qualifiedIdentifier += "." + token.image; } 
         )*
@@ -538,7 +541,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
             { 
                 memberDecl = 
                 new JConstructorDeclaration( line, mods, 
-                                             name, params, body );
+                                             name, params, body , null);
             }
         ) |     
         LOOKAHEAD( ( <VOID> | type() ) <IDENTIFIER> <LPAREN> )
@@ -557,7 +560,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
             { 
                 memberDecl = 
                    new JMethodDeclaration( line, mods, name, 
-                                           type, params, body ); 
+                                           type, params, body, null );
             } 
         ) | 
         ( 

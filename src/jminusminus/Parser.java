@@ -670,7 +670,6 @@ public class Parser {
 			}
 		} else if (have(TRY)){
 			JStatement tryBody = statement();
-//			JBlock tryBlock = block();
 			mustBe(CATCH);
 			mustBe(LPAREN);
 			JFormalParameter exceptionDecl = formalParameter();

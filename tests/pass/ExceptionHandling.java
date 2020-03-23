@@ -6,7 +6,6 @@ public class ExceptionHandling {
     }
 
     public int catchMethod() {
-
         String hey;
         hey = new String("hej");
 
