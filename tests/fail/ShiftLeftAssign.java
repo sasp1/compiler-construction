@@ -1,3 +1,4 @@
+/*
 package pass;
 
 public class ShiftLeftAssign {
@@ -5,3 +6,4 @@ public class ShiftLeftAssign {
 		System.out.println('a' <<= 42);
 	}
 }
+*/

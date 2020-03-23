@@ -1,4 +1,4 @@
-package pass;
+package fail;
 
 public class ShiftRightUnsignAssign {
 	public static void main ( String [] args ) {
