@@ -57,7 +57,7 @@
 	 JavaCC frontend.
     -->
 
-    <target name="runJavaCCFile">
+    <target name="runJavaCCFile" depends="clean,javacc,compileJavaCC">
         <java classname="jminusminus/JavaCCMain"
               dir="classes"
               fork="true">
