@@ -75,6 +75,8 @@
         </java>
     </target>
 
+    <target name="clean,javacc,compileJavaCC" depends="clean,javacc,compileJavaCC"/>
+
     <target name="compileJavaCC">
         <echo message="Compiling j-- source files..."/>
         <mkdir dir="${CLASS_DIR}" />
