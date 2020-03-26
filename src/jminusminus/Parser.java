@@ -1014,6 +1014,10 @@ public class Parser {
 		JExpression lhs = conditionalCondExpression();
 		if (have(ASSIGN)) {
 			return new JAssignOp(line, lhs, assignmentExpression());
+		} else if (have(DIV_ASSIGN)) {
+			return new JDivAssignOp(line, lhs, assignmentExpression());
+		} else if (have(REM_ASSIGN)) {
+			return new JRemAssignOp(line, lhs, assignmentExpression());
 		} else if (have(PLUS_ASSIGN)) {
 			return new JPlusAssignOp(line, lhs, assignmentExpression());
 		} else if (have(MINUS_ASSIGN)) {
@@ -1213,6 +1217,8 @@ public class Parser {
 		int line = scanner.token().line();
 		if (have(INC)) {
 			return new JPreIncrementOp(line, unaryExpression());
+		} else if (have(DEC)){
+			return new JPreDecrementOp(line, unaryExpression());
 		} else if (have(MINUS)) {
 			return new JNegateOp(line, unaryExpression());
 		} else if (have(PLUS)) {
@@ -1275,6 +1281,9 @@ public class Parser {
 		}
 		while (have(DEC)) {
 			throwExpression = new JPostDecrementOp(line, throwExpression);
+		}
+		while (have(INC)) {
+			throwExpression = new JPostIncrementOp(line, throwExpression);
 		}
 		return throwExpression;
 	}
