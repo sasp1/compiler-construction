@@ -373,6 +373,19 @@ private TypeName qualifiedIdentifier(): {
          new TypeName( line, qualifiedIdentifier ); }
 }
 
+private ArrayList<TypeName> typeIdentifiers(): {
+    int line = 0;
+    ArrayList<TypeName> types = new ArrayList<TypeName>();
+    types.add(qualifiedIdentifier());
+}
+{
+    try {
+        (<COMMA> {types.add(qualifiedIdentifier());})*
+    } catch(ParseException e ) {
+        recoverFromError( new int[] { SEMI, EOF }, e );
+    }
+    { return types; }
+}
 /**
  * Parse a type declaration.
  * 
@@ -499,6 +512,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     int line = 0;
     String name = "";
     Type superClass = Type.OBJECT;
+    Type interfaceClass = Type.OBJECT;
     ArrayList<JMember> classBody = null;
 }
 {
@@ -513,9 +527,10 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     catch ( ParseException e ) { 
         recoverFromError( new int[] { SEMI, EOF }, e ); 
     }
-    { 
-        return new JClassDeclaration( line, mods, 
-            name, superClass, classBody ); 
+    {
+ // TODO: Should be given interface but feature is not yet implemented
+        return new JClassDeclaration( line, mods,
+            name, superClass, classBody, superClass);
     }
 }
 
@@ -576,6 +591,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
     JBlock body = null;
     ArrayList<JVariableDeclarator> variableDeclarators = null;
     JMember memberDecl = null;
+    ArrayList<TypeName> throwTypes = null;
 }
 {
     try {
@@ -586,23 +602,29 @@ private JMember memberDecl( ArrayList<String>  mods ): {
                 line = token.beginLine; 
                 name = token.image; 
             } 
-            params = formalParameters() 
+            params = formalParameters()
+            [
+                <THROWS> { throwTypes = typeIdentifiers(); }
+            ]
             body = block()
             { 
                 memberDecl = 
                 new JConstructorDeclaration( line, mods, 
-                                             name, params, body , null);
+                                             name, params, body , throwTypes);
             }
         ) |     
         LOOKAHEAD( ( <VOID> | type() ) <IDENTIFIER> <LPAREN> )
         (
-            ( 
+            (
                 <VOID> { type = Type.VOID; } | 
                 type = type() 
-            ) 
+            )
             { line = token.beginLine; }
             <IDENTIFIER> { name = token.image; } 
-            params = formalParameters() 
+            params = formalParameters()
+            [
+                <THROWS> { throwTypes = typeIdentifiers(); }
+            ]
             ( 
                 body = block() | 
                 <SEMI> 
@@ -610,9 +632,9 @@ private JMember memberDecl( ArrayList<String>  mods ): {
             { 
                 memberDecl = 
                    new JMethodDeclaration( line, mods, name, 
-                                           type, params, body, null );
+                                           type, params, body, throwTypes);
             } 
-        ) | 
+        ) |
         ( 
             type = type() { line = token.beginLine; }
             variableDeclarators = variableDeclarators( type )
@@ -708,6 +730,9 @@ private JStatement statement(): {
     JStatement alternate = null;
     JStatement body = null;
     JExpression expr = null;
+    JFormalParameter formalParameter = null;
+    JStatement catchBody = null;
+    JStatement finallyBody = null;
 }
 {       
     try {
@@ -736,6 +761,14 @@ private JStatement statement(): {
         ] 
         <SEMI>
         { statement = new JReturnStatement( line, expr ); } |
+        <TRY> { line = token.beginLine; }
+        body = statement()
+        <CATCH> <LPAREN> formalParameter = formalParameter() <RPAREN> catchBody = statement()
+        [
+            LOOKAHEAD(<FINALLY>)
+            <FINALLY> finallyBody = statement()
+        ]
+        { statement = new JTryCatchStatement(line, body, formalParameter, catchBody, finallyBody);} |
         <SEMI> 
         { statement = new JEmptyStatement( line ); } |
         // Must be a statementExpression
@@ -1464,25 +1497,42 @@ private JExpression simpleUnaryExpression(): {
 
 private JExpression postfixExpression(): {
     int line = 0; 
-    JExpression primaryExpr = null;
+    JExpression throwExpr = null;
 }
 {
     try {
-        primaryExpr = primary() { line = primaryExpr.line(); } 
+        throwExpr = throwExpression() { line = throwExpr.line(); }
         (
-            primaryExpr = selector( primaryExpr ) 
+            throwExpr = selector( throwExpr )
         )*
         ( 
             <DEC> 
-            { primaryExpr = 
-                new JPostDecrementOp( line, primaryExpr ); } 
+            { throwExpr =
+                new JPostDecrementOp( line, throwExpr ); }
         )*
     } 
     catch ( ParseException e ) {
         recoverFromError( new int[] { SEMI, EOF }, e ); 
     }
-    { return primaryExpr; }
+    { return throwExpr; }
 }
+
+private JExpression throwExpression(): {
+        int line = 0;
+        JExpression expr = null;
+        JExpression primary = null;
+        }
+    {
+        try {
+        <THROW> { line = token.beginLine; }
+        primary = primary()
+        { expr = new JThrowExpression(line, primary);} |
+        expr = primary()
+        } catch ( ParseException e) {
+            recoverFromError( new int[] { SEMI, EOF }, e );
+        }
+        { return expr;}
+    }
 
 /**
  * Parse a selector.

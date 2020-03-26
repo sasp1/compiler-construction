@@ -610,9 +610,13 @@ public class Parser {
 			mustBe(IDENTIFIER);
 			String name = scanner.previousToken().image();
 			ArrayList<JFormalParameter> params = formalParameters();
+			ArrayList<TypeName> throwTypes = null;
+			if (have(THROWS)) {
+				throwTypes = typeIdentifiers();
+			}
+
 			JBlock body = block();
-			/* TODO: Add throws block */
-			memberDecl = new JConstructorDeclaration(line, mods, name, params, body, null);
+			memberDecl = new JConstructorDeclaration(line, mods, name, params, body, throwTypes);
 		} else {
 			Type type = null;
 			if (have(VOID)) {
@@ -624,7 +628,6 @@ public class Parser {
 				ArrayList<TypeName> throwTypes = null;
 				if (have(THROWS)) {
 					throwTypes = typeIdentifiers();
-
 				}
 				JBlock body = have(SEMI) ? null : block();
 				memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
@@ -638,7 +641,6 @@ public class Parser {
 					ArrayList<TypeName> throwTypes = null;
 					if (have(THROWS)) {
 						throwTypes = typeIdentifiers();
-
 					}
 					JBlock body = have(SEMI) ? null : block();
 					memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
