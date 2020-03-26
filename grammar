@@ -24,7 +24,7 @@ interfaceDeclaration ::= INTERFACE IDENTIFIER
 							[EXTENDS interfaceIdentifier]
 							classBody 
 
-classBody ::= LCURLY {modifiers memberDecl} RCURLY
+classBody ::= LCURLY {[modifiers] memberDecl} RCURLY
 
 memberDecl ::= IDENTIFIER            // constructor
                  formalParameters block
@@ -32,6 +32,7 @@ memberDecl ::= IDENTIFIER            // constructor
                  formalParameters	
                  (block | SEMI)
              | type variableDeclarators SEMI // field
+             | block 				// Static block
 
 block ::= LCURLY {blockStatement} RCURLY 
 

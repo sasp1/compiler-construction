@@ -376,6 +376,27 @@ public class Parser {
 		}
 		return new TypeName(line, qualifiedIdentifier);
 	}
+	
+	/**
+	 * Added
+	 * Parse a interface identifier.
+	 * 
+	 * <pre>
+	 *   interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
+	 * </pre>
+	 * 
+	 * @return an instance of TypeName.
+	 */
+	
+	private TypeName interfaceIdentifier() {
+		int line = scanner.token().line();
+		String interfaceIdentifier = qualifiedIdentifier().toString();
+		
+		while (have(COMMA)) {
+			interfaceIdentifier += ", " + qualifiedIdentifier().toString();
+		}
+		return new TypeName(line, interfaceIdentifier);
+	}
 
 	/**
 	 * Parse a type declaration.
@@ -389,7 +410,11 @@ public class Parser {
 
 	private JAST typeDeclaration() {
 		ArrayList<String> mods = modifiers();
-		return classDeclaration(mods);
+		if(see(INTERFACE)) {
+			return interfaceDeclaration(mods);
+		} else {
+			return classDeclaration(mods);						
+		}
 	}
 
 	/**
@@ -460,6 +485,34 @@ public class Parser {
 		return mods;
 	}
 
+	/** ADDED
+	 * Parse a interface declaration.
+	 * 
+	 *	interfaceDeclaration ::= INTERFACE IDENTIFIER 
+	 *						[EXTENDS interfaceIdentifier]
+	 *						classBody 
+	 * </pre>
+	 * 
+	 * 
+	 * @param mods the class modifiers.
+	 * @return an AST for a classDeclaration.
+	 */
+
+	private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods) {
+		int line = scanner.token().line();
+		mustBe(INTERFACE);
+		mustBe(IDENTIFIER);
+		String name = scanner.previousToken().image();
+		Type superClass;
+		if (have(EXTENDS)) {
+			superClass = interfaceIdentifier();
+		} else {
+			superClass = Type.OBJECT;
+		}
+		
+		return new JInterfaceDeclaration(line, mods, name, superClass, classBody());
+	}
+	
 	/**
 	 * Parse a class declaration.
 	 * 
@@ -482,12 +535,19 @@ public class Parser {
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
 		Type superClass;
+		Type interfaceClass;
 		if (have(EXTENDS)) {
 			superClass = qualifiedIdentifier();
 		} else {
 			superClass = Type.OBJECT;
 		}
-		return new JClassDeclaration(line, mods, name, superClass, classBody());
+		if(have(IMPLEMENTS)) {
+			interfaceClass = interfaceIdentifier();
+		} else {
+			interfaceClass = null;
+		}
+		
+		return new JClassDeclaration(line, mods, name, superClass, classBody(), interfaceClass);
 	}
 
 	/**
@@ -532,7 +592,11 @@ public class Parser {
 	private JMember memberDecl(ArrayList<String> mods) {
 		int line = scanner.token().line();
 		JMember memberDecl = null;
-		if (seeIdentLParen()) {
+		
+		if(see(LCURLY)) {
+			JBlock body = block();
+			memberDecl = new JBlockDeclaration(line, mods, body);
+		} else if (seeIdentLParen()) {
 			// A constructor
 			mustBe(IDENTIFIER);
 			String name = scanner.previousToken().image();

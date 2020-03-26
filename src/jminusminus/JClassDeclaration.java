@@ -29,6 +29,9 @@ class JClassDeclaration extends JAST implements JTypeDecl {
     /** This class type. */
     private Type thisType;
 
+    /** Added */
+    private Type interfaceType;
+    
     /** Context for this class. */
     private ClassContext context;
 
@@ -40,6 +43,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 
     /** Static (class) fields of this class. */
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
+    
 
     /**
      * Construct an AST node for a class declaration given the line number, list
@@ -59,12 +63,13 @@ class JClassDeclaration extends JAST implements JTypeDecl {
      */
 
     public JClassDeclaration(int line, ArrayList<String> mods, String name,
-            Type superType, ArrayList<JMember> classBlock) {
+            Type superType, ArrayList<JMember> classBlock, Type interfaceType) {
         super(line);
         this.mods = mods;
         this.name = name;
         this.superType = superType;
         this.classBlock = classBlock;
+        this.interfaceType = interfaceType;
         hasExplicitConstructor = false;
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
         staticFieldInitializations = new ArrayList<JFieldDeclaration>();

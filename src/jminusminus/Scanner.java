@@ -118,6 +118,8 @@ class Scanner {
 
 	public TokenInfo getNextToken() {
 		StringBuffer buffer;
+		boolean isDouble = false;
+		boolean dotBeenSet = false;
 		boolean moreWhiteSpace = true;
 		while (moreWhiteSpace) {
 			while (isWhitespace(ch)) {
@@ -340,7 +342,18 @@ class Scanner {
 			}
 			return new TokenInfo(STRING_LITERAL, buffer.toString(), line);
 		case '.':
+			buffer = new StringBuffer();
+			isDouble = false;
+			buffer.append(ch);
 			nextCh();
+			while (isDigit(ch)) {
+				isDouble = true;
+				buffer.append(ch);
+				nextCh();
+			}
+			if(isDouble) {
+				return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+			}
 			return new TokenInfo(DOT, line);
 		case '?':
 			nextCh();
@@ -350,6 +363,28 @@ class Scanner {
 		case '0':
 			// Handle only simple decimal integers for now.
 			nextCh();
+			
+			buffer = new StringBuffer();
+			isDouble = false;
+			if(ch == '.') {
+				isDouble = true;
+				buffer.append(ch);
+				nextCh();
+				while (isDigit(ch)) {
+					buffer.append(ch);
+					nextCh();
+				}
+			} else if(ch == 'd' || ch == 'D') {
+				isDouble = true;
+				buffer.append('.');
+				buffer.append('0');
+				nextCh();
+			}
+			
+			if(isDouble) {
+				return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+			}
+			
 			return new TokenInfo(INT_LITERAL, "0", line);
 		case '1':
 		case '2':
@@ -361,10 +396,46 @@ class Scanner {
 		case '8':
 		case '9':
 			buffer = new StringBuffer();
+			isDouble = false;
+			dotBeenSet = false;
 			while (isDigit(ch)) {
 				buffer.append(ch);
 				nextCh();
 			}
+			if(ch == '.') {
+				isDouble = true;
+				dotBeenSet = true;
+				buffer.append(ch);
+				nextCh();
+				while (isDigit(ch)) {
+					buffer.append(ch);
+					nextCh();
+				}
+			}
+			
+			if(ch=='e') {
+				buffer.append(ch);
+				isDouble = true;
+				nextCh();
+				while (isDigit(ch)) {
+					buffer.append(ch);
+					nextCh();
+				}
+			}
+			
+			if(ch == 'd' || ch == 'D') {
+				if(!dotBeenSet) {
+					isDouble = true;
+					buffer.append('.');
+					buffer.append('0');
+				}
+				nextCh();
+			}
+			
+			if(isDouble) {
+				return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+			}
+			
 			return new TokenInfo(INT_LITERAL, buffer.toString(), line);
 		default:
 			if (isIdentifierStart(ch)) {
