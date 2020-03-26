@@ -34,9 +34,8 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
      */
 
     public JBlockDeclaration(int line, ArrayList<String> mods, JBlock body)
-
     {
-        super(line, mods, "", Type.ANY, new ArrayList<JFormalParameter>(), body);
+        super(line, mods, "", Type.ANY, new ArrayList<JFormalParameter>(), body, new ArrayList<TypeName>());
     }
 
     /**
