@@ -311,8 +311,7 @@ private TypeName qualifiedIdentifier(): {
             qualifiedIdentifier = token.image; 
         }
         (
-
-            <DOT> <IDENTIFIER> 
+        LOOKAHEAD(<DOT> <IDENTIFIER> ) <DOT> <IDENTIFIER>
             { qualifiedIdentifier += "." + token.image; } 
         )*
     } 

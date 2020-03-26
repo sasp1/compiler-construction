@@ -58,13 +58,15 @@
     -->
 
     <target name="runJavaCCFile" depends="clean,javacc,compileJavaCC">
-        <java classname="jminusminus/JavaCCMain"
-              dir="classes"
+        <java classname="jminusminus.JavaCCMain"
+              dir="${CLASS_DIR}"
               fork="true">
               <arg value="-t"/> <!-- Change the argument -->
               <arg value="../tests/pass/Division.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
+
+    <target name="clean,javacc,compileJavaCC" depends="clean,javacc,compileJavaCC"/>
 
     <target name="compileJavaCC">
         <echo message="Compiling j-- source files..."/>
