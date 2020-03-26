@@ -373,6 +373,7 @@ private TypeName qualifiedIdentifier(): {
          new TypeName( line, qualifiedIdentifier ); }
 }
 
+
 /**
  * Parse a type declaration.
  * 
@@ -499,6 +500,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     int line = 0;
     String name = "";
     Type superClass = Type.OBJECT;
+    Type interfaceClass = Type.OBJECT;
     ArrayList<JMember> classBody = null;
 }
 {
@@ -513,9 +515,10 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     catch ( ParseException e ) { 
         recoverFromError( new int[] { SEMI, EOF }, e ); 
     }
-    { 
-        return new JClassDeclaration( line, mods, 
-            name, superClass, classBody ); 
+    {
+ // TODO: Should be given interface but feature is not yet implemented
+        return new JClassDeclaration( line, mods,
+            name, superClass, classBody, superClass);
     }
 }
 
