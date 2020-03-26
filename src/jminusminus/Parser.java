@@ -2,6 +2,7 @@
 
 package jminusminus;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import static jminusminus.TokenKind.*;
 
@@ -398,6 +399,16 @@ public class Parser {
 		return new TypeName(line, interfaceIdentifier);
 	}
 
+	private ArrayList<TypeName> typeIdentifiers() {
+		ArrayList<TypeName> types = new ArrayList<>();
+		types.add(qualifiedIdentifier());
+
+		while (have(COMMA)) {
+			types.add(qualifiedIdentifier());
+		}
+		return types;
+	}
+
 	/**
 	 * Parse a type declaration.
 	 * 
@@ -550,6 +561,8 @@ public class Parser {
 		return new JClassDeclaration(line, mods, name, superClass, classBody(), interfaceClass);
 	}
 
+
+
 	/**
 	 * Parse a class body.
 	 * 
@@ -602,7 +615,8 @@ public class Parser {
 			String name = scanner.previousToken().image();
 			ArrayList<JFormalParameter> params = formalParameters();
 			JBlock body = block();
-			memberDecl = new JConstructorDeclaration(line, mods, name, params, body);
+			/* TODO: Add throws block */
+			memberDecl = new JConstructorDeclaration(line, mods, name, params, body, null);
 		} else {
 			Type type = null;
 			if (have(VOID)) {
@@ -611,8 +625,13 @@ public class Parser {
 				mustBe(IDENTIFIER);
 				String name = scanner.previousToken().image();
 				ArrayList<JFormalParameter> params = formalParameters();
+				ArrayList<TypeName> throwTypes = null;
+				if (have(THROWS)) {
+					throwTypes = typeIdentifiers();
+
+				}
 				JBlock body = have(SEMI) ? null : block();
-				memberDecl = new JMethodDeclaration(line, mods, name, type, params, body);
+				memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
 			} else {
 				type = type();
 				if (seeIdentLParen()) {
@@ -620,8 +639,13 @@ public class Parser {
 					mustBe(IDENTIFIER);
 					String name = scanner.previousToken().image();
 					ArrayList<JFormalParameter> params = formalParameters();
+					ArrayList<TypeName> throwTypes = null;
+					if (have(THROWS)) {
+						throwTypes = typeIdentifiers();
+
+					}
 					JBlock body = have(SEMI) ? null : block();
-					memberDecl = new JMethodDeclaration(line, mods, name, type, params, body);
+					memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
 				} else {
 					// Field
 					memberDecl = new JFieldDeclaration(line, mods, variableDeclarators(type));
@@ -708,6 +732,18 @@ public class Parser {
 				mustBe(SEMI);
 				return new JReturnStatement(line, expr);
 			}
+		} else if (have(TRY)){
+			JStatement tryBody = statement();
+			mustBe(CATCH);
+			mustBe(LPAREN);
+			JFormalParameter exceptionDecl = formalParameter();
+			mustBe(RPAREN);
+			JStatement catchBody = statement();
+			JStatement finallyBody = null;
+			if (have(FINALLY)) {
+				finallyBody = statement();
+			}
+			return new JTryCatchStatement(line, tryBody, exceptionDecl, catchBody, finallyBody);
 		} else if (have(SEMI)) {
 			return new JEmptyStatement(line);
 		} else { // Must be a statementExpression
@@ -759,6 +795,13 @@ public class Parser {
 		String name = scanner.previousToken().image();
 		return new JFormalParameter(line, name, type);
 	}
+
+//	private JParDeclaration parDeclaration() {
+//		mustBe(LPAREN);
+//		Type type = type();
+//		mustBe(IDENTIFIER);
+//
+//	}
 
 	/**
 	 * Parse a parenthesized expression.
@@ -1036,7 +1079,7 @@ public class Parser {
 
 	private JExpression assignmentExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = conditionalAndExpression();
+		JExpression lhs = conditionalCondExpression();
 		if (have(ASSIGN)) {
 			return new JAssignOp(line, lhs, assignmentExpression());
 		} else if (have(PLUS_ASSIGN)) {
@@ -1064,11 +1107,26 @@ public class Parser {
 		while (more) {
 			if (have(LAND)) {
 				lhs = new JLogicalAndOp(line, lhs, equalityExpression());
+			} else if (have(LOR)) {
+				lhs = new JLogicalOrOp(line, lhs, equalityExpression());
 			} else {
 				more = false;
 			}
 		}
 		return lhs;
+	}
+
+	private JExpression conditionalCondExpression() {
+		int line = scanner.token().line();
+		JExpression lhs = conditionalAndExpression();
+		if (have(COND)) {
+			JExpression consequent = assignmentExpression();
+			mustBe(COLON);
+			JExpression alternate = conditionalCondExpression();
+			return new JConditionalExpression(line, lhs, consequent, alternate);
+		} else {
+			return lhs;
+		}
 	}
 
 	/**
@@ -1089,8 +1147,7 @@ public class Parser {
 		while (more) {
 			if (have(EQUAL)) {
 				lhs = new JEqualOp(line, lhs, relationalExpression());
-			}
-			else if (have(NEQUAL)) {
+			} else if (have(NEQUAL)) {
 				lhs = new JNotEqualOp(line, lhs, relationalExpression());
 			} else {
 				more = false;
@@ -1190,9 +1247,9 @@ public class Parser {
 				lhs = new JRemainderOp(line, lhs, unaryExpression());
 			} else if (have(AND)) {
 				lhs = new JIAndOp(line, lhs, unaryExpression());
-			}else if (have(OR)) {
+			} else if (have(OR)) {
 				lhs = new JIOrOp(line, lhs, unaryExpression());
-			}else if (have(XOR)) {
+			} else if (have(XOR)) {
 				lhs = new JIXorOp(line, lhs, unaryExpression());
 			} else {
 				more = false;
@@ -1224,8 +1281,7 @@ public class Parser {
 			return new JPosOp(line, unaryExpression());
 		} else if (have(UCOM)) {
 			return new JIUComOp(line, unaryExpression());
-		}
-		else {
+		} else {
 			return simpleUnaryExpression();
 		}
 	}
@@ -1274,15 +1330,26 @@ public class Parser {
 
 	private JExpression postfixExpression() {
 		int line = scanner.token().line();
-		JExpression primaryExpr = primary();
+
+		JExpression throwExpression = throwExpression();
 		while (see(DOT) || see(LBRACK)) {
-			primaryExpr = selector(primaryExpr);
+			throwExpression = selector(throwExpression);
 		}
 		while (have(DEC)) {
-			primaryExpr = new JPostDecrementOp(line, primaryExpr);
+			throwExpression = new JPostDecrementOp(line, throwExpression);
 		}
-		return primaryExpr;
+		return throwExpression;
 	}
+
+	private JExpression throwExpression() {
+		int line = scanner.token().line();
+
+		if (have(THROW)) {
+			return new JThrowExpression(line, primary());
+		}
+		return primary();
+	}
+
 
 	/**
 	 * Parse a selector.

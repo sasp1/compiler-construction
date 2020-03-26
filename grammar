@@ -30,6 +30,7 @@ memberDecl ::= IDENTIFIER            // constructor
                  formalParameters block
              | (VOID | type) IDENTIFIER  // method
                  formalParameters	
+                 [THROWS typeIdentifiers]
                  (block | SEMI)
              | type variableDeclarators SEMI // field
              | block 				// Static block
@@ -43,6 +44,7 @@ statement ::= block
             | IF parExpression statement [ELSE statement]
             | WHILE parExpression statement 
             | RETURN [expression] SEMI
+            | TRY statement CATCH formalParameters statement
             | SEMI 
             | statementExpression SEMI
 
@@ -85,7 +87,7 @@ assignmentExpression ::= conditionalCondExpression  // must be a valid lhs
                            | SHIFT_LEFT_ASSIGN | XOR_ASSIGN | OR_ASSIGN | ANDEQ) assignmentExpression]
 
 conditionalCondExpression ::= conditionalAndExpression // level 10
-                               {COND conditionalAndExpression}
+                               {COND conditionalAndExpression COLON conditionalAndExpression}
 
 conditionalAndExpression ::= equalityExpression // level 10
                                {(LAND | LOR) equalityExpression}
@@ -116,12 +118,16 @@ unaryExpression ::= INC unaryExpression  // level 1
 
 simpleUnaryExpression ::= LNOT unaryExpression
                         | LPAREN basicType RPAREN unaryExpression //casted
-                        | LPAREN // casted               
+                        | LPAREN // casted
                             referenceType
                           RPAREN simpleUnaryExpression
-                        | postfixExpression 
+                        | postfixExpression
 
-postfixExpression ::= primary {selector} {DEC}
+
+
+postfixExpression ::= throwExpression {selector} {DEC}
+
+throwExpression ::= {THROW} primary
 
 selector ::= DOT qualifiedIdentifier [arguments]
            | LBRACK expression RBRACK
