@@ -643,7 +643,6 @@ public class Parser {
 					ArrayList<TypeName> throwTypes = null;
 					if (have(THROWS)) {
 						throwTypes = typeIdentifiers();
-
 					}
 					JBlock body = have(SEMI) ? null : block();
 					memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
