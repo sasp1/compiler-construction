@@ -11,6 +11,10 @@ public class BlockPass {
 			i = i + 1;
 		}		
 		
+		{
+		
+		}
+		
 		public int returnNumber() {
 			return i;
 		}
