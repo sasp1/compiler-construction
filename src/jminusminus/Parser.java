@@ -1011,7 +1011,7 @@ public class Parser {
 
 	private JExpression assignmentExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = conditionalCondExpression();
+		JExpression lhs = conditionalExpression();
 		if (have(ASSIGN)) {
 			return new JAssignOp(line, lhs, assignmentExpression());
 		} else if (have(DIV_ASSIGN)) {
@@ -1024,6 +1024,19 @@ public class Parser {
 			return new JMinusAssignOp(line, lhs, assignmentExpression());
 		} else if (have(MULT_ASSIGN)) {
 			return new JMultAssignOp(line, lhs, assignmentExpression());
+		} else {
+			return lhs;
+		}
+	}
+
+	private JExpression conditionalExpression() {
+		int line = scanner.token().line();
+		JExpression lhs = conditionalAndExpression();
+		if (have(COND)) {
+			JExpression consequent = conditionalAndExpression(); // I'm unsure what kind of expression it should be
+			mustBe(COLON);
+			JExpression alternate = conditionalAndExpression();
+			return new JConditionalExpression(line, lhs, consequent, alternate);
 		} else {
 			return lhs;
 		}
@@ -1054,19 +1067,6 @@ public class Parser {
 			}
 		}
 		return lhs;
-	}
-
-	private JExpression conditionalCondExpression() {
-		int line = scanner.token().line();
-		JExpression lhs = conditionalAndExpression();
-		if (have(COND)) {
-			JExpression consequent = assignmentExpression();
-			mustBe(COLON);
-			JExpression alternate = conditionalCondExpression();
-			return new JConditionalExpression(line, lhs, consequent, alternate);
-		} else {
-			return lhs;
-		}
 	}
 
 	/**
