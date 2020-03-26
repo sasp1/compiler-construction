@@ -111,6 +111,7 @@ multiplicativeExpression ::= unaryExpression       // level 2
 
 
 unaryExpression ::= INC unaryExpression  // level 1
+                  | DEC unaryExpression
 				  | PLUS unaryExpression
                   | MINUS unaryExpression
 				  | UCOM unaryExpression
@@ -125,7 +126,7 @@ simpleUnaryExpression ::= LNOT unaryExpression
 
 
 
-postfixExpression ::= throwExpression {selector} {DEC}
+postfixExpression ::= throwExpression {selector} {DEC | INC}
 
 throwExpression ::= {THROW} primary
 
