@@ -29,6 +29,13 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IUComTest.class);
 		suite.addTestSuite(NotEqualTest.class);
 		suite.addTestSuite(DoubleTest.class);
+<<<<<<< HEAD
+=======
+=======
+		suite.addTestSuite(LogicalOrTest.class);
+
+>>>>>>> refs/remotes/origin/master
+>>>>>>> branch 'DoubleBranch' of https://github.com/sasp1/compiler-construction.git
 		return suite;
 	}
 
