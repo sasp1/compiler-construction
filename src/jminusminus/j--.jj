@@ -1129,7 +1129,7 @@ private Type referenceType(): {
         <LBRACK> <RBRACK> { type = new ArrayTypeName( type ); }
         ( 
             <LBRACK> <RBRACK> 
-            { type = new ArrayTypeName( type ); } 
+            { type = new ArrayTypeName( type ); }
         )* |
         type = qualifiedIdentifier()
         ( 
@@ -1230,14 +1230,26 @@ private JExpression assignmentExpression(): {
 }
 {
     try {
-        lhs = conditionalAndExpression() { line = lhs.line(); }
+        lhs = conditionalExpression() { line = lhs.line(); }
         [       
             <ASSIGN> 
             rhs = assignmentExpression()
             { lhs = new JAssignOp( line, lhs, rhs ); } |
             <PLUS_ASSIGN>
             rhs = assignmentExpression()
-            { lhs = new JPlusAssignOp( line, lhs, rhs ); }
+            { lhs = new JPlusAssignOp( line, lhs, rhs ); } |
+            <MINUS_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JMinusAssignOp( line, lhs, rhs ); } |
+            <MULT_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JMultAssignOp( line, lhs, rhs ); } |
+            <REM_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JRemAssignOp( line, lhs, rhs ); } |
+            <DIV_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JDivAssignOp( line, lhs, rhs ); }
         ]
     } 
     catch ( ParseException e ) { 
@@ -1257,6 +1269,27 @@ private JExpression assignmentExpression(): {
  * @return an AST for a conditionalExpression.
  */
 
+private JExpression conditionalExpression(): {
+int line = 0;
+    JExpression lhs = null, consequent = null, alternate = null;
+}
+{
+    try {
+        lhs = conditionalAndExpression() { line = lhs.line(); }
+        (
+            <COND>
+            consequent = conditionalAndExpression()
+            <COLON>
+            alternate = conditionalAndExpression()
+            { lhs = new JConditionalExpression( line, lhs, consequent, alternate ); }
+        )*
+    }
+    catch ( ParseException e ) {
+        recoverFromError( new int[] { SEMI, EOF }, e );
+    }
+    { return lhs; }
+}
+
 private JExpression conditionalAndExpression(): {
     int line = 0;
     JExpression lhs = null, rhs = null;
@@ -1264,10 +1297,13 @@ private JExpression conditionalAndExpression(): {
 {
     try {
         lhs = equalityExpression() { line = lhs.line(); }
-        ( 
+        (
             <LAND>
             rhs = equalityExpression()
-            { lhs = new JLogicalAndOp( line, lhs, rhs ); }
+            { lhs = new JLogicalAndOp( line, lhs, rhs ); } |
+            <LOR>
+            rhs = equalityExpression()
+            { lhs = new JLogicalOrOp( line, lhs, rhs ); }
         )*
     } 
     catch ( ParseException e ) { 
@@ -1382,7 +1418,7 @@ private JExpression additiveExpression(): {
  * 
  * <pre>
  *   multiplicativeExpression : unaryExpression  // level 2
- *                                  {STAR unaryExpression}
+ *                                  {STAR unaryExpression | DIV unaryExpression}
  * </pre>
  * 
  * @return an AST for a multiplicativeExpression.
@@ -1399,6 +1435,10 @@ private JExpression multiplicativeExpression(): {
             <STAR> 
             rhs = unaryExpression()
             { lhs = new JMultiplyOp( line, lhs, rhs ); }
+            |
+            <DIV>
+            rhs = unaryExpression()
+            { lhs = new JDivideOp( line, lhs, rhs ); }
         )*
     } 
     catch ( ParseException e ) { 
