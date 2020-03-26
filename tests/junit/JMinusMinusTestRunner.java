@@ -30,6 +30,7 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(NotEqualTest.class);
 		//suite.addTestSuite(DoubleTest.class);
 		//suite.addTestSuite(LogicalOrTest.class);
+		//suite.addTestSuite(BlockTest.class); 
 		return suite;
 	}
 
