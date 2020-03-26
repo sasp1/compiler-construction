@@ -167,8 +167,35 @@ TOKEN:
 | < SUPER: "super" >
 | < THIS: "this" >
 | < TRUE: "true" >
-| < VOID: "void" >
-| < WHILE: "while" >
+| < VOID             : "void" >
+| < WHILE            :"while" >
+| < BREAK			 :"break" >
+| < BYTE			 :"byte" >
+| < CASE			 :"case" >
+| < CATCH			 :"catch" >
+| < CONST			 :"const" >
+| < CONTINUE		 :"continue" >
+| < DEFAUL		     :"default" >
+| < DO				 :"do" >
+| < DOUBLE			 :"double" >
+| < FINAL			 :"final" >
+| < FINALLY			 :"finally" >
+| < FLOAT			 :"float" >
+| < FOR				 :"for" >
+| < GOTO			 :"goto" >
+| < IMPLEMENTS		 :"implements" >
+| < INTERFACE		 :"interface" >
+| < LONG			 :"long" >
+| < NATIVE			 :"native" >
+| < SHORT			 :"short" >
+| < STRICTFP		 :"strictfp" >
+| < SWITCH			 :"switch" >
+| < SYNCHRONIZED	 :"synchronized" >
+| < THROW			 :"throw" >
+| < THROWS			 :"throws" >
+| < TRANSIENT		 :"transient" >
+| < TRY				 :"try" >
+| < VOLATILE		 :"volatile" >
 }
 
 // Operators (these could be combined with the reserved words)
@@ -182,10 +209,33 @@ TOKEN:
 | < INC: "++" >
 | < LAND: "&&" >
 | < LE: "<=" >
+| < LT: "<" >
 | < LNOT: "!" >
 | < MINUS: "-" >
 | < PLUS_ASSIGN: "+=" >
 | < STAR: "*" >
+| < DIV: "/" >
+| < MINUS_ASSIGN: "-=" >
+| < MULT_ASSIGN: "*=" >
+| < DIV_ASSIGN:"/=" >
+| < REM_ASSIGN:"%=" >
+| < SHIFT_RIGHT_ASSIGN : ">>=" >
+| < SHIFT_LEFT_ASSIGN : "<<=" >
+| < XOR_ASSIGN: "^=" >
+| < OR_ASSIGN: "|=" >
+| < ANDEQ       : "&=" >
+| < REM         : "%" >
+| < SHIFT_LEFT  : "<<" >
+| < SHIFT_RIGHT : ">>" >
+| < SHIFT_RIGHT_UNSIGN : ">>>" >
+| < SHIFT_RIGHT_UNSIGN_ASSIGN : ">>>=" >
+| < AND         : "&" >
+| < OR          : "|" >
+| < XOR         : "^" >
+| < UCOM		: "~" >
+| < COND		: "?" >
+| < NEQUAL		: "!=" >
+| < LOR         : "||" >
 }
 
 // Separators (these could be combined with the reserved words)
@@ -199,6 +249,7 @@ TOKEN:
 | < RBRACK: "]" >
 | < SEMI: ";" >
 | < COMMA: "," >
+| < COLON: ":" >
 | < DOT: "." >
 }
 
@@ -220,6 +271,8 @@ TOKEN:
 | < #ESC: "\\" ["n","t","b","r","f","\\","'","\""] >
 }
 
+
+
 // For anything else, we return an ERROR token. Without this 
 // definition the TokenManager will throw an Error when a lexical 
 // error occurs, making it impossible to recover from it. So we 
@@ -238,7 +291,7 @@ TOKEN:
  * for it. After constructing the Parser, this is its entry point.
  * 
  * <pre>
- *   compilationUnit ::= [PACKAGE qualifiedIdentifier SEMI]
+ *   compilationUnit : [PACKAGE qualifiedIdentifier SEMI]
  *                       {IMPORT  qualifiedIdentifier SEMI}
  *                       {typeDeclaration}
  *                       EOF 
@@ -291,7 +344,7 @@ public JCompilationUnit compilationUnit(): {
  * Parse a qualified identifier.
  * 
  * <pre>
- *   qualifiedIdentifier ::= IDENTIFIER {DOT IDENTIFIER}
+ *   qualifiedIdentifier : IDENTIFIER {DOT IDENTIFIER}
  * </pre>
  * 
  * @return an instance of TypeName.
@@ -308,9 +361,9 @@ private TypeName qualifiedIdentifier(): {
             line = token.beginLine; 
             qualifiedIdentifier = token.image; 
         }
-        ( 
-            <DOT> <IDENTIFIER> 
-            { qualifiedIdentifier += "." + token.image; } 
+        (
+        LOOKAHEAD(<DOT> <IDENTIFIER> ) <DOT> <IDENTIFIER>
+            { qualifiedIdentifier += "." + token.image; }
         )*
     } 
     catch ( ParseException e ) { 
@@ -324,7 +377,7 @@ private TypeName qualifiedIdentifier(): {
  * Parse a type declaration.
  * 
  * <pre>
- *   typeDeclaration ::= modifiers classDeclaration
+ *   typeDeclaration : modifiers classDeclaration
  * </pre>
  * 
  * @return an AST for a typeDeclaration.
@@ -349,7 +402,7 @@ private JAST typeDeclaration(): {
  * Parse modifiers.
  * 
  * <pre>
- *   modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT}
+ *   modifiers : {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT}
  * </pre>
  * 
  * Check for duplicates, and conflicts among access modifiers (public,
@@ -430,7 +483,7 @@ private ArrayList<String> modifiers(): {
  * Parse a class declaration.
  * 
  * <pre>
- *   classDeclaration ::= CLASS IDENTIFIER 
+ *   classDeclaration : CLASS IDENTIFIER 
  *                        [EXTENDS qualifiedIdentifier] 
  *                        classBody
  * </pre>
@@ -470,7 +523,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
  * Parse a class body.
  * 
  * <pre>
- *   classBody ::= LCURLY
+ *   classBody : LCURLY
  *                   {modifiers memberDecl}
  *                 RCURLY
  * </pre>
@@ -502,7 +555,7 @@ private ArrayList<JMember> classBody(): {
  * Parse a member declaration.
  * 
  * <pre>
- *   memberDecl ::= IDENTIFIER            // constructor
+ *   memberDecl : IDENTIFIER            // constructor
  *                    formalParameters
  *                    block
  *                | (VOID | type) IDENTIFIER  // method
@@ -538,7 +591,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
             { 
                 memberDecl = 
                 new JConstructorDeclaration( line, mods, 
-                                             name, params, body );
+                                             name, params, body , null);
             }
         ) |     
         LOOKAHEAD( ( <VOID> | type() ) <IDENTIFIER> <LPAREN> )
@@ -557,7 +610,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
             { 
                 memberDecl = 
                    new JMethodDeclaration( line, mods, name, 
-                                           type, params, body ); 
+                                           type, params, body, null );
             } 
         ) | 
         ( 
@@ -580,7 +633,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
  * Parse a block.
  * 
  * <pre>
- *   block ::= LCURLY {blockStatement} RCURLY 
+ *   block : LCURLY {blockStatement} RCURLY 
  * </pre>
  * 
  * @return an AST for a block.
@@ -610,7 +663,7 @@ private JBlock block(): {
  * Parse a block statement.
  * 
  * <pre>
- *   blockStatement ::= localVariableDeclarationStatement
+ *   blockStatement : localVariableDeclarationStatement
  *                    | statement
  * </pre>
  * 
@@ -636,7 +689,7 @@ private JStatement blockStatement(): {
  * Parse a statement.
  * 
  * <pre>
- *   statement ::= block
+ *   statement : block
  *               | IF parExpression statement [ELSE statement]
  *               | WHILE parExpression statement 
  *               | RETURN [expression] SEMI
@@ -699,7 +752,7 @@ private JStatement statement(): {
  * Parse formal parameters.
  * 
  * <pre>
- *   formalParameters ::= LPAREN 
+ *   formalParameters : LPAREN 
  *                          [formalParameter 
  *                            {COMMA  formalParameter}]
  *                        RPAREN
@@ -736,7 +789,7 @@ private ArrayList<JFormalParameter> formalParameters(): {
  * Parse a formal parameter.
  * 
  * <pre>
- *   formalParameter ::= type IDENTIFIER
+ *   formalParameter : type IDENTIFIER
  * </pre>
  * 
  * @return an AST for a formalParameter.
@@ -762,7 +815,7 @@ private JFormalParameter formalParameter(): {
  * Parse a parenthesized expression.
  * 
  * <pre>
- *   parExpression ::= LPAREN expression RPAREN
+ *   parExpression : LPAREN expression RPAREN
  * </pre>
  * 
  * @return an AST for a parExpression.
@@ -786,7 +839,7 @@ private JExpression parExpression(): {
  * Parse a local variable declaration statement.
  * 
  * <pre>
- *   localVariableDeclarationStatement ::= type 
+ *   localVariableDeclarationStatement : type 
  *                                           variableDeclarators 
  *                                             SEMI
  * </pre>
@@ -815,7 +868,7 @@ private JVariableDeclaration localVariableDeclarationStatement(): {
  * Parse variable declarators.
  * 
  * <pre>
- *   variableDeclarators ::= variableDeclarator 
+ *   variableDeclarators : variableDeclarator 
  *                             {COMMA variableDeclarator}
  * </pre>
  * 
@@ -848,7 +901,7 @@ private ArrayList<JVariableDeclarator>
  * Parse a variable declarator.
  * 
  * <pre>
- *   variableDeclarator ::= IDENTIFIER
+ *   variableDeclarator : IDENTIFIER
  *                          [ASSIGN variableInitializer]
  * </pre>
  * 
@@ -878,7 +931,7 @@ private JVariableDeclarator variableDeclarator( Type type ): {
  * Parse a variable initializer.
  * 
  * <pre>
- *   variableInitializer ::= arrayInitializer
+ *   variableInitializer : arrayInitializer
  *                         | expression
  * </pre>
  * 
@@ -904,7 +957,7 @@ private JExpression variableInitializer( Type expected ): {
  * Parse an array initializer.
  * 
  * <pre>
- *   arrayInitializer ::= LCURLY 
+ *   arrayInitializer : LCURLY 
  *                          [variableInitializer 
  *                            {COMMA variableInitializer} [COMMA]]
  *                        RCURLY 
@@ -944,7 +997,7 @@ private JArrayInitializer arrayInitializer( Type expected ): {
  * Parse arguments.
  * 
  * <pre>
- *   arguments ::= LPAREN [expression {COMMA expression}] RPAREN    
+ *   arguments : LPAREN [expression {COMMA expression}] RPAREN    
  * </pre>
  * 
  * @return a list of expressions.
@@ -976,7 +1029,7 @@ private ArrayList<JExpression> arguments(): {
  * Parse a type.
  * 
  * <pre>
- *   type ::= referenceType 
+ *   type : referenceType 
  *          | basicType
  * </pre>
  * 
@@ -1002,7 +1055,7 @@ private Type type(): {
  * Parse a basic type.
  * 
  * <pre>
- *   basicType ::= BOOLEAN | CHAR | INT
+ *   basicType : BOOLEAN | CHAR | INT
  * </pre>
  * 
  * @return an instance of Type.
@@ -1027,7 +1080,7 @@ private Type basicType(): {
  * Parse a reference type.
  * 
  * <pre>
- *   referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
+ *   referenceType : basicType LBRACK RBRACK {LBRACK RBRACK}
  *                   | qualifiedIdentifier {LBRACK RBRACK}
  * </pre>
  * 
@@ -1061,7 +1114,7 @@ private Type referenceType(): {
  * Parse a statement expression. 
  * 
  * <pre>
- *   statementExpression ::= expression // but must have 
+ *   statementExpression : expression // but must have 
  *                                      // side-effect, eg i++
  * </pre>
  * 
@@ -1104,7 +1157,7 @@ private JStatement statementExpression(): {
  * An expression.
  * 
  * <pre>
- *   expression ::= assignmentExpression 
+ *   expression : assignmentExpression 
  * </pre>
  * 
  * @return an AST for an expression.
@@ -1127,7 +1180,7 @@ private JExpression expression(): {
  * Parse an assignment expression.
  * 
  * <pre>
- *   assignmentExpression ::= 
+ *   assignmentExpression : 
  *       conditionalAndExpression // level 13
  *           [( ASSIGN  // conditionalExpression
  *            | PLUS_ASSIGN // must be valid lhs
@@ -1164,7 +1217,7 @@ private JExpression assignmentExpression(): {
  * Parse a conditional-and expression.
  * 
  * <pre>
- *   conditionalAndExpression ::= equalityExpression // level 10
+ *   conditionalAndExpression : equalityExpression // level 10
  *                                  {LAND equalityExpression}
  * </pre>
  * 
@@ -1194,7 +1247,7 @@ private JExpression conditionalAndExpression(): {
  * Parse an equality expression.
  * 
  * <pre>
- *   equalityExpression ::= relationalExpression  // level 6
+ *   equalityExpression : relationalExpression  // level 6
  *                            {EQUAL relationalExpression}
  * </pre>
  * 
@@ -1224,7 +1277,7 @@ private JExpression equalityExpression(): {
  * Parse a relational expression.
  * 
  * <pre>
- *   relationalExpression ::= additiveExpression  // level 5
+ *   relationalExpression : additiveExpression  // level 5
  *                              [(GT | LE) additiveExpression 
  *                              | INSTANCEOF referenceType]
  * </pre>
@@ -1262,7 +1315,7 @@ private JExpression relationalExpression(): {
  * Parse an additive expression.
  * 
  * <pre>
- *   additiveExpression ::= multiplicativeExpression // level 3
+ *   additiveExpression : multiplicativeExpression // level 3
  *                            {MINUS multiplicativeExpression}
  * </pre>
  * 
@@ -1295,7 +1348,7 @@ private JExpression additiveExpression(): {
  * Parse a multiplicative expression.
  * 
  * <pre>
- *   multiplicativeExpression ::= unaryExpression  // level 2
+ *   multiplicativeExpression : unaryExpression  // level 2
  *                                  {STAR unaryExpression}
  * </pre>
  * 
@@ -1325,7 +1378,7 @@ private JExpression multiplicativeExpression(): {
  * Parse an unary expression.
  * 
  * <pre>
- *   unaryExpression ::= INC unaryExpression // level 1
+ *   unaryExpression : INC unaryExpression // level 1
  *                     | MINUS unaryExpression
  *                     | simpleUnaryExpression
  * </pre>
@@ -1357,7 +1410,7 @@ private JExpression unaryExpression(): {
  * Parse a simple unary expression.
  * 
  * <pre>
- *   simpleUnaryExpression ::= LNOT unaryExpression
+ *   simpleUnaryExpression : LNOT unaryExpression
  *                           | LPAREN basicType RPAREN 
  *                               unaryExpression
  *                           | LPAREN         
@@ -1403,7 +1456,7 @@ private JExpression simpleUnaryExpression(): {
  * Parse a postfix expression.
  * 
  * <pre>
- *   postfixExpression ::= primary {selector} {DEC}
+ *   postfixExpression : primary {selector} {DEC}
  * </pre>
  * 
  * @return an AST for a postfixExpression.
@@ -1435,7 +1488,7 @@ private JExpression postfixExpression(): {
  * Parse a selector.
  * 
  * <pre>
- *   selector ::= DOT qualifiedIdentifier [arguments]
+ *   selector : DOT qualifiedIdentifier [arguments]
  *              | LBRACK expression RBRACK
  * </pre>
  * 
@@ -1476,7 +1529,7 @@ private JExpression selector( JExpression target ): {
  * Parse a primary expression.
  * 
  * <pre>
- *   primary ::= parExpression
+ *   primary : parExpression
  *             | THIS [arguments]
  *             | SUPER ( arguments 
  *                     | DOT IDENTIFIER [arguments] 
@@ -1553,7 +1606,7 @@ private JExpression primary(): {
  * Parse a creator.
  * 
  * <pre>
- *   creator ::= (basicType | qualifiedIdentifier) 
+ *   creator : (basicType | qualifiedIdentifier) 
  *                 ( arguments
  *                 | LBRACK RBRACK {LBRACK RBRACK} 
  *                     [arrayInitializer]
@@ -1606,7 +1659,7 @@ private JExpression creator(): {
  * Parse a new array declarator.
  * 
  * <pre>
- *   newArrayDeclarator ::= LBRACK expression RBRACK 
+ *   newArrayDeclarator : LBRACK expression RBRACK 
  *                            {LBRACK expression RBRACK}
  *                            {LBRACK RBRACK}
  * </pre>
@@ -1649,7 +1702,7 @@ private JNewArrayOp newArrayDeclarator( Type type ): {
  * Parse a literal.
  * 
  * <pre>
- *   literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL
+ *   literal : INT_LITERAL | CHAR_LITERAL | STRING_LITERAL
  *             | TRUE        | FALSE        | NULL
  * </pre>
  * 

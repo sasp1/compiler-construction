@@ -1,4 +1,4 @@
-<!-- 
+<!--
 // Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
 -->
 
@@ -27,7 +27,7 @@
         <echo message="testAnalysis: Analyzes j-- tests"/>
     	<echo message="help: Lists main targets"/>
     </target>
-    
+
     <!-- javacc: Generates JavaCC scanner and parser. -->
     <target name="javacc">
         <echo message="Generating JavaCC files..."/>
@@ -52,11 +52,22 @@
         </javac>
     </target>
 
-    <!-- 
-	 compileJavaCC: Compiles the jminusminus source files including 
+    <!--
+	 compileJavaCC: Compiles the jminusminus source files including
 	 JavaCC frontend.
     -->
-    
+
+    <target name="runJavaCCFile" depends="clean,javacc,compileJavaCC">
+        <java classname="jminusminus.JavaCCMain"
+              dir="${CLASS_DIR}"
+              fork="true">
+              <arg value="-t"/> <!-- Change the argument -->
+              <arg value="../tests/pass/Conditional.java"/> <!-- Change the Division to other file name -->
+        </java>
+    </target>
+
+    <target name="clean,javacc,compileJavaCC" depends="clean,javacc,compileJavaCC"/>
+
     <target name="compileJavaCC">
         <echo message="Compiling j-- source files..."/>
         <mkdir dir="${CLASS_DIR}" />
@@ -84,11 +95,25 @@
         </javac>
     </target>
 
-    <!-- 
-       jar: Bundles the jminusminus classes and SPIM runtime  
+    <target name="compileTests">
+        <echo message="Compiling j-- source files..."/>
+        <mkdir dir="classes/pass" />
+        <javac srcdir="${basedir}/tests/pass"
+               destdir="classes"
+	       includeantruntime="false"
+        	   debug="on">
+            <!-- Uncomment the following to see compiler warnings. -->
+            <!-- <compilerarg value="-Xlint" />                    -->
+            <classpath>
+                <pathelement location="${LIB_DIR}/junit.jar" />
+            </classpath>
+        </javac>
+    </target>
+    <!--
+       jar: Bundles the jminusminus classes and SPIM runtime
        classes into respective jar files.
     -->
-    
+
     <target name="jar">
         <echo message="Bundling class files into jar files..."/>
         <jar destfile="${LIB_DIR}/j--.jar" basedir="${CLASS_DIR}" includes="jminusminus/**"/>
@@ -103,7 +128,7 @@
                  package="Yes"
                  sourcepath="${SRC_DIR}" destdir="${JAVADOC_DIR}"
                  packagenames="jminusminus.*,spim.*"
-                 windowtitle="${APP_FULL_NAME}" 
+                 windowtitle="${APP_FULL_NAME}"
 		 	     doctitle="${APP_FULL_NAME}">
             <link href="http://java.sun.com/javase/6/docs/api/" />
         </javadoc>
@@ -126,11 +151,11 @@
        </java>
     </target>
 
-    <!-- 
-    package: Makes a distributable package for the compiler which includes the 
-    sources, binaries, documentation and junit test framework. 
+    <!--
+    package: Makes a distributable package for the compiler which includes the
+    sources, binaries, documentation and junit test framework.
     -->
-    <target name="package" 
+    <target name="package"
 	    depends="clean,javacc,compileJavaCC,compileSPIM,jar,javadoc,j2h">
         <echo message="Making a distributable j--.zip..."/>
         <zip destfile="j--.zip"
@@ -139,15 +164,15 @@
              excludes="j--/${CLASS_DIR}/**,j--/*.zip" />
     </target>
 
-    <!-- 
-    runCompilerTests: We first compile the tests in tests/pass and 
-    tests/fail directories using the jminusminus compiler. We  
-    use a JUnit test JMinusMinusTest.java to run the jminusminus 
-    compiler on each of the tests. We then run the 
-    JMinusMinusTestRunner JUnit test suite, which includes a JUnit test 
-    case for each jminusminus test file under tests/pass directory. 
-    For example, there is a GCDTest.java test case under tests/junit 
-    corresponding to the jminusminus test GCD.java under tests/pass. 
+    <!--
+    runCompilerTests: We first compile the tests in tests/pass and
+    tests/fail directories using the jminusminus compiler. We
+    use a JUnit test JMinusMinusTest.java to run the jminusminus
+    compiler on each of the tests. We then run the
+    JMinusMinusTestRunner JUnit test suite, which includes a JUnit test
+    case for each jminusminus test file under tests/pass directory.
+    For example, there is a GCDTest.java test case under tests/junit
+    corresponding to the jminusminus test GCD.java under tests/pass.
     -->
     <target name="runCompilerTests" depends="compile,compileSPIM,jar">
         <echo message="Compiling and running j-- (JVM) programs..."/>
@@ -200,12 +225,12 @@
             </test>
         </junit>
     </target>
-    
-    <!-- 
-    runCompilerTestsJavaCC: Same as run compilerTests, but using 
-    JavaCC frontend.                                 
+
+    <!--
+    runCompilerTestsJavaCC: Same as run compilerTests, but using
+    JavaCC frontend.
     -->
-    <target name="runCompilerTestsJavaCC" 
+    <target name="runCompilerTestsJavaCC"
 	    depends="javacc,compileJavaCC,compileSPIM,jar">
         <echo message=
             "Compiling and running j-- (JVM) programs using JavaCC frontend..."/>
@@ -259,9 +284,9 @@
         </junit>
     </target>
 
-    <!-- 
-    testScanner: Tests handwritten scanner by running it on all tests under 
-    tests/pass directory. 
+    <!--
+    testScanner: Tests handwritten scanner by running it on all tests under
+    tests/pass directory.
     -->
     <target name="testScanner" depends="compile,jar">
         <echo message="Running handwritten scanner on the j-- programs..."/>
@@ -288,10 +313,10 @@
             </test>
         </junit>
     </target>
-    
-    <!-- 
-    testJavaCCScanner: Tests JavaCC scanner by running it on all tests 
-    under tests/pass directory. 
+
+    <!--
+    testJavaCCScanner: Tests JavaCC scanner by running it on all tests
+    under tests/pass directory.
     -->
     <target name="testJavaCCScanner" depends="javacc,compileJavaCC,jar">
         <echo message="Running JavaCC scanner on the j-- programs..."/>
@@ -319,9 +344,9 @@
         </junit>
     </target>
 
-    <!-- 
-    testParser: Tests hand-written parser by running it on all tests 
-    under tests/pass directory. 
+    <!--
+    testParser: Tests hand-written parser by running it on all tests
+    under tests/pass directory.
     -->
     <target name="testParser" depends="compile,jar">
         <echo message="Running handwritten parser on the j-- programs..."/>
@@ -348,10 +373,10 @@
             </test>
         </junit>
     </target>
-    
-    <!-- 
-    testJavaCCParser: Tests JavaCC parser by running it on all tests 
-    under tests/pass directory. 
+
+    <!--
+    testJavaCCParser: Tests JavaCC parser by running it on all tests
+    under tests/pass directory.
     -->
     <target name="testJavaCCParser" depends="javacc,compileJavaCC,jar">
         <echo message="Running JavaCC parser on the j-- programs..."/>
@@ -379,9 +404,9 @@
         </junit>
     </target>
 
-    <!-- 
-    testPreAnalysis: Runs the jminusminus compiler on each test under 
-    tests/pass up to the stage where the AST has been pre-analyzed. 
+    <!--
+    testPreAnalysis: Runs the jminusminus compiler on each test under
+    tests/pass up to the stage where the AST has been pre-analyzed.
     -->
     <target name="testPreAnalysis" depends="compile,jar">
         <echo message="Running compiler on j-- programs up to pre-analysis..."/>
@@ -408,10 +433,10 @@
             </test>
         </junit>
     </target>
-    
-    <!-- 
-    testAnalysis: Runs the jminusminus compiler on each test under 
-    tests/pass up to the stage where the AST has been analyzed. 
+
+    <!--
+    testAnalysis: Runs the jminusminus compiler on each test under
+    tests/pass up to the stage where the AST has been analyzed.
     -->
     <target name="testAnalysis" depends="compile,jar">
         <echo message="Running compiler on j-- programs up to analysis..."/>
@@ -460,10 +485,3 @@
         <delete dir="${J2H_DIR}" />
     </target>
 </project>
-
-
-
-
-
-
-

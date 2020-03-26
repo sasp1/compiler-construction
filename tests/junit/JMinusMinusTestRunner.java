@@ -28,7 +28,12 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IOrTest.class);
 		suite.addTestSuite(IUComTest.class);
 		suite.addTestSuite(NotEqualTest.class);
+<<<<<<< HEAD
 		suite.addTestSuite(DoubleTest.class);
+=======
+		suite.addTestSuite(LogicalOrTest.class);
+
+>>>>>>> refs/remotes/origin/master
 		return suite;
 	}
 

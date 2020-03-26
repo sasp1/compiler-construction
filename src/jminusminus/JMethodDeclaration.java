@@ -42,6 +42,11 @@ class JMethodDeclaration
     /** Is method private. */
     protected boolean isPrivate;
 
+    /** Types of errors that method can throw. */
+    private Type[] throwTypes;
+
+    private ArrayList<TypeName> throwTypeNames;
+
     /**
      * Construct an AST node for a method declaration given the
      * line number, method name, return type, formal parameters,
@@ -60,11 +65,14 @@ class JMethodDeclaration
      *                the formal parameters.
      * @param body
      *                method body.
+     *
+     * @param throwTypeNames
+     *                Exception types that the method could throw
      */
 
     public JMethodDeclaration(int line, ArrayList<String> mods,
         String name, Type returnType,
-        ArrayList<JFormalParameter> params, JBlock body)
+        ArrayList<JFormalParameter> params, JBlock body, ArrayList<TypeName> throwTypeNames)
 
     {
         super(line);
@@ -76,6 +84,7 @@ class JMethodDeclaration
         this.isAbstract = mods.contains("abstract");
         this.isStatic = mods.contains("static");
         this.isPrivate = mods.contains("private");
+        this.throwTypeNames = throwTypeNames;
     }
 
     /**
@@ -243,6 +252,17 @@ class JMethodDeclaration
                 p.indentLeft();
             }
             p.println("</FormalParameters>");
+        }
+        if (throwTypeNames != null && throwTypeNames.size() > 0) {
+            p.println("<ThrowTypes>");
+            p.indentRight();
+            for (TypeName throwType : throwTypeNames) {
+                p.printf("<ThrowType type=\"%s\">\n", throwType);
+                p.println("</ThrowType>");
+            }
+            p.indentLeft();
+            p.println("</ThrowTypes>");
+
         }
         if (body != null) {
             p.println("<Body>");
