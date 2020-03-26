@@ -199,17 +199,3 @@ class JMultAssignOp extends JAssignment {
     public void codegen(CLEmitter output) {
     }
 }
-
-class JDivAssignOp extends JAssignment {
-
-    public JDivAssignOp(int line, JExpression lhs, JExpression rhs) {
-        super(line, "/=", lhs, rhs);
-    }
-
-    public JExpression analyze(Context context) {
-        return this;
-    }
-
-    public void codegen(CLEmitter output) {
-    }
-}

@@ -1024,8 +1024,6 @@ public class Parser {
 			return new JMinusAssignOp(line, lhs, assignmentExpression());
 		} else if (have(MULT_ASSIGN)) {
 			return new JMultAssignOp(line, lhs, assignmentExpression());
-		} else if (have(DIV_ASSIGN)) {
-			return new JDivAssignOp(line, lhs, assignmentExpression());
 		} else {
 			return lhs;
 		}
@@ -1217,7 +1215,7 @@ public class Parser {
 		int line = scanner.token().line();
 		if (have(INC)) {
 			return new JPreIncrementOp(line, unaryExpression());
-		} else if (have(DEC)){
+		} else if (have(DEC)) {
 			return new JPreDecrementOp(line, unaryExpression());
 		} else if (have(MINUS)) {
 			return new JNegateOp(line, unaryExpression());
