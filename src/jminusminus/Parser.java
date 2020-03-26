@@ -501,8 +501,6 @@ public class Parser {
 		return new JClassDeclaration(line, mods, name, superClass, classBody());
 	}
 
-
-
 	/**
 	 * Parse a class body.
 	 * 
@@ -668,7 +666,7 @@ public class Parser {
 				mustBe(SEMI);
 				return new JReturnStatement(line, expr);
 			}
-		} else if (have(TRY)){
+		} else if (have(TRY)) {
 			JStatement tryBody = statement();
 			mustBe(CATCH);
 			mustBe(LPAREN);
@@ -732,12 +730,12 @@ public class Parser {
 		return new JFormalParameter(line, name, type);
 	}
 
-//	private JParDeclaration parDeclaration() {
-//		mustBe(LPAREN);
-//		Type type = type();
-//		mustBe(IDENTIFIER);
-//
-//	}
+	// private JParDeclaration parDeclaration() {
+	// mustBe(LPAREN);
+	// Type type = type();
+	// mustBe(IDENTIFIER);
+	//
+	// }
 
 	/**
 	 * Parse a parenthesized expression.
@@ -1016,8 +1014,16 @@ public class Parser {
 		JExpression lhs = conditionalCondExpression();
 		if (have(ASSIGN)) {
 			return new JAssignOp(line, lhs, assignmentExpression());
+		} else if (have(DIV_ASSIGN)) {
+			return new JDivAssignOp(line, lhs, assignmentExpression());
+		} else if (have(REM_ASSIGN)) {
+			return new JRemAssignOp(line, lhs, assignmentExpression());
 		} else if (have(PLUS_ASSIGN)) {
 			return new JPlusAssignOp(line, lhs, assignmentExpression());
+		} else if (have(MINUS_ASSIGN)) {
+			return new JMinusAssignOp(line, lhs, assignmentExpression());
+		} else if (have(MULT_ASSIGN)) {
+			return new JMultAssignOp(line, lhs, assignmentExpression());
 		} else {
 			return lhs;
 		}
@@ -1209,6 +1215,8 @@ public class Parser {
 		int line = scanner.token().line();
 		if (have(INC)) {
 			return new JPreIncrementOp(line, unaryExpression());
+		} else if (have(DEC)) {
+			return new JPreDecrementOp(line, unaryExpression());
 		} else if (have(MINUS)) {
 			return new JNegateOp(line, unaryExpression());
 		} else if (have(PLUS)) {
@@ -1272,6 +1280,9 @@ public class Parser {
 		while (have(DEC)) {
 			throwExpression = new JPostDecrementOp(line, throwExpression);
 		}
+		while (have(INC)) {
+			throwExpression = new JPostIncrementOp(line, throwExpression);
+		}
 		return throwExpression;
 	}
 
@@ -1283,7 +1294,6 @@ public class Parser {
 		}
 		return primary();
 	}
-
 
 	/**
 	 * Parse a selector.
