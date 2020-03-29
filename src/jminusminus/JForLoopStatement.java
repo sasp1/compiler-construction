@@ -48,34 +48,12 @@ public class JForLoopStatement extends JStatement {
 	 */
 	
 	public JStatement analyze(Context context) {		
-		// LocalContext locContext = new LocalContext(context);
-		// init.analyze(locContext);
-		// cond.analyze(locContext);
-		// cond.type().mustMatchExpected(line, Type.BOOLEAN);
-		// update.analyze(locContext);
-		// statement.analyze(locContext);
+		
 		return this;
 	}
 	
 	public void codegen(CLEmitter output) {
-		
-		// init.codegen(output);
-		// // labels needed
-		// String test = output.createLabel();
-		// String out = output.createLabel();
-		
-		// output.addLabel(test);
-		// cond.codegen(output, out, false);
-		
-		// statement.codegen(output);
-		// update.codegen(output);
-		
-		// //Jump back up to test
-		// output.addBranchInstruction(GOTO, test);
-		
-		// //outside of the loop
-		// output.addLabel(out);
-		
+			
 	}
 	
 	public void writeToStdOut(PrettyPrinter p) {

@@ -56,65 +56,36 @@ public class JForEachStatement extends JStatement {
 	}
 	
 	public JStatement analyze(Context context) {
-		LocalContext locContext = new LocalContext(context);
-		param.analyze(locContext);
-		expr.analyze(locContext);
-		if (!Type.ITERABLE.isJavaAssignableFrom(expr.type()) && !expr.type().isArray()) {
-			JAST.compilationUnit.reportSemanticError(line, "Local variable must be of the type array or iterable: \"%s\"", 
-					expr.type().toString());
-		}
-		
-		param.type().mustMatchExpected(line, expr.type().componentType());
-		
-		init.analyze(locContext);
-		cond.analyze(locContext);
-		cond.type().mustMatchExpected(line, Type.BOOLEAN);
-		update.analyze(locContext);
-		statement.analyze(locContext);
 		
 		return this;
 	}
 	
 	public void codegen(CLEmitter output) {
-		init.codegen(output);
-		//labels needed
-		String test = output.createLabel();
-		String out = output.createLabel();
-		
-		output.addLabel(test);
-		cond.codegen(output, out, false);
-		
-		statement.codegen(output);
-		update.codegen(output);
-		
-		//jump back up to test
-		output.addBranchInstruction(GOTO, test);
-		
-		output.addLabel(out);
+
 	}
 	
 	public void writeToStdOut(PrettyPrinter p) {
-		p.printf("<JForEachStatement line = \"%d\">\n", line());
-		p.indentRight();
-		
-		p.printf("<VariableDecl>\n");
-		p.indentRight();
-		param.writeToStdOut(p);
-		p.indentLeft();
-		p.printf("</VariableDecl>\n");
-		
-		p.printf("<Identifier name = \"%s\">\n", expr.toString());
-		p.indentLeft();
-		p.printf("</Identifer>\n");
-		
-		p.printf("<Statement>\n");
-		p.indentRight();
-		statement.writeToStdOut(p);
-		p.indentLeft();
-		p.printf("</Statement>\n");
-		
-		p.indentLeft();
-		p.printf("</JForEachStatement>\n");
+//		p.printf("<JForEachStatement line = \"%d\">\n", line());
+//		p.indentRight();
+//		
+//		p.printf("<VariableDecl>\n");
+//		p.indentRight();
+//		param.writeToStdOut(p);
+//		p.indentLeft();
+//		p.printf("</VariableDecl>\n");
+//		
+//		p.printf("<Identifier name = \"%s\">\n", expr.toString());
+//		p.indentLeft();
+//		p.printf("</Identifer>\n");
+//		
+//		p.printf("<Statement>\n");
+//		p.indentRight();
+//		statement.writeToStdOut(p);
+//		p.indentLeft();
+//		p.printf("</Statement>\n");
+//		
+//		p.indentLeft();
+//		p.printf("</JForEachStatement>\n");
 		
 	}
 
