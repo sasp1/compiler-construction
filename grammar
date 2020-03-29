@@ -7,7 +7,7 @@ compilationUnit ::= [PACKAGE qualifiedIdentifier SEMI]
 
 qualifiedIdentifier ::= IDENTIFIER {DOT IDENTIFIER}
 
-typeIdentifiers ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
+interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
 
 typeDeclaration ::= modifiers classTypeDeclaration
 
@@ -17,22 +17,23 @@ classTypeDeclaration ::= classDeclaration | interfaceDeclaration
 
 classDeclaration ::= CLASS IDENTIFIER 
                        [EXTENDS  qualifiedIdentifier]
-                       [IMPLEMENTS typeIdentifiers]
+                       [IMPLEMENTS interfaceIdentifier]
                        classBody
 
 interfaceDeclaration ::= INTERFACE IDENTIFIER 
-							[EXTENDS typeIdentifiers]
+							[EXTENDS interfaceIdentifier]
 							classBody 
 
-classBody ::= LCURLY {modifiers memberDecl} RCURLY
+classBody ::= LCURLY {[modifiers] memberDecl} RCURLY
 
 memberDecl ::= IDENTIFIER            // constructor
                  formalParameters block
              | (VOID | type) IDENTIFIER  // method
-                 formalParameters
+                 formalParameters	
                  [THROWS typeIdentifiers]
                  (block | SEMI)
              | type variableDeclarators SEMI // field
+             | block 				// Static block
 
 block ::= LCURLY {blockStatement} RCURLY 
 
@@ -110,6 +111,7 @@ multiplicativeExpression ::= unaryExpression       // level 2
 
 
 unaryExpression ::= INC unaryExpression  // level 1
+                  | DEC unaryExpression
 				  | PLUS unaryExpression
                   | MINUS unaryExpression
 				  | UCOM unaryExpression
@@ -124,7 +126,7 @@ simpleUnaryExpression ::= LNOT unaryExpression
 
 
 
-postfixExpression ::= throwExpression {selector} {DEC}
+postfixExpression ::= throwExpression {selector} {DEC | INC}
 
 throwExpression ::= {THROW} primary
 

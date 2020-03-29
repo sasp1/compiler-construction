@@ -21,7 +21,7 @@ enum TokenKind {
 	PUBLIC("public"), RETURN("return"), SHORT("short"), STATIC("static"), STRICTFP("strictfp"), SUPER("super"), 
 	SWITCH("switch"), SYNCHRONIZED("synchronized"), THIS("this"), THROW("throw"), THROWS("throws"), 
 	TRANSIENT("transient"), TRUE("true"), TRY("try"), VOID("void"), VOLATILE("volatile"), WHILE("while"),
-	IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"), CHAR_LITERAL("<CHAR_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>"),
+	IDENTIFIER("<IDENTIFIER>"), INT_LITERAL("<INT_LITERAL>"), CHAR_LITERAL("<CHAR_LITERAL>"), DOUBLE_LITERAL("<DOUBLE_LITERAL>"), STRING_LITERAL("<STRING_LITERAL>"),
 	
 	//Operators:
 	PLUS("+"), ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), GTE(">="), INC("++"), LAND("&&"), LOR("||"), LT("<"), LE("<="), LNOT("!"), MINUS("-"), PLUS_ASSIGN("+="), MINUS_ASSIGN("-="),

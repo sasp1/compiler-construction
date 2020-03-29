@@ -61,10 +61,21 @@
         <java classname="jminusminus/JavaCCMain"
               dir="classes"
               fork="true">
-              <arg value="-t"/> <!-- Change the argument -->
+              <arg value="-p"/> <!-- Change the argument -->
               <arg value="../tests/pass/Division.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
+
+    <target name="runNormalFile" depends="clean,compile">
+        <java classname="jminusminus/Main"
+              dir="classes"
+              fork="true">
+              <arg value="-p"/> <!-- Change the argument -->
+              <arg value="../tests/pass/ForLoop.java"/> <!-- Change the Division to other file name -->
+        </java>
+    </target>
+
+    <target name="clean,javacc,compileJavaCC" depends="clean,javacc,compileJavaCC"/>
 
     <target name="compileJavaCC">
         <echo message="Compiling j-- source files..."/>

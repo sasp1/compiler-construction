@@ -1,18 +1,13 @@
-// Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
-
 package jminusminus;
 
+import static jminusminus.CLConstants.ALOAD_0;
+import static jminusminus.CLConstants.INVOKESPECIAL;
+import static jminusminus.CLConstants.RETURN;
+
 import java.util.ArrayList;
-import static jminusminus.CLConstants.*;
 
-/**
- * A class declaration has a list of modifiers, a name, a super class and a
- * class block; it distinguishes between instance fields and static (class)
- * fields for initialization, and it defines a type. It also introduces its own
- * (class) context.
- */
+public class JInterfaceDeclaration extends JAST implements JTypeDecl {
 
-class JClassDeclaration extends JAST implements JTypeDecl {
 
     /** Class modifiers. */
     private ArrayList<String> mods;
@@ -28,8 +23,6 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 
     /** This class type. */
     private Type thisType;
-
-
     
     /** Context for this class. */
     private ClassContext context;
@@ -43,7 +36,6 @@ class JClassDeclaration extends JAST implements JTypeDecl {
     /** Static (class) fields of this class. */
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
     
-    /** Added */
     private ArrayList<Type> interfaceList;
 
     /**
@@ -63,17 +55,17 @@ class JClassDeclaration extends JAST implements JTypeDecl {
      *            class block.
      */
 
-    public JClassDeclaration(int line, ArrayList<String> mods, String name,
+    public JInterfaceDeclaration(int line, ArrayList<String> mods, String name,
             Type superType, ArrayList<JMember> classBlock, ArrayList<Type> interfaceList) {
         super(line);
         this.mods = mods;
         this.name = name;
         this.superType = superType;
         this.classBlock = classBlock;
-        this.interfaceList = interfaceList;
         hasExplicitConstructor = false;
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
         staticFieldInitializations = new ArrayList<JFieldDeclaration>();
+        this.interfaceList = interfaceList;
     }
 
     /**
@@ -269,7 +261,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
      */
 
     public void writeToStdOut(PrettyPrinter p) {
-        p.printf("<JClassDeclaration line=\"%d\" name=\"%s\""
+        p.printf("<JInterfaceDeclaration line=\"%d\" name=\"%s\""
                 + " super=\"%s\">\n", line(), name, superType.toString());
         p.indentRight();
         if (context != null) {
@@ -292,7 +284,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
             p.println("</ClassBlock>");
         }
         p.indentLeft();
-        p.println("</JClassDeclaration>");
+        p.println("</JInterfaceDeclaration>");
     }
 
     /**

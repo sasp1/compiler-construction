@@ -1,7 +1,9 @@
 package pass;
 
+import java.io.IOException;
+
 public class ExceptionHandling {
-    public void throwMethod() throws Exception, java.lang.NullPointerException {
+    public void throwMethod() throws IOException, Exception {
         throw new Exception("hej");
     }
 
@@ -15,10 +17,13 @@ public class ExceptionHandling {
 
         try {
             int j = 0;
+            int jk = 0;
         } catch (Exception e) {
             hej = 2==3;
+            heey = 2;
             return 1;
-        } finally {
+        }
+        finally {
             hej = false;
         }
 

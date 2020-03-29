@@ -118,6 +118,14 @@ ESC            ::= "\\" ("n"|"r"|"t"|"b"|"f"|"'"|"\""|"\\")
 STRING_LITERAL ::= "\"" {ESC | ~("\""|"\\"|"\n"|"\r")} "\""
 CHAR_LITERAL   ::= "'" (ESC | ~("'"|"\n"|"\r"|"\\")) "'"
 
+
+EXPONENT	   ::= {"e" | "E"} ("+"|"-") ("1"-"9") {"0"-"9"}
+DOUBLE_NORMAL  ::= (INT_LITERAL) "." INT_LITERAL (EXPONENT) ("d" | "D")
+DOUBLE_EXP	   ::= INT_LITERAL EXPONENT ("d" | "D")
+DOUBLE_INT	   ::= INT_LITERAL (EXPONENT) {"d" | "D"}
+DOUBLE_LITERAL ::= { DOUBLE_NORMAL | DOUBLE_EXP | DOUBLE_INT }
+
+
 // End of file
 EOF            ::= "<end of file>"
 

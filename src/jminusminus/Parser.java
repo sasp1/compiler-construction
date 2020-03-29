@@ -269,7 +269,7 @@ public class Parser {
 	 */
 
 	private boolean seeBasicType() {
-		if (see(BOOLEAN) || see(CHAR) || see(INT)) {
+		if (see(BOOLEAN) || see(CHAR) || see(INT) || see(DOUBLE)) {
 			return true;
 		} else {
 			return false;
@@ -292,7 +292,7 @@ public class Parser {
 			return true;
 		} else {
 			scanner.recordPosition();
-			if (have(BOOLEAN) || have(CHAR) || have(INT)) {
+			if (have(BOOLEAN) || have(CHAR) || have(INT) || have(DOUBLE)) {
 				if (have(LBRACK) && see(RBRACK)) {
 					scanner.returnToPosition();
 					return true;
@@ -391,6 +391,28 @@ public class Parser {
 		}
 		return new TypeName(line, qualifiedIdentifier);
 	}
+	
+	/**
+	 * Added
+	 * Parse a interface identifier.
+	 * 
+	 * <pre>
+	 *   interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
+	 * </pre>
+	 * 
+	 * @return an instance of TypeName.
+	 */
+	
+	private ArrayList<Type> interfaceIdentifiers(ArrayList<Type> interfaceList) {
+		int line = scanner.token().line();
+		
+		interfaceList.add(qualifiedIdentifier());
+		
+		while (have(COMMA)) {
+			interfaceList.add(qualifiedIdentifier());
+		}
+		return interfaceList;
+	}
 
 	private ArrayList<TypeName> typeIdentifiers() {
 		ArrayList<TypeName> types = new ArrayList<>();
@@ -414,7 +436,11 @@ public class Parser {
 
 	private JAST typeDeclaration() {
 		ArrayList<String> mods = modifiers();
-		return classDeclaration(mods);
+		if(see(INTERFACE)) {
+			return interfaceDeclaration(mods);
+		} else {
+			return classDeclaration(mods);						
+		}
 	}
 
 	/**
@@ -485,6 +511,33 @@ public class Parser {
 		return mods;
 	}
 
+	/** ADDED
+	 * Parse a interface declaration.
+	 * 
+	 *	interfaceDeclaration ::= INTERFACE IDENTIFIER 
+	 *						[EXTENDS interfaceIdentifier]
+	 *						classBody 
+	 * </pre>
+	 * 
+	 * 
+	 * @param mods the class modifiers.
+	 * @return an AST for a classDeclaration.
+	 */
+
+	private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods) {
+		int line = scanner.token().line();
+		mustBe(INTERFACE);
+		mustBe(IDENTIFIER);
+		String name = scanner.previousToken().image();
+		ArrayList<Type> interfaceList = new ArrayList<Type>();
+		Type superClass = Type.OBJECT;
+		if (have(EXTENDS)) {
+			interfaceIdentifiers(interfaceList);
+		}
+		
+		return new JInterfaceDeclaration(line, mods, name, superClass, classBody(), interfaceList);
+	}
+	
 	/**
 	 * Parse a class declaration.
 	 * 
@@ -507,15 +560,18 @@ public class Parser {
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
 		Type superClass;
+		ArrayList<Type> interfaceList = new ArrayList<Type>();
 		if (have(EXTENDS)) {
 			superClass = qualifiedIdentifier();
 		} else {
 			superClass = Type.OBJECT;
 		}
-		return new JClassDeclaration(line, mods, name, superClass, classBody());
+		if(have(IMPLEMENTS)) {
+			interfaceIdentifiers(interfaceList);
+		}
+		
+		return new JClassDeclaration(line, mods, name, superClass, classBody(), interfaceList);
 	}
-
-
 
 	/**
 	 * Parse a class body.
@@ -559,14 +615,22 @@ public class Parser {
 	private JMember memberDecl(ArrayList<String> mods) {
 		int line = scanner.token().line();
 		JMember memberDecl = null;
-		if (seeIdentLParen()) {
+		
+		if(see(LCURLY)) {
+			JBlock body = block();
+			memberDecl = new JBlockDeclaration(line, mods, body);
+		} else if (seeIdentLParen()) {
 			// A constructor
 			mustBe(IDENTIFIER);
 			String name = scanner.previousToken().image();
 			ArrayList<JFormalParameter> params = formalParameters();
+			ArrayList<TypeName> throwTypes = null;
+			if (have(THROWS)) {
+				throwTypes = typeIdentifiers();
+			}
+
 			JBlock body = block();
-			/* TODO: Add throws block */
-			memberDecl = new JConstructorDeclaration(line, mods, name, params, body, null);
+			memberDecl = new JConstructorDeclaration(line, mods, name, params, body, throwTypes);
 		} else {
 			Type type = null;
 			if (have(VOID)) {
@@ -578,7 +642,6 @@ public class Parser {
 				ArrayList<TypeName> throwTypes = null;
 				if (have(THROWS)) {
 					throwTypes = typeIdentifiers();
-
 				}
 				JBlock body = have(SEMI) ? null : block();
 				memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
@@ -592,7 +655,6 @@ public class Parser {
 					ArrayList<TypeName> throwTypes = null;
 					if (have(THROWS)) {
 						throwTypes = typeIdentifiers();
-
 					}
 					JBlock body = have(SEMI) ? null : block();
 					memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, throwTypes);
@@ -703,7 +765,7 @@ public class Parser {
 				mustBe(SEMI);
 				return new JReturnStatement(line, expr);
 			}
-		} else if (have(TRY)){
+		} else if (have(TRY)) {
 			JStatement tryBody = statement();
 			mustBe(CATCH);
 			mustBe(LPAREN);
@@ -767,12 +829,12 @@ public class Parser {
 		return new JFormalParameter(line, name, type);
 	}
 
-//	private JParDeclaration parDeclaration() {
-//		mustBe(LPAREN);
-//		Type type = type();
-//		mustBe(IDENTIFIER);
-//
-//	}
+	// private JParDeclaration parDeclaration() {
+	// mustBe(LPAREN);
+	// Type type = type();
+	// mustBe(IDENTIFIER);
+	//
+	// }
 
 	/**
 	 * Parse a parenthesized expression.
@@ -958,6 +1020,8 @@ public class Parser {
 			return Type.CHAR;
 		} else if (have(INT)) {
 			return Type.INT;
+		} else if (have(DOUBLE)) {
+			return Type.DOUBLE; 
 		} else {
 			reportParserError("Type sought where %s found", scanner.token().image());
 			return Type.ANY;
@@ -1050,11 +1114,32 @@ public class Parser {
 
 	private JExpression assignmentExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = conditionalCondExpression();
+		JExpression lhs = conditionalExpression();
 		if (have(ASSIGN)) {
 			return new JAssignOp(line, lhs, assignmentExpression());
+		} else if (have(DIV_ASSIGN)) {
+			return new JDivAssignOp(line, lhs, assignmentExpression());
+		} else if (have(REM_ASSIGN)) {
+			return new JRemAssignOp(line, lhs, assignmentExpression());
 		} else if (have(PLUS_ASSIGN)) {
 			return new JPlusAssignOp(line, lhs, assignmentExpression());
+		} else if (have(MINUS_ASSIGN)) {
+			return new JMinusAssignOp(line, lhs, assignmentExpression());
+		} else if (have(MULT_ASSIGN)) {
+			return new JMultAssignOp(line, lhs, assignmentExpression());
+		} else {
+			return lhs;
+		}
+	}
+
+	private JExpression conditionalExpression() {
+		int line = scanner.token().line();
+		JExpression lhs = conditionalAndExpression();
+		if (have(COND)) {
+			JExpression consequent = conditionalAndExpression(); // I'm unsure what kind of expression it should be
+			mustBe(COLON);
+			JExpression alternate = conditionalAndExpression();
+			return new JConditionalExpression(line, lhs, consequent, alternate);
 		} else {
 			return lhs;
 		}
@@ -1085,19 +1170,6 @@ public class Parser {
 			}
 		}
 		return lhs;
-	}
-
-	private JExpression conditionalCondExpression() {
-		int line = scanner.token().line();
-		JExpression lhs = conditionalAndExpression();
-		if (have(COND)) {
-			JExpression consequent = assignmentExpression();
-			mustBe(COLON);
-			JExpression alternate = conditionalCondExpression();
-			return new JConditionalExpression(line, lhs, consequent, alternate);
-		} else {
-			return lhs;
-		}
 	}
 
 	/**
@@ -1246,6 +1318,8 @@ public class Parser {
 		int line = scanner.token().line();
 		if (have(INC)) {
 			return new JPreIncrementOp(line, unaryExpression());
+		} else if (have(DEC)) {
+			return new JPreDecrementOp(line, unaryExpression());
 		} else if (have(MINUS)) {
 			return new JNegateOp(line, unaryExpression());
 		} else if (have(PLUS)) {
@@ -1309,6 +1383,9 @@ public class Parser {
 		while (have(DEC)) {
 			throwExpression = new JPostDecrementOp(line, throwExpression);
 		}
+		while (have(INC)) {
+			throwExpression = new JPostIncrementOp(line, throwExpression);
+		}
 		return throwExpression;
 	}
 
@@ -1320,7 +1397,6 @@ public class Parser {
 		}
 		return primary();
 	}
-
 
 	/**
 	 * Parse a selector.
@@ -1506,6 +1582,8 @@ public class Parser {
 			return new JLiteralChar(line, scanner.previousToken().image());
 		} else if (have(STRING_LITERAL)) {
 			return new JLiteralString(line, scanner.previousToken().image());
+		} else if (have(DOUBLE_LITERAL)) { 
+			return new JLiteralDouble(line, scanner.previousToken().image()); 
 		} else if (have(TRUE)) {
 			return new JLiteralTrue(line);
 		} else if (have(FALSE)) {
