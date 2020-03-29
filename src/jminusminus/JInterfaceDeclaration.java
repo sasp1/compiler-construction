@@ -36,7 +36,7 @@ public class JInterfaceDeclaration extends JAST implements JTypeDecl {
     /** Static (class) fields of this class. */
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
     
-    private Arraylist<Type> interfaceList;
+    private ArrayList<Type> interfaceList;
 
     /**
      * Construct an AST node for a class declaration given the line number, list
