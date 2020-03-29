@@ -745,7 +745,6 @@ public class Parser {
 				JStatement statement = statement();
 				return new JForLoopStatement(line, init, expr, upd, statement);
 			}
-			
 		}
 		
 		else if (have(IF)) {

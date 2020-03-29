@@ -79,34 +79,34 @@ public class JForLoopStatement extends JStatement {
 	}
 	
 	public void writeToStdOut(PrettyPrinter p) {
-		p.printf("<JForLoopStatement line = \"%d\">\n", line());
-		p.indentRight();
+		// p.printf("<JForLoopStatement line = \"%d\">\n", line());
+		// p.indentRight();
 		
-		p.printf("<InitExpression>\n");
-		p.indentRight();
-		init.writeToStdOut(p);
-		p.indentLeft();
-		p.printf("</InitializerExpression>\n");
+		// p.printf("<InitExpression>\n");
+		// p.indentRight();
+		// init.writeToStdOut(p);
+		// p.indentLeft();
+		// p.printf("</InitializerExpression>\n");
 		
-		p.printf("<ConditionExpression>");
-		p.indentRight();
-		cond.writeToStdOut(p);
-		p.indentLeft();
-		p.printf("</ConditionExpression>\n");
+		// p.printf("<ConditionExpression>");
+		// p.indentRight();
+		// cond.writeToStdOut(p);
+		// p.indentLeft();
+		// p.printf("</ConditionExpression>\n");
 		
-		p.printf("<UpdateExpression>\n");
-		p.indentRight();
-		update.writeToStdOut(p);
-		p.indentLeft();
-		p.printf("</UpdateExpression>\n");
+		// p.printf("<UpdateExpression>\n");
+		// p.indentRight();
+		// update.writeToStdOut(p);
+		// p.indentLeft();
+		// p.printf("</UpdateExpression>\n");
 		
-		p.printf("<Statement>\n");
-		p.indentRight();
-		statement.writeToStdOut(p);
-		p.indentLeft();
-		p.printf("</Statement>\n");
+		// p.printf("<Statement>\n");
+		// p.indentRight();
+		// statement.writeToStdOut(p);
+		// p.indentLeft();
+		// p.printf("</Statement>\n");
 		
-		p.printf("</JForLoopStatement>\n");
+		// p.printf("</JForLoopStatement>\n");
 		
 	}
 
