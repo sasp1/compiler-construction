@@ -512,7 +512,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     int line = 0;
     String name = "";
     Type superClass = Type.OBJECT;
-    Type interfaceClass = Type.OBJECT;
+    ArrayList<Type> interfaceList = null;
     ArrayList<JMember> classBody = null;
 }
 {
@@ -530,7 +530,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     {
  // TODO: Should be given interface but feature is not yet implemented
         return new JClassDeclaration( line, mods,
-            name, superClass, classBody, superClass);
+            name, superClass, classBody, interfaceList);
     }
 }
 
