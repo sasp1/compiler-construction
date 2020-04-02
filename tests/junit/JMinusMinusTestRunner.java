@@ -28,9 +28,10 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IOrTest.class);
 		suite.addTestSuite(IUComTest.class);
 		suite.addTestSuite(NotEqualTest.class);
-		suite.addTestSuite(LogicalOrTest.class);
-		suite.addTestSuite(ForLoopTest.class);
-		suite.addTestSuite(ForEachTest.class);
+		//suite.addTestSuite(LogicalOrTest.class);
+		//suite.addTestSuite(ForLoopTest.class);
+		//suite.addTestSuite(ForEachTest.class);
+		suite.addTestSuite(ForStatementsTest.class);
 		return suite;
 	}
 

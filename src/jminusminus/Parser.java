@@ -318,17 +318,17 @@ public class Parser {
 	
 	private boolean seeForEach() {
 		scanner.recordPosition();
-		if (seeBasicType() || seeReferenceType()) {
+		if (seeReferenceType() || seeBasicType()) {
 			scanner.next();
-			if (have(IDENTIFIER) && have(COLON)) {
+			if (have(COLON) && have(IDENTIFIER)) {
 				scanner.returnToPosition();
 				return true;
 			}
 		}
-		
 		scanner.returnToPosition();
 		return false;
 	}
+
 
 	// ////////////////////////////////////////////////
 	// Parser Proper /////////////////////////////////
@@ -728,14 +728,15 @@ public class Parser {
 		if (see(LCURLY)) {
 			return block();
 		} else if (have(FOR)) {
-			mustBe(LPAREN);
+			mustBe(LPAREN);			
 			if (seeForEach()) {
 				JFormalParameter param = formalParameter();
 				mustBe(COLON);
 				JExpression id = expression();
 				mustBe(RPAREN);
 				JStatement statement = statement();
-				return new JForEachStatement(line, param, id, statement);
+				//return new JForEachStatement(line, param, id, statement);
+				return new JForStatement(line, param, id, null, null, null, statement);
 			} else {
 				JVariableDeclaration init = localVariableDeclarationStatement();
 				JExpression expr = expression();
@@ -743,7 +744,8 @@ public class Parser {
 				JStatement upd = statementExpression();
 				mustBe(RPAREN);
 				JStatement statement = statement();
-				return new JForLoopStatement(line, init, expr, upd, statement);
+				//return new JForLoopStatement(line, init, expr, upd, statement);
+				return new JForStatement(line, null, null, init, expr, upd, statement);
 			}
 		}
 		
@@ -871,7 +873,7 @@ public class Parser {
 		mustBe(SEMI);
 		return new JVariableDeclaration(line, mods, vdecls);
 	}
-	
+		
 
 	/**
 	 * Parse variable declarators.
