@@ -71,7 +71,8 @@
               dir="classes"
               fork="true">
               <arg value="-p"/> <!-- Change the argument -->
-              <arg value="../tests/pass/MultAssign.java"/> <!-- Change the Division to other file name -->
+              <arg value="../tests/pass/PlusAssign.java"/> <!-- Change the Division to other file name -->
+
         </java>
     </target>
 
