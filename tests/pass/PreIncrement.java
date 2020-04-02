@@ -1,7 +1,7 @@
 package pass;
 
 public class PreIncrement {
-    public int preIncrement(String a){
+    public int preIncrement(int a){
         ++a;
         return a;
     }
