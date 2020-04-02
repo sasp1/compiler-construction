@@ -5,5 +5,4 @@ public class PlusAssign {
         a += b;
         return a;
     }
-
 }
