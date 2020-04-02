@@ -4,14 +4,14 @@ public class JTryCatchStatement extends JStatement{
 
 
     /** Body of try block*/
-    private JStatement tryBody;
+    private JBlock tryBody;
 
     /** Declaration of exception "catch (Exception e) { }"*/
     private JFormalParameter exceptionDeclaration;
 
     /** Body of catch block*/
-    private JStatement catchBody;
-    private final JStatement finallyBody;
+    private JBlock catchBody;
+    private final JBlock finallyBody;
 
     /**
      * Construct an AST node for a statement given its line number.
@@ -22,7 +22,7 @@ public class JTryCatchStatement extends JStatement{
      *@param catchBody body of catch block
      * @param finallyBody body of optional finally body
      */
-    protected JTryCatchStatement(int line, JStatement tryBody, JFormalParameter exceptionDeclaration, JStatement catchBody, JStatement finallyBody) {
+    protected JTryCatchStatement(int line, JBlock tryBody, JFormalParameter exceptionDeclaration, JBlock catchBody, JBlock finallyBody) {
         super(line);
         this.tryBody = tryBody;
         this.exceptionDeclaration = exceptionDeclaration;
@@ -30,10 +30,25 @@ public class JTryCatchStatement extends JStatement{
         this.finallyBody = finallyBody;
     }
 
-
     @Override
     public JAST analyze(Context context) {
-        return null;
+        tryBody.analyze(context);
+
+
+
+        Type exceptionType = exceptionDeclaration.type().resolve(context);
+
+
+
+        exceptionDeclaration.setType(exceptionType);
+        exceptionType.mustInheritFromType(line, Throwable.class, context);
+        catchBody.analyze(context);
+
+        if (finallyBody != null) {
+            finallyBody.analyze(context);
+        }
+
+        return this;
     }
 
     @Override
@@ -50,11 +65,16 @@ public class JTryCatchStatement extends JStatement{
         tryBody.writeToStdOut(p);
         p.indentLeft();
         p.printf("</TryPart>\n");
-        p.printf("<ExceptionDeclaration>\n");
-        p.indentRight();
-        exceptionDeclaration.writeToStdOut(p);
-        p.indentLeft();
-        p.printf("</ExceptionDeclaration>\n");
+
+//        TODO: Might have to be refactored as exception declaration is mandatory
+        if (exceptionDeclaration.type().classRep() != null) {
+            p.printf("<ExceptionDeclaration>\n");
+            p.indentRight();
+            exceptionDeclaration.writeToStdOut(p);
+            p.indentLeft();
+            p.printf("</ExceptionDeclaration>\n");
+        }
+
         p.printf("<CatchPart>\n");
         p.indentRight();
         catchBody.writeToStdOut(p);

@@ -10,7 +10,12 @@ public class JThrowExpression extends JExpression {
 
     @Override
     public JExpression analyze(Context context) {
-        return null;
+        primary.analyze(context);
+
+//        TODO: Check that exception is handled (either that method throws it or that it is try catch block
+        primary.type().mustInheritFromType(line(), Throwable.class, context);
+
+        return this;
     }
 
     @Override
