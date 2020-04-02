@@ -315,6 +315,20 @@ public class Parser {
 		scanner.returnToPosition();
 		return result;
 	}
+	
+	private boolean seeForEach() {
+		scanner.recordPosition();
+		if (seeReferenceType() || seeBasicType()) {
+			scanner.next();
+			if (have(IDENTIFIER) && have(COLON)) {
+				scanner.returnToPosition();
+				return true;
+			}
+		}
+		scanner.returnToPosition();
+		return false;
+	}
+
 
 	// ////////////////////////////////////////////////
 	// Parser Proper /////////////////////////////////
@@ -713,7 +727,29 @@ public class Parser {
 		int line = scanner.token().line();
 		if (see(LCURLY)) {
 			return block();
-		} else if (have(IF)) {
+		} else if (have(FOR)) {
+			mustBe(LPAREN);			
+			if (seeForEach()) {
+				JFormalParameter param = formalParameter();
+				mustBe(COLON);
+				JExpression id = expression();
+				mustBe(RPAREN);
+				JStatement statement = statement();
+				//return new JForEachStatement(line, param, id, statement);
+				return new JForStatement(line, param, id, null, null, null, statement);
+			} else {
+				JVariableDeclaration init = localVariableDeclarationStatement();
+				JExpression expr = expression();
+				mustBe(SEMI);
+				JStatement upd = statementExpression();
+				mustBe(RPAREN);
+				JStatement statement = statement();
+				//return new JForLoopStatement(line, init, expr, upd, statement);
+				return new JForStatement(line, null, null, init, expr, upd, statement);
+			}
+		}
+		
+		else if (have(IF)) {
 			JExpression test = parExpression();
 			JStatement consequent = statement();
 			JStatement alternate = have(ELSE) ? statement() : null;
@@ -837,6 +873,7 @@ public class Parser {
 		mustBe(SEMI);
 		return new JVariableDeclaration(line, mods, vdecls);
 	}
+		
 
 	/**
 	 * Parse variable declarators.
@@ -1037,7 +1074,8 @@ public class Parser {
 		JExpression expr = expression();
 		if (expr instanceof JAssignment || expr instanceof JPreIncrementOp || expr instanceof JPostDecrementOp
 				|| expr instanceof JMessageExpression || expr instanceof JSuperConstruction
-				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp) {
+				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp
+				|| expr instanceof JPreDecrementOp || expr instanceof JPostDecrementOp) {
 			// So as not to save on stack
 			expr.isStatementExpression = true;
 		} else {
