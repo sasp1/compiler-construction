@@ -1073,6 +1073,7 @@ public class Parser {
 		int line = scanner.token().line();
 		JExpression expr = expression();
 		if (expr instanceof JAssignment || expr instanceof JPreIncrementOp || expr instanceof JPostDecrementOp
+				|| expr instanceof JPostIncrementOp || expr instanceof JPreDecrementOp
 				|| expr instanceof JMessageExpression || expr instanceof JSuperConstruction
 				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp
 				|| expr instanceof JPreDecrementOp || expr instanceof JPostDecrementOp
@@ -1138,9 +1139,9 @@ public class Parser {
 		int line = scanner.token().line();
 		JExpression lhs = conditionalAndExpression();
 		if (have(COND)) {
-			JExpression consequent = conditionalAndExpression(); // I'm unsure what kind of expression it should be
+			JExpression consequent = conditionalExpression(); // I'm unsure what kind of expression it should be
 			mustBe(COLON);
-			JExpression alternate = conditionalAndExpression();
+			JExpression alternate = conditionalExpression();
 			return new JConditionalExpression(line, lhs, consequent, alternate);
 		} else {
 			return lhs;
