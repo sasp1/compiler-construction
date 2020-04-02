@@ -1138,9 +1138,9 @@ public class Parser {
 		int line = scanner.token().line();
 		JExpression lhs = conditionalAndExpression();
 		if (have(COND)) {
-			JExpression consequent = conditionalAndExpression(); // I'm unsure what kind of expression it should be
+			JExpression consequent = conditionalExpression(); // I'm unsure what kind of expression it should be
 			mustBe(COLON);
-			JExpression alternate = conditionalAndExpression();
+			JExpression alternate = conditionalExpression();
 			return new JConditionalExpression(line, lhs, consequent, alternate);
 		} else {
 			return lhs;
