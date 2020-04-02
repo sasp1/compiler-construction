@@ -70,7 +70,7 @@
         <java classname="jminusminus/Main"
               dir="classes"
               fork="true">
-              <arg value="-p"/> <!-- Change the argument -->
+              <arg value="-a"/> <!-- Change the argument -->
               <arg value="../tests/pass/Conditional.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
