@@ -19,7 +19,10 @@ bin/
 .idea/
 
 # Package Files #
-*.jar
+lib/j--.jar
+lib/spim.jar
+
+*.iml
 *.war
 *.nar
 *.ear
