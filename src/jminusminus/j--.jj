@@ -1278,9 +1278,9 @@ int line = 0;
         lhs = conditionalAndExpression() { line = lhs.line(); }
         (
             <COND>
-            consequent = conditionalAndExpression()
+            consequent = conditionalExpression()
             <COLON>
-            alternate = conditionalAndExpression()
+            alternate = conditionalExpression()
             { lhs = new JConditionalExpression( line, lhs, consequent, alternate ); }
         )*
     }
