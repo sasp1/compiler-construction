@@ -320,7 +320,7 @@ public class Parser {
 		scanner.recordPosition();
 		if (seeReferenceType() || seeBasicType()) {
 			scanner.next();
-			if (have(COLON) && have(IDENTIFIER)) {
+			if (have(IDENTIFIER) && have(COLON)) {
 				scanner.returnToPosition();
 				return true;
 			}
