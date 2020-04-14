@@ -19,6 +19,7 @@ bin/
 .idea/
 
 # Package Files #
+
 lib/j--.jar
 lib/spim.jar
 
