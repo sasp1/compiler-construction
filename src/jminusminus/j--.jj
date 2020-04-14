@@ -729,10 +729,11 @@ private JStatement statement(): {
     JStatement consequent = null;
     JStatement alternate = null;
     JStatement body = null;
+    JBlock tryBody = null;
     JExpression expr = null;
     JFormalParameter formalParameter = null;
-    JStatement catchBody = null;
-    JStatement finallyBody = null;
+    JBlock catchBody = null;
+    JBlock finallyBody = null;
 }
 {       
     try {
@@ -762,13 +763,14 @@ private JStatement statement(): {
         <SEMI>
         { statement = new JReturnStatement( line, expr ); } |
         <TRY> { line = token.beginLine; }
-        body = statement()
-        <CATCH> <LPAREN> formalParameter = formalParameter() <RPAREN> catchBody = statement()
+
+        tryBody = block()
+        <CATCH> <LPAREN> formalParameter = formalParameter() <RPAREN> catchBody = block()
         [
             LOOKAHEAD(<FINALLY>)
-            <FINALLY> finallyBody = statement()
+            <FINALLY> finallyBody = block()
         ]
-        { statement = new JTryCatchStatement(line, body, formalParameter, catchBody, finallyBody);} |
+        { statement = new JTryCatchStatement(line, tryBody, formalParameter, catchBody, finallyBody);} |
         <SEMI> 
         { statement = new JEmptyStatement( line ); } |
         // Must be a statementExpression
@@ -1277,6 +1279,7 @@ int line = 0;
     try {
         lhs = conditionalAndExpression() { line = lhs.line(); }
         (
+            LOOKAHEAD(<COND> conditionalExpression() <COLON> conditionalExpression() )
             <COND>
             consequent = conditionalExpression()
             <COLON>
