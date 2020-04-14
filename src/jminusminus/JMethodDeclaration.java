@@ -3,6 +3,7 @@
 package jminusminus;
 
 import java.util.ArrayList;
+
 import static jminusminus.CLConstants.*;
 
 /**
@@ -10,39 +11,61 @@ import static jminusminus.CLConstants.*;
  */
 
 class JMethodDeclaration
-    extends JAST implements JMember {
+        extends JAST implements JMember {
 
-    /** Method modifiers. */
+    /**
+     * Method modifiers.
+     */
     protected ArrayList<String> mods;
 
-    /** Method name. */
+    /**
+     * Method name.
+     */
     protected String name;
 
-    /** Return type. */
+    /**
+     * Return type.
+     */
     protected Type returnType;
 
-    /** The formal parameters. */
+    /**
+     * The formal parameters.
+     */
     protected ArrayList<JFormalParameter> params;
 
-    /** Method body. */
+    /**
+     * Method body.
+     */
     protected JBlock body;
 
-    /** Built in analyze(). */
+    /**
+     * Built in analyze().
+     */
     protected MethodContext context;
 
-    /** Computed by preAnalyze(). */
+    /**
+     * Computed by preAnalyze().
+     */
     protected String descriptor;
 
-    /** Is method abstract. */
+    /**
+     * Is method abstract.
+     */
     protected boolean isAbstract;
 
-    /** Is method static. */
+    /**
+     * Is method static.
+     */
     protected boolean isStatic;
 
-    /** Is method private. */
+    /**
+     * Is method private.
+     */
     protected boolean isPrivate;
 
-    /** Types of errors that method can throw. */
+    /**
+     * Types of errors that method can throw.
+     */
     private Type[] throwTypes;
 
     private ArrayList<TypeName> throwTypeNames;
@@ -51,30 +74,20 @@ class JMethodDeclaration
      * Construct an AST node for a method declaration given the
      * line number, method name, return type, formal parameters,
      * and the method body.
-     * 
-     * @param line
-     *                line in which the method declaration occurs
-     *                in the source file.
-     * @param mods
-     *                modifiers.
-     * @param name
-     *                method name.
-     * @param returnType
-     *                return type.
-     * @param params
-     *                the formal parameters.
-     * @param body
-     *                method body.
      *
-     * @param throwTypeNames
-     *                Exception types that the method could throw
+     * @param line           line in which the method declaration occurs
+     *                       in the source file.
+     * @param mods           modifiers.
+     * @param name           method name.
+     * @param returnType     return type.
+     * @param params         the formal parameters.
+     * @param body           method body.
+     * @param throwTypeNames Exception types that the method could throw
      */
 
     public JMethodDeclaration(int line, ArrayList<String> mods,
-        String name, Type returnType,
-        ArrayList<JFormalParameter> params, JBlock body, ArrayList<TypeName> throwTypeNames)
-
-    {
+                              String name, Type returnType,
+                              ArrayList<JFormalParameter> params, JBlock body, ArrayList<TypeName> throwTypeNames) {
         super(line);
         this.mods = mods;
         this.name = name;
@@ -89,36 +102,36 @@ class JMethodDeclaration
 
     /**
      * Declare this method in the parent (class) context.
-     * 
-     * @param context
-     *                the parent (class) context.
-     * @param partial
-     *                the code emitter (basically an abstraction
+     *
+     * @param context the parent (class) context.
+     * @param partial the code emitter (basically an abstraction
      *                for producing the partial class).
      */
 
     public void preAnalyze(Context context, CLEmitter partial) {
         // Resolve types of the formal parameters
         for (JFormalParameter param : params) {
+
             param.setType(param.type().resolve(context));
         }
 
         // Resolve return type
         returnType = returnType.resolve(context);
 
+
         // Check proper local use of abstract
         if (isAbstract && body != null) {
             JAST.compilationUnit.reportSemanticError(line(),
-                "abstract method cannot have a body");
+                    "abstract method cannot have a body");
         } else if (body == null && !isAbstract) {
             JAST.compilationUnit.reportSemanticError(line(),
-                "Method with null body must be abstarct");
+                    "Method with null body must be abstarct");
         } else if (isAbstract && isPrivate) {
             JAST.compilationUnit.reportSemanticError(line(),
-                "private method cannot be declared abstract");
+                    "private method cannot be declared abstract");
         } else if (isAbstract && isStatic) {
             JAST.compilationUnit.reportSemanticError(line(),
-                "static method cannot be declared abstract");
+                    "static method cannot be declared abstract");
         }
 
         // Compute descriptor
@@ -139,16 +152,15 @@ class JMethodDeclaration
      * the offset (for instance methods), (3) declaring the
      * formal parameters in the method context, and (4) analyzing
      * the method's body.
-     * 
-     * @param context
-     *                context in which names are resolved.
+     *
+     * @param context context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
      */
 
     public JAST analyze(Context context) {
-        MethodContext methodContext = 
-	    new MethodContext(context, isStatic, returnType);
-	this.context = methodContext;
+        MethodContext methodContext =
+                new MethodContext(context, isStatic, returnType);
+        this.context = methodContext;
 
         if (!isStatic) {
             // Offset 0 is used to address "this".
@@ -158,28 +170,32 @@ class JMethodDeclaration
         // Declare the parameters. We consider a formal parameter 
         // to be always initialized, via a function call.
         for (JFormalParameter param : params) {
-            LocalVariableDefn defn = new LocalVariableDefn(param.type(), 
-                this.context.nextOffset());
+            LocalVariableDefn defn = new LocalVariableDefn(param.type(),
+                    this.context.nextOffset());
             defn.initialize();
             this.context.addEntry(param.line(), param.name(), defn);
         }
+
+        if (throwTypeNames != null)
+            for (Type throwType : throwTypeNames) {
+                throwType.mustInheritFromType(this.line(), Throwable.class, this.context);
+            }
+
         if (body != null) {
             body = body.analyze(this.context);
-	    if (returnType!=Type.VOID && ! methodContext.methodHasReturn()){
-		JAST.compilationUnit.reportSemanticError(line(),
-		    "Non-void method must have a return statement");
-	    }
+            if (returnType != Type.VOID && !methodContext.methodHasReturn()) {
+                JAST.compilationUnit.reportSemanticError(line(),
+                        "Non-void method must have a return statement");
+            }
         }
-	return this;
+        return this;
     }
 
     /**
      * Add this method declaration to the partial class.
-     * 
-     * @param context
-     *                the parent (class) context.
-     * @param partial
-     *                the code emitter (basically an abstraction
+     *
+     * @param context the parent (class) context.
+     * @param partial the code emitter (basically an abstraction
      *                for producing the partial class).
      */
 
@@ -193,7 +209,7 @@ class JMethodDeclaration
         if (returnType == Type.VOID) {
             partial.addNoArgInstruction(RETURN);
         } else if (returnType == Type.INT
-            || returnType == Type.BOOLEAN || returnType == Type.CHAR) {
+                || returnType == Type.BOOLEAN || returnType == Type.CHAR) {
             partial.addNoArgInstruction(ICONST_0);
             partial.addNoArgInstruction(IRETURN);
         } else {
@@ -205,10 +221,9 @@ class JMethodDeclaration
 
     /**
      * Generate code for the method declaration.
-     * 
-     * @param output
-     *                the code emitter (basically an abstraction
-     *                for producing the .class file).
+     *
+     * @param output the code emitter (basically an abstraction
+     *               for producing the .class file).
      */
 
     public void codegen(CLEmitter output) {
@@ -229,8 +244,8 @@ class JMethodDeclaration
 
     public void writeToStdOut(PrettyPrinter p) {
         p.printf("<JMethodDeclaration line=\"%d\" name=\"%s\" "
-            + "returnType=\"%s\">\n", line(), name, returnType
-            .toString());
+                + "returnType=\"%s\">\n", line(), name, returnType
+                .toString());
         p.indentRight();
         if (context != null) {
             context.writeToStdOut(p);

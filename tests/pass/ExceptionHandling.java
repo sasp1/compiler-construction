@@ -3,7 +3,7 @@ package pass;
 import java.io.IOException;
 
 public class ExceptionHandling {
-    public void throwMethod() throws IOException, Exception {
+    public void throwMethod() throws Exception{
         throw new Exception("hej");
     }
 
