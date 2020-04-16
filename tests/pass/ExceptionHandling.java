@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class ExceptionHandling {
     public void throwMethod() throws Exception{
-        throw new Exception("hej");
+        throw new Exception("hej"); // Eneste fejl tilbage <<
     }
 
     public int catchMethod() {
