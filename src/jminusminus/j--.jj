@@ -266,6 +266,7 @@ TOKEN:
 TOKEN:
 {
   < INT_LITERAL: ("0" | <NON_ZERO_DIGIT> (<DIGIT>)*) >
+| < DOUBLE_LITERAL: (<DIGIT> (<DIGIT>)* ((<DOT>)? (<DIGIT>)* (("e" | "E") (<PLUS> | <MINUS>)? <DIGIT> (<DIGIT>)* )? )? ("d" | "D")?) >   
 | < CHAR_LITERAL: "'" (<ESC> | ~["'","\\","\n","\r"]) "'" >
 | < STRING_LITERAL: "\"" (<ESC> | ~["\"","\\","\n","\r"])* "\"" >   
 | < #ESC: "\\" ["n","t","b","r","f","\\","'","\""] >
@@ -729,8 +730,13 @@ private JStatement statement(): {
     JStatement consequent = null;
     JStatement alternate = null;
     JStatement body = null;
+    JBlock blockBody = null;
     JBlock tryBody = null;
     JExpression expr = null;
+    JStatement upd = null;
+    JVariableDeclaration vdecl = null;
+    JExpression id = null;
+    
     JFormalParameter formalParameter = null;
     JBlock catchBody = null;
     JBlock finallyBody = null;
@@ -762,6 +768,23 @@ private JStatement statement(): {
         ] 
         <SEMI>
         { statement = new JReturnStatement( line, expr ); } |
+        LOOKAHEAD(<FOR> <LPAREN> (basicType() | referenceType()) <IDENTIFIER> <COLON>)
+        <FOR> { line = token.beginLine; } <LPAREN>
+        formalParameter = formalParameter()
+        <COLON>
+        id = expression()
+        <RPAREN>
+        body = statement()
+        { statement = new JForStatement(line, formalParameter, id, null, null, null, body); } | //For each
+        <FOR> { line = token.beginLine; }
+        <LPAREN>
+        vdecl = localVariableDeclarationStatement()
+        expr = expression()
+        <SEMI>
+        upd = statementExpression()
+        <RPAREN>
+        body = statement()
+        { statement = new JForStatement(line, null, null, vdecl, expr, upd, body); } | //For loop
         <TRY> { line = token.beginLine; }
 
         tryBody = block()
@@ -1090,7 +1113,7 @@ private Type type(): {
  * Parse a basic type.
  * 
  * <pre>
- *   basicType : BOOLEAN | CHAR | INT
+ *   basicType : BOOLEAN | CHAR | INT | DOUBLE
  * </pre>
  * 
  * @return an instance of Type.
@@ -1103,7 +1126,8 @@ private Type basicType(): {
     try {
         <BOOLEAN> { type = Type.BOOLEAN; } |
         <CHAR> { type = Type.CHAR; } |
-        <INT> { type = Type.INT; }
+        <INT> { type = Type.INT; } | 
+        <DOUBLE> { type = Type.DOUBLE; }
     } 
     catch ( ParseException e ) { 
         recoverFromError( new int[] { SEMI, EOF }, e ); 
@@ -1167,6 +1191,8 @@ private JStatement statementExpression(): {
             line = expr.line();
             if ( expr instanceof JAssignment
               || expr instanceof JPreIncrementOp
+              || expr instanceof JPreDecrementOp
+              || expr instanceof JPostIncrementOp
               || expr instanceof JPostDecrementOp
               || expr instanceof JMessageExpression
               || expr instanceof JSuperConstruction
@@ -1809,6 +1835,8 @@ private JExpression literal(): {
     try {
         <INT_LITERAL> 
         { expr = new JLiteralInt( token.beginLine, token.image ); } | 
+        <DOUBLE_LITERAL>
+        { expr = new JLiteralDouble( token.beginLine, token.image); } |
         <CHAR_LITERAL> 
         { expr = new JLiteralChar( token.beginLine, token.image ); } |
         <STRING_LITERAL> 
