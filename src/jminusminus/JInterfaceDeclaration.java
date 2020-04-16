@@ -136,9 +136,10 @@ public class JInterfaceDeclaration extends JAST implements JTypeDecl {
      */
 
     public void preAnalyze(Context context) {
-        // Construct a class context
+        // Construct a class context that hopefully works as a interface...
         this.context = new ClassContext(this, context);
 
+        //TODO add more super classes
         // Resolve superclass
         superType = superType.resolve(this.context);
 

@@ -39,7 +39,7 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
     }
 
     /**
-     * Declare this constructor in the parent (class) context.
+     * Declare this block in the parent (class) context.
      * 
      * @param context
      *            the parent (class) context.
@@ -50,29 +50,23 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
 
     public void preAnalyze(Context context, CLEmitter partial) {
         super.preAnalyze(context, partial);
-        if (isStatic) {
+        if (isPrivate) {
             JAST.compilationUnit.reportSemanticError(line(),
-                    "Constructor cannot be declared static");
+                    "Blocks cannot be declared private");
+        } else if (isPublic) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Blocks cannot be declared public");
+        } else if (isProtected) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Blocks cannot be declared protected");
         } else if (isAbstract) {
             JAST.compilationUnit.reportSemanticError(line(),
-                    "Constructor cannot be declared abstract");
-        }
-        if (body.statements().size() > 0
-                && body.statements().get(0) instanceof JStatementExpression) {
-            JStatementExpression first = (JStatementExpression) body
-                    .statements().get(0);
-            if (first.expr instanceof JSuperConstruction) {
-                ((JSuperConstruction) first.expr).markProperUseOfConstructor();
-                invokesConstructor = true;
-            } else if (first.expr instanceof JThisConstruction) {
-                ((JThisConstruction) first.expr).markProperUseOfConstructor();
-                invokesConstructor = true;
-            }
+                    "Blocks cannot be declared abstract");
         }
     }
 
     /**
-     * Analysis for a constructor declaration is very much like that for a
+     * Analysis for a block declaration is very much like that for a
      * method declaration.
      * 
      * @param context
@@ -82,10 +76,9 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
 
     public JAST analyze(Context context) {
         // Record the defining class declaration.
-        definingClass = 
-	    (JClassDeclaration) context.classContext().definition();
+        ///definingClass = (JClassDeclaration) context.classContext().definition();
         MethodContext methodContext =
-            new MethodContext(context, isStatic, returnType);
+            new MethodContext(context, isStatic, null);
         this.context = methodContext;
 
         if (!isStatic) {
@@ -93,18 +86,10 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
             this.context.nextOffset();
         }
 
-        // Declare the parameters. We consider a formal parameter
-        // to be always initialized, via a function call. 
-        for (JFormalParameter param : params) {
-            LocalVariableDefn defn = 
-		new LocalVariableDefn(param.type(),
-				      this.context.nextOffset());
-            defn.initialize();
-            this.context.addEntry(param.line(), param.name(), defn);
-        }
         if (body != null) {
             body = body.analyze(this.context);
         }
+        
         return this;
 
     }

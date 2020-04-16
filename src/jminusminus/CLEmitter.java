@@ -2199,7 +2199,7 @@ class ByteClassLoader extends ClassLoader {
      */
 
     public Class<?> loadClass(String name, boolean resolve)
-            throws ClassNotFoundException {
+            throws ClassNotFoundException { 
         Class cls = findLoadedClass(name);
         if (cls == null) {
             try {

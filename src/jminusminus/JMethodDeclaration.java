@@ -63,12 +63,16 @@ class JMethodDeclaration
      */
     protected boolean isPrivate;
 
+	protected boolean isPublic;
+
+	protected boolean isProtected;
     /**
      * Types of errors that method can throw.
      */
     private Type[] throwTypes;
 
     private ArrayList<TypeName> throwTypeNames;
+
 
     /**
      * Construct an AST node for a method declaration given the
@@ -97,6 +101,8 @@ class JMethodDeclaration
         this.isAbstract = mods.contains("abstract");
         this.isStatic = mods.contains("static");
         this.isPrivate = mods.contains("private");
+        this.isPublic = mods.contains("public"); 
+        this.isProtected = mods.contains("protected");
         this.throwTypeNames = throwTypeNames;
     }
 
