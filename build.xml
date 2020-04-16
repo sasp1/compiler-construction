@@ -70,8 +70,8 @@
         <java classname="jminusminus/Main"
               dir="classes"
               fork="true">
-              <arg value="-a"/> <!-- Change the argument -->
-              <arg value="../tests/pass/Conditional.java"/> <!-- Change the Division to other file name -->
+              <arg value="-p"/> <!-- Change the argument -->
+              <arg value="../tests/pass/tests_only_for_scanner/ShiftRight.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
 
