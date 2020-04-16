@@ -66,6 +66,15 @@
         </java>
     </target>
 
+    <target name="runTypeChecking" depends="clean,compile">
+        <java classname="jminusminus/Main"
+              dir="classes"
+              fork="true">
+            <arg value="-a"/> <!-- Change the argument -->
+            <arg value="../tests/pass/LogicalOr.java"/> <!-- Change the Division to other file name -->
+        </java>
+    </target>
+
     <target name="runNormalFile" depends="clean,compile">
         <java classname="jminusminus/Main"
               dir="classes"
