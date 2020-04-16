@@ -266,10 +266,21 @@ TOKEN:
 TOKEN:
 {
   < INT_LITERAL: ("0" | <NON_ZERO_DIGIT> (<DIGIT>)*) >
+| < DOUBLE_LITERAL: (<DOUBLE_NORMAL> | <DOUBLE_EXP> | <DOUBLE_INT>) >
 | < CHAR_LITERAL: "'" (<ESC> | ~["'","\\","\n","\r"]) "'" >
-| < STRING_LITERAL: "\"" (<ESC> | ~["\"","\\","\n","\r"])* "\"" >   
+| < STRING_LITERAL: "\"" (<ESC> | ~["\"","\\","\n","\r"])* "\"" >  
 | < #ESC: "\\" ["n","t","b","r","f","\\","'","\""] >
 }
+
+//doubles 
+TOKEN: 
+{ 
+  < #EXPONENT: ("e" | "E") ("+"|"-") <NON_ZERO_DIGIT> <DIGIT> >
+| < #DOUBLE_NORMAL: <INT_LITERAL> "." <INT_LITERAL> (<EXPONENT>)? ("d" | "D")? >
+| <	#DOUBLE_EXP: <INT_LITERAL> <EXPONENT> ("d" | "D")? >
+| < #DOUBLE_INT: <INT_LITERAL> (<EXPONENT>)? ("d" | "D") >
+}
+
 
 
 
@@ -373,6 +384,32 @@ private TypeName qualifiedIdentifier(): {
          new TypeName( line, qualifiedIdentifier ); }
 }
 
+	/**	
+	 * Added	
+	 * Parse a interface identifier.	
+	 * 	
+	 * <pre>	
+	 *   interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}	
+	 * </pre>	
+	 * 	
+	 * @return an instance of TypeName.	
+	 */	
+		
+	private ArrayList<Type> interfaceIdentifiers(ArrayList<Type> interfaceList): {	
+		int line = 0;	
+		interfaceList.add(qualifiedIdentifier());	
+        }	
+        {
+        try { 	
+        ( 	
+            <COMMA> { interfaceList.add(qualifiedIdentifier()); }	
+        )*	
+        } catch(ParseException e ) {	
+            recoverFromError( new int[] { SEMI, EOF }, e );	
+        }	
+        { return interfaceList; }	
+	}	
+
 private ArrayList<TypeName> typeIdentifiers(): {
     int line = 0;
     ArrayList<TypeName> types = new ArrayList<TypeName>();
@@ -386,29 +423,32 @@ private ArrayList<TypeName> typeIdentifiers(): {
     }
     { return types; }
 }
-/**
- * Parse a type declaration.
- * 
- * <pre>
- *   typeDeclaration : modifiers classDeclaration
- * </pre>
- * 
- * @return an AST for a typeDeclaration.
- */
-
-private JAST typeDeclaration(): {
-    ArrayList<String> mods = null;
+/**	
+ * Parse a type declaration.	
+ * 	
+ * <pre>	
+ *   typeDeclaration : modifiers classDeclaration	
+ * </pre>	
+ * 	
+ * @return an AST for a typeDeclaration.	
+ */	
+private JAST typeDeclaration(): {	
+    ArrayList<String> mods = null;	
     JAST classDeclaration = null;
-}
-{
-    try {
-        mods = modifiers()
-        classDeclaration = classDeclaration( mods )
-    } 
-    catch ( ParseException e ) { 
-        recoverFromError( new int[] { SEMI, EOF }, e ); 
-    }
-    { return classDeclaration; }
+}	
+{	
+    try {	
+    	mods = modifiers() 
+    (    
+    	<INTERFACE> { classDeclaration = interfaceDeclaration(mods); }	
+    	|	
+        <CLASS> { classDeclaration = classDeclaration(mods); }
+    )	
+    } 	
+    catch (ParseException e) { 	
+        recoverFromError( new int[] { SEMI, EOF }, e ); 	
+    }	
+    { return classDeclaration; }	
 }
 
 /**
@@ -492,6 +532,41 @@ private ArrayList<String> modifiers(): {
     { return mods; }
 }
 
+/** ADDED	
+	 * Parse a interface declaration.	
+	 * 	
+	 *	interfaceDeclaration ::= INTERFACE IDENTIFIER 	
+	 *						[EXTENDS interfaceIdentifier]	
+	 *						classBody 	
+	 * </pre>	
+	 * 	
+	 * 	
+	 * @param mods the class modifiers.	
+	 * @return an AST for a classDeclaration.	
+	 */	
+	private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods): {	
+    	int line = 0;
+    	String name = ""; 
+    	Type superClass = Type.OBJECT;
+		ArrayList<Type> interfaceList = new ArrayList<Type>();
+    }	
+    {	
+        try {	
+            {line = token.beginLine; }
+            <IDENTIFIER> { name = token.image; }
+            [	
+            	<EXTENDS> {interfaceIdentifiers(interfaceList);}	
+            ]	
+        }	
+        catch ( ParseException e) { 	
+                recoverFromError( new int[] {SEMI, EOF}, e); 	
+        }	
+        {	
+		return new JInterfaceDeclaration(line, mods, name, superClass, classBody(), interfaceList);	
+        }	
+    }	
+
+
 /**
  * Parse a class declaration.
  * 
@@ -512,15 +587,18 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     int line = 0;
     String name = "";
     Type superClass = Type.OBJECT;
-    ArrayList<Type> interfaceList = null;
+    ArrayList<Type> interfaceList = new ArrayList<Type>();
     ArrayList<JMember> classBody = null;
 }
 {
     try {
-        <CLASS> { line = token.beginLine; }
+        { line = token.beginLine; }
         <IDENTIFIER> { name = token.image; }
         [ 
             <EXTENDS> superClass = qualifiedIdentifier() 
+        ]
+        [	
+            <IMPLEMENTS> {interfaceIdentifiers(interfaceList);}	
         ]
         classBody = classBody()           
     } 
@@ -595,6 +673,16 @@ private JMember memberDecl( ArrayList<String>  mods ): {
 }
 {
     try {
+    	LOOKAHEAD( <LCURLY> )	
+        (	
+        	{
+        		line = token.beginLine; 
+        	}
+            body = block()
+            {
+            	memberDecl = new JBlockDeclaration(line, mods, body);
+            }	
+        ) |
         LOOKAHEAD( <IDENTIFIER> <LPAREN> )
         (
             <IDENTIFIER> 
@@ -609,8 +697,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
             body = block()
             { 
                 memberDecl = 
-                new JConstructorDeclaration( line, mods, 
-                                             name, params, body , throwTypes);
+                new JConstructorDeclaration( line, mods, name, params, body , throwTypes);
             }
         ) |     
         LOOKAHEAD( ( <VOID> | type() ) <IDENTIFIER> <LPAREN> )
@@ -1103,7 +1190,8 @@ private Type basicType(): {
     try {
         <BOOLEAN> { type = Type.BOOLEAN; } |
         <CHAR> { type = Type.CHAR; } |
-        <INT> { type = Type.INT; }
+        <INT> { type = Type.INT; } | 
+        <DOUBLE> { type = Type.DOUBLE; }
     } 
     catch ( ParseException e ) { 
         recoverFromError( new int[] { SEMI, EOF }, e ); 
@@ -1812,8 +1900,9 @@ private JExpression literal(): {
         <CHAR_LITERAL> 
         { expr = new JLiteralChar( token.beginLine, token.image ); } |
         <STRING_LITERAL> 
-        { expr = 
-              new JLiteralString( token.beginLine, token.image ); } | 
+	    { expr = new JLiteralString( token.beginLine, token.image ); } |  	
+        <DOUBLE_LITERAL> 	
+        { expr = new JLiteralDouble( token.beginLine, token.image ); } | 
         <TRUE> 
         { expr = new JLiteralTrue( token.beginLine ); } | 
         <FALSE> 
