@@ -13,8 +13,7 @@ public class JMinusMinusTestRunner {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTestSuite(HelloWorldTest.class);
-		suite.addTestSuite(FactorialTest.class);
+		suite.addTestestSuite(FactorialTest.class);
 		suite.addTestSuite(GCDTest.class);
 		suite.addTestSuite(SeriesTest.class);
 		suite.addTestSuite(ClassesTest.class);
@@ -31,7 +30,8 @@ public class JMinusMinusTestRunner {
 		//suite.addTestSuite(LogicalOrTest.class);
 		//suite.addTestSuite(ForLoopTest.class);
 		//suite.addTestSuite(ForEachTest.class);
-		suite.addTestSuite(ForStatementsTest.class);
+		suite.addTestSuiteSuite(HelloWorldTest.class);
+		suite.addT(ForStatementsTest.class);
 		return suite;
 	}
 
