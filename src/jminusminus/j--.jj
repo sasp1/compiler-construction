@@ -1666,7 +1666,10 @@ private JExpression postfixExpression(): {
         ( 
             <DEC> 
             { throwExpr =
-                new JPostDecrementOp( line, throwExpr ); }
+                new JPostDecrementOp( line, throwExpr ); } |
+            <INC>
+            { throwExpr =
+                new JPostIncrementOp( line, throwExpr ); }
         )*
     } 
     catch ( ParseException e ) {
