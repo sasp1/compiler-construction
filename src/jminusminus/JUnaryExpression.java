@@ -85,9 +85,15 @@ class JNegateOp extends JUnaryExpression {
      */
 
     public JExpression analyze(Context context) {
-        arg = arg.analyze(context);
-        arg.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        arg = (JExpression) arg.analyze(context);
+        
+        if (arg.type().matchesExpected(Type.INT)) {
+            arg.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            arg.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
+        }
         return this;
     }
 
@@ -113,9 +119,15 @@ class JPosOp extends JUnaryExpression {
 	}
 	
 	public JExpression analyze(Context context) {
-		arg = arg.analyze(context);
-		arg.type().mustMatchOneOf(line(), Type.INT);
-		type = Type.INT;
+        arg = (JExpression) arg.analyze(context);
+        
+        if (arg.type().matchesExpected(Type.INT)) {
+            arg.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            arg.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
+        }
 		return this;
 	}
 	
@@ -231,10 +243,15 @@ class JPostDecrementOp extends JUnaryExpression {
             JAST.compilationUnit.reportSemanticError(line,
                     "Operand to expr-- must have an LValue.");
             type = Type.ANY;
-        } else {
-            arg = (JExpression) arg.analyze(context);
+        } 
+        arg = (JExpression) arg.analyze(context);
+        
+        if (arg.type().matchesExpected(Type.INT)) {
             arg.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else {
+            arg.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         }
         return this;
     }
@@ -313,10 +330,15 @@ class JPreIncrementOp extends JUnaryExpression {
             JAST.compilationUnit.reportSemanticError(line,
                     "Operand to ++expr must have an LValue.");
             type = Type.ANY;
-        } else {
-            arg = (JExpression) arg.analyze(context);
+        } 
+        arg = (JExpression) arg.analyze(context);
+        
+        if (arg.type().matchesExpected(Type.INT)) {
             arg.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else {
+            arg.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         }
         return this;
     }
@@ -367,9 +389,15 @@ class JIUComOp extends JUnaryExpression {
     }
 
     public JExpression analyze(Context context) {
-        arg = arg.analyze(context);
-        arg.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        arg = (JExpression) arg.analyze(context);
+        
+        if (arg.type().matchesExpected(Type.INT)) {
+            arg.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            arg.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
+        }
         return this;
     }
 

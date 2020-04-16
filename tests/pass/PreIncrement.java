@@ -2,7 +2,7 @@ package pass;
 
 public class PreIncrement {
 
-    public int preIncrement(int a){
+    public double preIncrement(double a){
         ++a;
         return a;
     }

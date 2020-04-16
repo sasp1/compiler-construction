@@ -1,7 +1,7 @@
 package pass;
 
 public class PostIncrement {
-    public int postIncrement(String a){
+    public double postIncrement(double a){
         a++;
         return a;
     }

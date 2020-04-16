@@ -99,6 +99,8 @@ class JPlusOp extends JBinaryExpression {
 			return (new JStringConcatenationOp(line, lhs, rhs)).analyze(context);
 		} else if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
 			type = Type.INT;
+		} else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+			type = Type.DOUBLE;
 		} else {
 			type = Type.ANY;
 			JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for +");

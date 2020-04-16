@@ -21,10 +21,15 @@ public class JPreDecrementOp extends JUnaryExpression {
             JAST.compilationUnit.reportSemanticError(line,
                     "Operand to ++expr must have an LValue.");
             type = Type.ANY;
-        } else {
-            arg = (JExpression) arg.analyze(context);
+        } 
+        arg = (JExpression) arg.analyze(context);
+        
+        if (arg.type().matchesExpected(Type.INT)) {
             arg.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else {
+            arg.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         }
         return this;
     }
