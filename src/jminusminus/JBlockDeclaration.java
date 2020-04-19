@@ -35,7 +35,7 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
 
     public JBlockDeclaration(int line, ArrayList<String> mods, JBlock body)
     {
-        super(line, mods, "", Type.ANY, new ArrayList<JFormalParameter>(), body, new ArrayList<TypeName>());
+        super(line, mods, "block " + ((int)(Math.random() * 10000000)), Type.ANY, new ArrayList<JFormalParameter>(), body, new ArrayList<TypeName>());
     }
 
     /**
@@ -105,14 +105,16 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
      */
 
     public void partialCodegen(Context context, CLEmitter partial) {
-        partial.addMethod(mods, "<init>", descriptor, null, false);
-        if (!invokesConstructor) {
-            partial.addNoArgInstruction(ALOAD_0);
-            partial.addMemberAccessInstruction(INVOKESPECIAL,
-                    ((JTypeDecl) context.classContext().definition())
-                            .superType().jvmName(), "<init>", "()V");
-        }
+        partial.addMethod(mods, name, descriptor, null, false);
         partial.addNoArgInstruction(RETURN);
+//        partial.addMethod(mods, "<init>", descriptor, null, false);
+//        if (!invokesConstructor) {
+//            partial.addNoArgInstruction(ALOAD_0);
+//            partial.addMemberAccessInstruction(INVOKESPECIAL,
+//                    ((JTypeDecl) context.classContext().definition())
+//                            .superType().jvmName(), "<init>", "()V");
+//        }
+//        partial.addNoArgInstruction(RETURN);
     }
 
     /**

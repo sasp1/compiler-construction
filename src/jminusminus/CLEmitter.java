@@ -1177,7 +1177,7 @@ public class CLEmitter {
             addMethodAttribute(syntheticAttribute());
         }
     }
-
+    
     /**
      * Add an exception handler.
      * 
