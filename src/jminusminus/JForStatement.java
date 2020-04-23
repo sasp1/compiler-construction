@@ -41,7 +41,6 @@ public class JForStatement extends JStatement {
 	}
 	
 	public JStatement analyze(Context context) {
-//		LocalContext locCon = new LocalContext(context);
 		if(isForEach) {
 			param.analyze(context);
 			expr.analyze(context);
@@ -51,6 +50,7 @@ public class JForStatement extends JStatement {
 			}
 			
 			param.type().mustMatchExpected(line, expr.type().componentType());
+			
 		} else {
 			init = (JVariableDeclaration) init.analyze(context);
 			cond = (JExpression) cond.analyze(context);
