@@ -31,7 +31,7 @@ public class JMinusMinusTestRunner {
 ////		suite.addTestSuite(LogicalOrTest.class);
 //		suite.addTestSuite(HelloWorldTest.class);
 //		suite.addTestSuite(ForStatementsTest.class);
-//		suite.addTestSuite(ExceptionHandlingTest.class);
+		suite.addTestSuite(ExceptionHandlingTest.class);
 		return suite;
 	}
 
