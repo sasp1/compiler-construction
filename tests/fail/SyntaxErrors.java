@@ -19,7 +19,8 @@ public class SyntaxErrors {
 
     public static void main(String[] args) {
         int x = Integer.parseInt(args[0]);
-        System.out.println(x + "! = " + factorial(x));
+//        System.out.println(x + "! = " + factorial(x));
+        System.out.println('a' << 42);
     }
 
 }

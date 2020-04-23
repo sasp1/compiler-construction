@@ -1284,7 +1284,8 @@ private JStatement statementExpression(): {
               || expr instanceof JSuperConstruction
               || expr instanceof JThisConstruction 
               || expr instanceof JNewOp
-              || expr instanceof JNewArrayOp ) {
+              || expr instanceof JNewArrayOp
+              || expr instanceof JThrowExpression) {
                 // So as not to save on stack
                 expr.isStatementExpression = true;
             }

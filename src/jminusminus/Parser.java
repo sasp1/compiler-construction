@@ -1076,7 +1076,7 @@ public class Parser {
 				|| expr instanceof JPostIncrementOp || expr instanceof JPreDecrementOp
 				|| expr instanceof JMessageExpression || expr instanceof JSuperConstruction
 				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp
-				|| expr instanceof JPostIncrementOp || expr instanceof JThrowExpression) {
+				|| expr instanceof JThrowExpression) {
 			// So as not to save on stack
 			expr.isStatementExpression = true;
 		} else {
