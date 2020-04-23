@@ -1,5 +1,3 @@
-// TODO: IMPLEMENT
-/*
 package junit;
 
 import junit.framework.TestCase;
@@ -17,8 +15,8 @@ public class MultAssignTest extends TestCase {
         super.tearDown();
     }
 
-    public void testPlusEqual() {
+    public void testMultAssign() {
         assertEquals(6, multAssign.multAssign(2, 3));
+        assertEquals(130, multAssign.multAssign(10, 13));
     }
 }
-*/
