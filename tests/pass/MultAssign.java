@@ -1,8 +1,8 @@
 package pass;
 
 public class MultAssign {
-    public double multAssign(double x, double y) {
-        y *= x;
-        return y;
+    public int multAssign(int x, int y) {
+        x *= y;
+        return x;
     }
 }
