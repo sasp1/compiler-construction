@@ -34,11 +34,7 @@ public class JTryCatchStatement extends JStatement{
     public JAST analyze(Context context) {
         tryBody.analyze(context);
 
-
-
         Type exceptionType = exceptionDeclaration.type().resolve(context);
-
-
 
         exceptionDeclaration.setType(exceptionType);
         exceptionType.mustInheritFromType(line, Throwable.class, context);
@@ -53,7 +49,17 @@ public class JTryCatchStatement extends JStatement{
 
     @Override
     public void codegen(CLEmitter output) {
-
+//        String tryStartLabel = output.createLabel();
+//        String tryEndLabel = output.createLabel();
+//        String catchLabel = output.createLabel();
+//        String finallyLabel = output.createLabel();
+        System.out.println(exceptionDeclaration.type().toString());
+        System.out.println("HEEEEJ");
+//        output.addLabel(tryStartLabel);
+//        output.addLabel(tryEndLabel);
+//        output.addLabel(catchLabel);
+//        output.addExceptionHandler(tryStartLabel, tryEndLabel, catchLabel, exceptionDeclaration.type().jvmName());
+//        tryBody.codegen(output);
     }
 
     @Override

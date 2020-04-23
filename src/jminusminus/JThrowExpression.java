@@ -1,5 +1,7 @@
 package jminusminus;
 
+import static jminusminus.CLConstants.ATHROW;
+
 public class JThrowExpression extends JExpression {
     private JExpression primary;
 
@@ -20,7 +22,8 @@ public class JThrowExpression extends JExpression {
 
     @Override
     public void codegen(CLEmitter output) {
-
+        primary.codegen(output);
+        output.addNoArgInstruction(ATHROW);
     }
 
     @Override
