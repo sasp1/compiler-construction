@@ -41,23 +41,23 @@ public class JForStatement extends JStatement {
 	}
 	
 	public JStatement analyze(Context context) {
-		LocalContext locCon = new LocalContext(context);
+//		LocalContext locCon = new LocalContext(context);
 		if(isForEach) {
-			param.analyze(locCon);
-			expr.analyze(locCon);
+			param.analyze(context);
+			expr.analyze(context);
 			
 			if (!Type.ITERABLE.isJavaAssignableFrom(expr.type()) && !expr.type().isArray()) {
 				JAST.compilationUnit.reportSemanticError(line, "Variable must have have type iterable or array: \"%s\"", expr.type().toString());
 			}
 			
 			param.type().mustMatchExpected(line, expr.type().componentType());
+		} else {
+			init = (JVariableDeclaration) init.analyze(context);
+			cond = (JExpression) cond.analyze(context);
+			cond.type().mustMatchExpected(line, Type.BOOLEAN);
+			update = (JStatement) update.analyze(context);
+			statement = (JStatement) statement.analyze(context);
 		}
-		
-		init = (JVariableDeclaration) init.analyze(locCon);
-		cond = (JExpression) cond.analyze(locCon);
-		cond.type().mustMatchExpected(line, Type.BOOLEAN);
-		update = (JStatement) update.analyze(locCon);
-		statement = (JStatement) statement.analyze(locCon);
 		
 		return this;
 	}
