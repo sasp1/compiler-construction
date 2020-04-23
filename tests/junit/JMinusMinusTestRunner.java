@@ -14,7 +14,7 @@ public class JMinusMinusTestRunner {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite(FactorialTest.class);
-		/*suite.addTestSuite(GCDTest.class);
+		suite.addTestSuite(GCDTest.class);
 		suite.addTestSuite(SeriesTest.class);
 		suite.addTestSuite(ClassesTest.class);
 		suite.addTestSuite(DivisionTest.class);
@@ -26,12 +26,11 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IXorTest.class);
 		suite.addTestSuite(IOrTest.class);
 		suite.addTestSuite(IUComTest.class);
-		suite.addTestSuite(NotEqualTest.class);*/
-		//suite.addTestSuite(LogicalOrTest.class);
-		//suite.addTestSuite(ForLoopTest.class);
-		//suite.addTestSuite(ForEachTest.class);
-//		suite.addTestSuite(HelloWorldTest.class);
-//		suite.addTestSuite(ForStatementsTest.class);
+
+		suite.addTestSuite(NotEqualTest.class);
+//		suite.addTestSuite(LogicalOrTest.class);
+		suite.addTestSuite(HelloWorldTest.class);
+		suite.addTestSuite(ForStatementsTest.class);
 		return suite;
 	}
 

@@ -1234,6 +1234,8 @@ public class Parser {
 			return new JShiftLeftOp(line, lhs, additiveExpression());
 		} else if (have(SHIFT_RIGHT)) {
 			return new JShiftRightOp(line, lhs, additiveExpression());
+		} else if (have(SHIFT_RIGHT_UNSIGN)) {
+			return new JShiftRightUnsignOp(line, lhs, additiveExpression());
 		} else if (have(INSTANCEOF)) {
 			return new JInstanceOfOp(line, lhs, referenceType());
 		} else {
