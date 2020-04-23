@@ -1,3 +1,5 @@
+package fail;
+
 public class GreaterThanOrEqual {
 	
 	public static void main ( String [] args ) {
