@@ -26,6 +26,9 @@ public class JForStatement extends JStatement {
 	public JForStatement(int line, JFormalParameter vecl, JExpression expr, JVariableDeclaration init, JExpression cond, JStatement update, 
 			JStatement statement) {
 		super(line);
+		
+		this.isForEach = cond == null ? true : false;
+		
 		this.init = init;
 		this.cond = cond;
 		this.update = update;
@@ -35,10 +38,27 @@ public class JForStatement extends JStatement {
 		this.expr = expr;
 		
 		
-		
 	}
 	
 	public JStatement analyze(Context context) {
+		if(isForEach) {
+			param.analyze(context);
+			expr.analyze(context);
+			
+			if (!Type.ITERABLE.isJavaAssignableFrom(expr.type()) && !expr.type().isArray()) {
+				JAST.compilationUnit.reportSemanticError(line, "Variable must have have type iterable or array: \"%s\"", expr.type().toString());
+			}
+			
+			param.type().mustMatchExpected(line, expr.type().componentType());
+			
+		} else {
+			init = (JVariableDeclaration) init.analyze(context);
+			cond = (JExpression) cond.analyze(context);
+			cond.type().mustMatchExpected(line, Type.BOOLEAN);
+			update = (JStatement) update.analyze(context);
+			statement = (JStatement) statement.analyze(context);
+		}
+		
 		return this;
 	}
 	

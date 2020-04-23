@@ -72,7 +72,7 @@
               dir="classes"
               fork="true">
             <arg value="-a"/> <!-- Change the argument -->
-            <arg value="../tests/pass/LogicalOr.java"/> <!-- Change the Division to other file name -->
+            <arg value="../tests/pass/ForStatements.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
 
