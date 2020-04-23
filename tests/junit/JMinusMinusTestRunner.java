@@ -28,7 +28,7 @@ public class JMinusMinusTestRunner {
 //		suite.addTestSuite(IUComTest.class);
 //
 //		suite.addTestSuite(NotEqualTest.class);
-////		suite.addTestSuite(LogicalOrTest.class);
+		suite.addTestSuite(LogicalOrTest.class);
 //		suite.addTestSuite(HelloWorldTest.class);
 //		suite.addTestSuite(ForStatementsTest.class);
 //		suite.addTestSuite(ExceptionHandlingTest.class);

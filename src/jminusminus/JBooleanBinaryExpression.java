@@ -245,14 +245,17 @@ class JLogicalOrOp extends JBooleanBinaryExpression {
      */
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
+        // if onTrue is true, then we want to make a jump (to target label), if the condition is met
+        // in this case, it means that we want to jump when to targetLabel when it is true.
         if (onTrue) {
-            String falseLabel = output.createLabel();
-            lhs.codegen(output, falseLabel, false);
+            lhs.codegen(output, targetLabel, true);
             rhs.codegen(output, targetLabel, true);
-            output.addLabel(falseLabel);
         } else {
-            lhs.codegen(output, targetLabel, false);
+            // here, we want to branch if the condition is false. So, if false, we go to targetLabel
+            String falseLabel = output.createLabel();
+            lhs.codegen(output, falseLabel, true);
             rhs.codegen(output, targetLabel, false);
+            output.addLabel(falseLabel);
         }
     }
 }
