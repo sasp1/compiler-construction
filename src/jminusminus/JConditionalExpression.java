@@ -66,6 +66,19 @@ public class JConditionalExpression extends JExpression {
 
     public void codegen(CLEmitter output) {
 
+        String elseLabel = output.createLabel();
+        String endLabel = output.createLabel();
+        condition.codegen(output, elseLabel, false);
+        thenPart.codegen(output);
+        if (elsePart != null) {
+            output.addBranchInstruction(GOTO, endLabel);
+        }
+        output.addLabel(elseLabel);
+        if (elsePart != null) {
+            elsePart.codegen(output);
+            output.addLabel(endLabel);
+        }
+
     }
 
     /**
