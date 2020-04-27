@@ -43,6 +43,8 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(LogicalOrTest.class); // step 5
 		suite.addTestSuite(ForStatementsTest.class);
 //		suite.addTestSuite(ExceptionHandlingTest.class);
+
+		suite.addTestSuite(ExceptionHandlingTest.class);
 		suite.addTestSuite(ConditionalTest.class);
 		return suite;
 	}
