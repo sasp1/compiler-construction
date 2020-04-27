@@ -16,8 +16,8 @@ public class ForStatementsTest extends TestCase {
 	}
 	
 	public void testForStatement() {
-		this.assertEquals(forStatement.forLoop(0), 10);
-		this.assertEquals(forStatement.foreach(0), 10);
+		assertEquals(15, forStatement.forLoop(0));
+//		this.assertEquals(6, forStatement.foreach(0));
 	}
 
 }

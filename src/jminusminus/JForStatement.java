@@ -3,6 +3,8 @@ package jminusminus;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static jminusminus.CLConstants.*;
+
 public class JForStatement extends JStatement {
 	
 	protected boolean isForEach;
@@ -23,7 +25,7 @@ public class JForStatement extends JStatement {
 	private JFormalParameter param;
 	private JExpression expr;
 	
-	public JForStatement(int line, JFormalParameter vecl, JExpression expr, JVariableDeclaration init, JExpression cond, JStatement update, 
+	public JForStatement(int line, JFormalParameter vecl, JExpression expr, JVariableDeclaration init, JExpression cond, JStatement update,
 			JStatement statement) {
 		super(line);
 		
@@ -48,9 +50,9 @@ public class JForStatement extends JStatement {
 			if (!Type.ITERABLE.isJavaAssignableFrom(expr.type()) && !expr.type().isArray()) {
 				JAST.compilationUnit.reportSemanticError(line, "Variable must have have type iterable or array: \"%s\"", expr.type().toString());
 			}
-			
+
 			param.type().mustMatchExpected(line, expr.type().componentType());
-			
+
 		} else {
 			init = (JVariableDeclaration) init.analyze(context);
 			cond = (JExpression) cond.analyze(context);
@@ -63,7 +65,34 @@ public class JForStatement extends JStatement {
 	}
 	
 	public void codegen(CLEmitter output) {
-		
+		String endLabel = output.createLabel();
+		String topLabel = output.createLabel();
+
+		if (isForEach) {
+
+//
+//			output.addLabel(topLabel);
+//
+//			init.codegen(output);
+//			expr.codegen(output, endLabel, false);
+//
+//			output.addBranchInstruction(GOTO, topLabel);
+//
+//			output.addLabel(endLabel);
+
+//			TODO: I would assume it is something like this, but it keeps loading from the array and goes out of bounds:
+//			 "foreach signature: (I)I) Expecting to find integer on stack". Need to find out how to stop it when the
+//			 empty
+
+		} else {
+			init.codegen(output);
+			output.addLabel(topLabel);
+			cond.codegen(output, endLabel, false); // maybe more?
+			statement.codegen(output);
+			update.codegen(output);
+			output.addBranchInstruction(GOTO, topLabel);
+			output.addLabel(endLabel);
+		}
 	}
 	
 	public void writeToStdOut(PrettyPrinter p) {
