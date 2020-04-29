@@ -1,10 +1,8 @@
 package jminusminus;
 
-import static jminusminus.CLConstants.ALOAD_0;
-import static jminusminus.CLConstants.INVOKESPECIAL;
-import static jminusminus.CLConstants.RETURN;
-
 import java.util.ArrayList;
+
+import static jminusminus.CLConstants.*;
 
 class JBlockDeclaration extends JMethodDeclaration implements JMember {
 
@@ -76,10 +74,8 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
 
     public JAST analyze(Context context) {
         // Record the defining class declaration.
-        ///definingClass = (JClassDeclaration) context.classContext().definition();
-        MethodContext methodContext =
-            new MethodContext(context, isStatic, null);
-        this.context = methodContext;
+        definingClass = (JClassDeclaration) context.classContext().definition();
+        this.context = new MethodContext(context, isStatic, null);
 
         if (!isStatic) {
             // Offset 0 is used to address "this"
@@ -105,16 +101,7 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
      */
 
     public void partialCodegen(Context context, CLEmitter partial) {
-        partial.addMethod(mods, name, descriptor, null, false);
-        partial.addNoArgInstruction(RETURN);
-//        partial.addMethod(mods, "<init>", descriptor, null, false);
-//        if (!invokesConstructor) {
-//            partial.addNoArgInstruction(ALOAD_0);
-//            partial.addMemberAccessInstruction(INVOKESPECIAL,
-//                    ((JTypeDecl) context.classContext().definition())
-//                            .superType().jvmName(), "<init>", "()V");
-//        }
-//        partial.addNoArgInstruction(RETURN);
+        // Do we need this? Doesn't seem to affect anything
     }
 
     /**
@@ -126,21 +113,7 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
      */
 
     public void codegen(CLEmitter output) {
-        output.addMethod(mods, "<init>", descriptor, null, false);
-        if (!invokesConstructor) {
-            output.addNoArgInstruction(ALOAD_0);
-            output.addMemberAccessInstruction(INVOKESPECIAL,
-                    ((JTypeDecl) context.classContext().definition())
-                            .superType().jvmName(), "<init>", "()V");
-        }
-        // Field initializations
-        for (JFieldDeclaration field : definingClass
-                .instanceFieldInitializations()) {
-            field.codegenInitializations(output);
-        }
-        // And then the body
         body.codegen(output);
-        output.addNoArgInstruction(RETURN);
     }
 
     /**
