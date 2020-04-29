@@ -25,6 +25,21 @@ public class Block {
         return j;
     }
 
+    public int blockInMethod() {
+        {
+            j = 100;
+        }
+        return j;
+    }
+
+    public int initializeJBlockInMethod() {
+        {
+            int j;
+            j = 100;
+        }
+        return j;
+    }
+
     public int returnNumber() {
         return i;
     }

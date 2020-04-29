@@ -24,5 +24,7 @@ public class BlockTest extends TestCase {
 		assertEquals(0, blockForJ.returnJ());
 		blockForJ.incrementJ();
 		assertEquals(1, blockForJ.returnJ());
+		assertEquals(1, blockForJ.initializeJBlockInMethod());
+		assertEquals(100,blockForJ.blockInMethod());
 	}
 }
