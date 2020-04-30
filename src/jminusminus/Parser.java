@@ -4,6 +4,8 @@ package jminusminus;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import static jminusminus.TokenKind.*;
 
 /**
@@ -173,6 +175,7 @@ public class Parser {
 	 */
 
 	private boolean seeCast() {
+
 		scanner.recordPosition();
 		if (!have(LPAREN)) {
 			scanner.returnToPosition();

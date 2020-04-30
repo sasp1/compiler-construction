@@ -12,8 +12,11 @@ public class ForStatements {
 	public int foreach(int acc) {
 		int[] array = {0,1,2,3};
 		for (int i : array) {
-			acc = acc + i;
+			int h = 2;
+//			acc = acc + i;
 		}
 		return acc;
 	}
+
+
 }

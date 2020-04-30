@@ -1,5 +1,11 @@
 package jminusminus;
 
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
+import static jminusminus.CLConstants.GOTO;
+
 public class JForEachStatement extends JStatement {
 
     private final JVariableDeclarator init;
@@ -15,13 +21,21 @@ public class JForEachStatement extends JStatement {
 
     @Override
     public JAST analyze(Context context) {
-        System.out.println("HEEEJ");
         init.analyze(context);
 
         int offset = ((LocalContext) context).nextOffset();
         LocalVariableDefn defn = new LocalVariableDefn(init.type().resolve(
                 context), offset);
         context.addEntry(line, init.name(), defn);
+
+        IDefn previousDefn = context.lookup(init.name());
+        if (previousDefn != null
+                && previousDefn instanceof LocalVariableDefn) {
+            JAST.compilationUnit.reportSemanticError(init.line(),
+                    "The name " + init.name()
+                            + " overshadows another local variable.");
+        }
+
 
         iterable.analyze(context);
         statement.analyze(context);
@@ -35,7 +49,21 @@ public class JForEachStatement extends JStatement {
 
     @Override
     public void codegen(CLEmitter output) {
+//        String topLabel = output.createLabel();
+//        String endLabel = output.createLabel();
+//
+//        output.addLabel(topLabel);
+//        init.codegen(output);
+//        iterable.codegen(output, endLabel, false);
+//        statement.codegen(output);
+//
+//        output.addBranchInstruction(GOTO, topLabel);
+//
+//        output.addLabel(endLabel);
 
+//			TODO: I would assume it is something like this, but it keeps loading from the array and goes out of bounds:
+//			 "foreach signature: (I)I) Expecting to find integer on stack". Need to find out how to stop it when the
+//			 empty
     }
 
     @Override
