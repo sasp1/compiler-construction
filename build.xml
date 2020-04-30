@@ -80,7 +80,7 @@
         <java classname="jminusminus/Main"
               dir="classes"
               fork="true">
-              <arg value="-p"/> <!-- Change the argument -->
+<!--              <arg value="-a"/> &lt;!&ndash; Change the argument &ndash;&gt;-->
               <arg value="../tests/pass/ExceptionHandling.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
@@ -135,7 +135,7 @@
 
     <target name="jar">
         <echo message="Bundling class files into jar files..."/>
-        <jar destfile="tests/j--.jar" basedir="${CLASS_DIR}" includes="jminusminus/**"/>
+        <jar destfile="${LIB_DIR}/j--.jar" basedir="${CLASS_DIR}" includes="jminusminus/**"/>
         <jar destfile="${LIB_DIR}/spim.jar" basedir="${CLASS_DIR}" includes="spim/**"/>
     </target>
 
@@ -497,7 +497,7 @@
             <fileset dir="${basedir}" includes="**/*.class"/>
         </delete>
         <delete file="j--.zip" />
-        <delete file="tests/j--.jar" />
+        <delete file="${LIB_DIR}/j--.jar" />
         <delete file="${LIB_DIR}/spim.jar" />
         <delete dir="${CLASS_DIR}" />
         <delete dir="${JAVADOC_DIR}" />

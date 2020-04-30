@@ -2,35 +2,34 @@ package pass;
 
 import java.lang.Exception;
 import java.lang.System;
+import java.lang.Throwable;
 
 public class ExceptionHandling {
 
-    public static void main(String[] args) {
-        ExceptionHandling eh = new ExceptionHandling();
-        try {
-            int x = 5/0;
-        } catch (Exception e){
-            System.out.println("caught");
-        } finally {
-            System.out.println("finally");
-        }
+//    public void throwMethod(String msg) throws Exception{
+//        throw new Exception(msg);
+//    }
+
+    int i;
+    public ExceptionHandling() {
+        i = 2;
     }
 
-    public void throwMethod() throws Exception {
-        throw new Exception("hej");
-    }
 
     public int catchMethod() {
-        int i = 0;
+        i = 0;
+        int j = 0;
 
         try {
-            i = i + 1;
+            i = 1;
+            i = 3;
+            throw new Exception("");
         } catch (Exception e) {
-            return -1;
+           i = 1;
+           i =2;
+
         }
-        finally {
-            i = i + 1;
-        }
+
         return i;
     }
 }

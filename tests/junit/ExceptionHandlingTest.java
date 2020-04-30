@@ -9,6 +9,7 @@ public class ExceptionHandlingTest extends TestCase {
 
     String testMsg;
     private ExceptionHandling eh;
+
     protected void setUp() throws Exception {
         testMsg = "testMessage";
         eh = new ExceptionHandling();
@@ -19,12 +20,17 @@ public class ExceptionHandlingTest extends TestCase {
         super.tearDown();
     }
 
-    public void testThrow() throws Exception {
+//    public void testThrow() {
+//        try {
+//            eh.throwMethod(testMsg);
+//            fail();
+//        } catch (Exception e) {
+//            assertEquals(testMsg, e.getMessage());
+//        }
+//    }
 
-        eh.throwMethod();
-
-        assertEquals(2,eh.catchMethod());
-
+    public void testTryCatch(){
+        assertEquals(2, eh.catchMethod());
     }
 
 //    public void testTryCatch() {
