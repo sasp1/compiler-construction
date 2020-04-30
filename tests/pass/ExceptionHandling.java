@@ -1,33 +1,36 @@
 package pass;
 
-import java.io.IOException;
 import java.lang.Exception;
+import java.lang.System;
 
 public class ExceptionHandling {
-    public void throwMethod() throws Exception{
+
+    public static void main(String[] args) {
+        ExceptionHandling eh = new ExceptionHandling();
+        try {
+            int x = 5/0;
+        } catch (Exception e){
+            System.out.println("caught");
+        } finally {
+            System.out.println("finally");
+        }
+    }
+
+    public void throwMethod() throws Exception {
         throw new Exception("hej");
     }
 
     public int catchMethod() {
-        String hey;
-        hey = new String("hej");
-
-        int heey;
-        heey = 3;
-        boolean hej;
+        int i = 0;
 
         try {
-            int j = 0;
-            int jk = 0;
+            i = i + 1;
         } catch (Exception e) {
-            hej = 2==3;
-            heey = 2;
-            return 1;
+            return -1;
         }
         finally {
-            hej = false;
+            i = i + 1;
         }
-
-        return 0;
+        return i;
     }
 }

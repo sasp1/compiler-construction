@@ -54,7 +54,6 @@ public class JTryCatchStatement extends JStatement{
 //        String catchLabel = output.createLabel();
 //        String finallyLabel = output.createLabel();
         System.out.println(exceptionDeclaration.type().toString());
-        System.out.println("HEEEEJ");
 //        output.addLabel(tryStartLabel);
 //        output.addLabel(tryEndLabel);
 //        output.addLabel(catchLabel);
