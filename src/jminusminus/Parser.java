@@ -730,22 +730,22 @@ public class Parser {
 		} else if (have(FOR)) {
 			mustBe(LPAREN);
 			if (seeForEach()) {
-				JFormalParameter param = formalParameter();
+//				Type type = type();
+//				JVariableDeclarator init = variableDeclarator(type);
+				JExpression expression = expression();
 				mustBe(COLON);
-				JExpression id = expression();
+				JExpression expression1 = expression();
 				mustBe(RPAREN);
 				JStatement statement = statement();
-				//return new JForEachStatement(line, param, id, statement);
-				return new JForStatement(line, param, id, null, null, null, statement);
+				return new JForEachStatement(line, expression, expression1, statement);
 			} else {
 				JVariableDeclaration init = localVariableDeclarationStatement();
-				JExpression expr = expression();
+				JExpression condition = expression();
 				mustBe(SEMI);
 				JStatement upd = statementExpression();
 				mustBe(RPAREN);
 				JStatement statement = statement();
-				//return new JForLoopStatement(line, init, expr, upd, statement);
-				return new JForStatement(line, null, null, init, expr, upd, statement);
+				return new JForLoopStatement(line, init, condition, upd, statement);
 			}
 		}
 
@@ -911,6 +911,8 @@ public class Parser {
 		int line = scanner.token().line();
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
+		System.out.println("SEBA: "+see(ASSIGN));
+
 		JExpression initial = have(ASSIGN) ? variableInitializer(type) : null;
 		return new JVariableDeclarator(line, name, type, initial);
 	}
