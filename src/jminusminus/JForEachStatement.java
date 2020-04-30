@@ -29,13 +29,11 @@ public class JForEachStatement extends JStatement {
         context.addEntry(line, init.name(), defn);
 
         IDefn previousDefn = context.lookup(init.name());
-        if (previousDefn != null
-                && previousDefn instanceof LocalVariableDefn) {
+        if (previousDefn instanceof LocalVariableDefn) {
             JAST.compilationUnit.reportSemanticError(init.line(),
                     "The name " + init.name()
                             + " overshadows another local variable.");
         }
-
 
         iterable.analyze(context);
         statement.analyze(context);
