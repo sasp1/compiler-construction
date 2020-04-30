@@ -21,21 +21,12 @@ public class JForEachStatement extends JStatement {
 
     @Override
     public JAST analyze(Context context) {
-        init.analyze(context);
 
         int offset = ((LocalContext) context).nextOffset();
-        LocalVariableDefn defn = new LocalVariableDefn(init.type().resolve(
-                context), offset);
+        LocalVariableDefn defn = new LocalVariableDefn(init.type().resolve(context), offset);
+        defn.initialize();
         context.addEntry(line, init.name(), defn);
-
-        IDefn previousDefn = context.lookup(init.name());
-        if (previousDefn != null
-                && previousDefn instanceof LocalVariableDefn) {
-            JAST.compilationUnit.reportSemanticError(init.line(),
-                    "The name " + init.name()
-                            + " overshadows another local variable.");
-        }
-
+        init.analyze(context);
 
         iterable.analyze(context);
         statement.analyze(context);
