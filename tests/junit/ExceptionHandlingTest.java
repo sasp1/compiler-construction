@@ -20,17 +20,21 @@ public class ExceptionHandlingTest extends TestCase {
         super.tearDown();
     }
 
-//    public void testThrow() {
-//        try {
-//            eh.throwMethod(testMsg);
-//            fail();
-//        } catch (Exception e) {
-//            assertEquals(testMsg, e.getMessage());
-//        }
-//    }
+    public void testThrow() {
+        try {
+            eh.throwMethod(testMsg);
+            fail();
+        } catch (Exception e) {
+            assertEquals(testMsg, e.getMessage());
+        }
+    }
 
     public void testTryCatch(){
         assertEquals(2, eh.catchMethod());
+    }
+
+    public void testThrows(){
+        // TODO: Test throws explicitly
     }
 
 //    public void testTryCatch() {
