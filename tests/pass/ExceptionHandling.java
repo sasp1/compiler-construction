@@ -6,9 +6,9 @@ import java.lang.Throwable;
 
 public class ExceptionHandling {
 
-//    public void throwMethod(String msg) throws Exception{
-//        throw new Exception(msg);
-//    }
+    public void throwMethod(String msg) throws Exception{
+        throw new Exception(msg);
+    }
 
     int i;
     public ExceptionHandling() {
