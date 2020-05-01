@@ -28,11 +28,16 @@ public class JForEachStatement extends JStatement {
         defn.initialize();
         context.addEntry(line, init.name(), defn);
 
-        System.out.println("type: "+init.type());
 
         init.analyze(context);
 
-//        System.out.println("reaching ehre?");
+        IDefn previousDefn = context.lookup(init.name());
+        if (previousDefn instanceof LocalVariableDefn) {
+            JAST.compilationUnit.reportSemanticError(init.line(),
+                    "The name " + init.name()
+                            + " overshadows another local variable.");
+        }
+
         iterable.analyze(context);
 //        System.out.println("reaching ehre?");
         statement.analyze(context);
