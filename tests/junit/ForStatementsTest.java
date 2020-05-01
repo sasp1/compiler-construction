@@ -16,10 +16,9 @@ public class ForStatementsTest extends TestCase {
 	}
 	
 	public void testForStatement() {
-
-
-//		assertEquals(15, forStatement.forLoop(0));
-		assertEquals(6, forStatement.foreach(0));
+		//		assertEquals(15, forStatement.forLoop(0));
+		String[] arr = new String[]{"23"};
+		assertEquals("1", forStatement.foreach("1", arr));
 	}
 
 }

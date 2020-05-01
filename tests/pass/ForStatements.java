@@ -1,21 +1,15 @@
 package pass;
-
+import java.lang.System;
 public class ForStatements {
 
-//	public int forLoop(int acc) {
-//		for (int i = 5; i > 0; i--) {
-//			acc = acc + i;
-//		}
-//		return acc;
-//	}
+	public static void main(String[] args) {
 
-	public int foreach(int acc) {
-		int[] array = {0,1,2,3};
-		for (int i : array) {
-			acc = acc + i;
-		}
-		return acc;
 	}
 
-
+	public String foreach(String str, String[] arr) {
+		for (String i : arr) {
+			str = i + str;
+		}
+		return str;
+	}
 }
