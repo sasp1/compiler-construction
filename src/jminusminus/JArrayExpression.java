@@ -11,28 +11,29 @@ import static jminusminus.CLConstants.*;
  */
 
 class JArrayExpression
-    extends JExpression implements JLhs {
+        extends JExpression implements JLhs {
 
-    /** The array. */
+    /**
+     * The array.
+     */
     private JExpression theArray;
 
-    /** The array index expression. */
+    /**
+     * The array index expression.
+     */
     private JExpression indexExpr;
 
     /**
      * Construct an AST node for an array indexing operation.
-     * 
-     * @param line
-     *                line in which the operation occurs in the
-     *                source file.
-     * @param theArray
-     *                the array we're indexing.
-     * @param indexExpr
-     *                the index expression.
+     *
+     * @param line      line in which the operation occurs in the
+     *                  source file.
+     * @param theArray  the array we're indexing.
+     * @param indexExpr the index expression.
      */
 
     public JArrayExpression(int line, JExpression theArray,
-        JExpression indexExpr) {
+                            JExpression indexExpr) {
         super(line);
         this.theArray = theArray;
         this.indexExpr = indexExpr;
@@ -41,9 +42,8 @@ class JArrayExpression
     /**
      * Perform semantic analysis on an array indexing expression
      * such as A[i].
-     * 
-     * @param context
-     *                context in which names are resolved.
+     *
+     * @param context context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
      */
 
@@ -52,7 +52,7 @@ class JArrayExpression
         indexExpr = (JExpression) indexExpr.analyze(context);
         if (!(theArray.type().isArray())) {
             JAST.compilationUnit.reportSemanticError(line(),
-                "attempt to index a non-array object");
+                    "attempt to index a non-array object");
             this.type = Type.ANY;
         } else {
             this.type = theArray.type().componentType();
@@ -64,9 +64,8 @@ class JArrayExpression
     /**
      * Analyzing the array expression as an Lvalue is like
      * analyzing it for its Rvalue.
-     * 
-     * @param context
-     *                context in which names are resolved.
+     *
+     * @param context context in which names are resolved.
      */
 
     public JExpression analyzeLhs(Context context) {
@@ -78,10 +77,9 @@ class JArrayExpression
      * Perform code generation from the JArrayExpression using
      * the specified code emitter. Generate the code necessary
      * for loading the Rvalue.
-     * 
-     * @param output
-     *                the code emitter (basically an abstraction
-     *                for producing the .class file).
+     *
+     * @param output the code emitter (basically an abstraction
+     *               for producing the .class file).
      */
 
     public void codegen(CLEmitter output) {
@@ -89,9 +87,9 @@ class JArrayExpression
         indexExpr.codegen(output);
         if (type == Type.INT) {
             output.addNoArgInstruction(IALOAD);
-	} else if (type == Type.BOOLEAN) {
+        } else if (type == Type.BOOLEAN) {
             output.addNoArgInstruction(BALOAD);
-	} else if (type == Type.CHAR) {
+        } else if (type == Type.CHAR) {
             output.addNoArgInstruction(CALOAD);
         } else if (!type.isPrimitive()) {
             output.addNoArgInstruction(AALOAD);
@@ -102,10 +100,9 @@ class JArrayExpression
      * Generate the code required for setting up an Lvalue, eg
      * for use in an assignment. Here, this requires loading the
      * array and the index.
-     * 
-     * @param output
-     *                the code emitter (basically an abstraction
-     *                for producing the .class file).
+     *
+     * @param output the code emitter (basically an abstraction
+     *               for producing the .class file).
      */
 
     public void codegenLoadLhsLvalue(CLEmitter output) {
@@ -120,10 +117,9 @@ class JArrayExpression
      * variable, eg for use in a +=. Here, this requires
      * duplicating the array and the index on the stack and doing
      * an array load.
-     * 
-     * @param output
-     *                the code emitter (basically an abstraction
-     *                for producing the .class file).
+     *
+     * @param output the code emitter (basically an abstraction
+     *               for producing the .class file).
      */
 
     public void codegenLoadLhsRvalue(CLEmitter output) {
@@ -134,12 +130,12 @@ class JArrayExpression
         } else {
             output.addNoArgInstruction(DUP2);
         }
-	if (type == Type.INT) {
-	    output.addNoArgInstruction(IALOAD);
-	} else if (type == Type.BOOLEAN) {
-	    output.addNoArgInstruction(BALOAD);
-	} else if (type == Type.CHAR) {
-	    output.addNoArgInstruction(CALOAD);
+        if (type == Type.INT) {
+            output.addNoArgInstruction(IALOAD);
+        } else if (type == Type.BOOLEAN) {
+            output.addNoArgInstruction(BALOAD);
+        } else if (type == Type.CHAR) {
+            output.addNoArgInstruction(CALOAD);
         } else if (!type.isPrimitive()) {
             output.addNoArgInstruction(AALOAD);
         }
@@ -151,10 +147,9 @@ class JArrayExpression
      * expression, as in a[i] = x = <expr> or x = y--. Here this
      * means copying it down two locations (beneath the array and
      * index).
-     * 
-     * @param output
-     *                the code emitter (basically an abstraction
-     *                for producing the .class file).
+     *
+     * @param output the code emitter (basically an abstraction
+     *               for producing the .class file).
      */
 
     public void codegenDuplicateRvalue(CLEmitter output) {
@@ -165,19 +160,18 @@ class JArrayExpression
     /**
      * Generate the code required for doing the actual
      * assignment. Here, this requires an array store.
-     * 
-     * @param output
-     *                the code emitter (basically an abstraction
-     *                for producing the .class file).
+     *
+     * @param output the code emitter (basically an abstraction
+     *               for producing the .class file).
      */
 
     public void codegenStore(CLEmitter output) {
-	if (type == Type.INT) {
-	    output.addNoArgInstruction(IASTORE);
-	} else if (type == Type.BOOLEAN) {
-	    output.addNoArgInstruction(BASTORE);
-	} else if (type == Type.CHAR) {
-	    output.addNoArgInstruction(CASTORE);
+        if (type == Type.INT) {
+            output.addNoArgInstruction(IASTORE);
+        } else if (type == Type.BOOLEAN) {
+            output.addNoArgInstruction(BASTORE);
+        } else if (type == Type.CHAR) {
+            output.addNoArgInstruction(CASTORE);
         } else if (!type.isPrimitive()) {
             output.addNoArgInstruction(AASTORE);
         }
