@@ -14,13 +14,13 @@ public class ForStatementsTest extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-
 	public void testForEachCollection() {
 
 //		assertEquals(15, forStatement.forLoop(0));
 		int n = forStatement.forEachCollection(0);
 		assertEquals(6, n);
 //		assertEquals(0, forStatement.foreach(0));
+
 	}
 
 	public void testForEachArray(){

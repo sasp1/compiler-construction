@@ -72,38 +72,6 @@ public class JForEachStatement extends JStatement {
         output.addBranchInstruction(CLConstants.GOTO, start);
         output.addLabel(end);
 
-//        initializer.codegen(output);
-//        init.codegen(output);
-
-//        output.addMemberAccessInstruction(INVOKEINTERFACE, iterable.type().componentType().jvmName(), "iterator", "()Z");
-//        output.addMemberAccessInstruction(INVOKESTATIC, iterable.type().componentType().jvmName(), "iterator", "()V");
-
-
-//        String endLabel = output.createLabel();
-//        String topLabel = output.createLabel();
-//
-//        init.codegen(output);
-//
-//        output.addLabel(topLabel);
-//        cond.codegen(output, endLabel, false); // maybe more?
-//        statement.codegen(output);
-//        update.codegen(output);
-//        output.addBranchInstruction(GOTO, topLabel);
-//        output.addLabel(endLabel);
-
-
-//        String topLabel = output.createLabel();
-//        String endLabel = output.createLabel();
-//
-//        output.addLabel(topLabel);
-//        init.codegen(output);
-//        iterable.codegen(output, endLabel, false);
-//        statement.codegen(output);
-//
-//        output.addBranchInstruction(GOTO, topLabel);
-//
-//        output.addLabel(endLabel);
-
 //			TODO: I would assume it is something like this, but it keeps loading from the array and goes out of bounds:
 //			 "foreach signature: (I)I) Expecting to find integer on stack". Need to find out how to stop it when the
 //			 empty

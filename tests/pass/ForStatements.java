@@ -1,15 +1,7 @@
 package pass;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ForStatements {
-
-//	public int forLoop(int acc) {
-//		for (int i = 5; i > 0; i--) {
-//			acc = acc + i;
-//		}
-//		return acc;
-//	}
 
 	public int forEachCollection(int acc) {
 		ArrayList array = new ArrayList();
