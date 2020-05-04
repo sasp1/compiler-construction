@@ -81,7 +81,6 @@ class JVariableDeclaration extends JStatement {
 
             // Then declare it in the local context
             context.addEntry(decl.line(), decl.name(), defn);
-
             // All initializations must be turned into assignment
             // statements and analyzed
             if (decl.initializer() != null) {

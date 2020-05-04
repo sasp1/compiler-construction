@@ -4,7 +4,6 @@ package junit;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import pass.Block;
 
 /**
  * JUnit test suite for running the j-- programs in tests/pass.
@@ -43,7 +42,7 @@ public class JMinusMinusTestRunner {
 //
 		suite.addTestSuite(LogicalOrTest.class); // step 5
 		suite.addTestSuite(BlockTest.class); // step 5
-//		suite.addTestSuite(ForStatementsTest.class);
+		suite.addTestSuite(ForStatementsTest.class);
 		suite.addTestSuite(ExceptionHandlingTest.class);
 		suite.addTestSuite(ConditionalTest.class);
 		return suite;

@@ -28,7 +28,6 @@ public class JTryCatchStatement extends JStatement{
         this.exceptionDeclaration = exceptionDeclaration;
         this.catchBody = catchBody;
         this.finallyBody = finallyBody;
-
     }
 
     @Override
