@@ -18,7 +18,6 @@ public class ExceptionHandling {
 
     public int catchMethod() {
         i = 0;
-        int j = 0;
 
         try {
             i = 1;
@@ -30,6 +29,24 @@ public class ExceptionHandling {
 
         }
 
+        return i;
+    }
+
+    public int throwsMethod(String msg) throws Exception {
+        throw new Exception(msg);
+        return 0;
+    }
+
+    public int finallyMethodReturns2(int i) {
+
+        try {
+            throw new Exception("");
+            i = -1;
+        } catch (Exception e) {
+            i = -2;
+        } finally {
+            i = 2;
+        }
         return i;
     }
 }

@@ -28,7 +28,6 @@ public class JTryCatchStatement extends JStatement{
         this.exceptionDeclaration = exceptionDeclaration;
         this.catchBody = catchBody;
         this.finallyBody = finallyBody;
-
     }
 
     @Override
@@ -69,7 +68,7 @@ public class JTryCatchStatement extends JStatement{
         output.addLabel(endLabel);
 //        output.addBranchInstruction(CLConstants.GOTO, handlerLabel);
         if (finallyBody != null) {
-
+            finallyBody.codegen(output);
         }
 
         output.addExceptionHandler(tryStartLabel, tryEndLabel, handlerLabel, exceptionDeclaration.type().jvmName());

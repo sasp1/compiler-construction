@@ -71,7 +71,7 @@
         <java classname="jminusminus/Main"
               dir="classes"
               fork="true">
-            <arg value="-a"/> <!-- Change the argument -->
+            <arg value="-pa"/> <!-- Change the argument -->
             <arg value="../tests/pass/ForStatements.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
@@ -80,8 +80,9 @@
         <java classname="jminusminus/Main"
               dir="classes"
               fork="true">
-<!--              <arg value="-t"/> &lt;!&ndash; Change the argument &ndash;&gt;-->
-              <arg value="../tests/pass/Division.java"/> <!-- Change the Division to other file name -->
+
+<!--              <arg value="-a"/> &lt;!&ndash; Change the argument &ndash;&gt;-->
+              <arg value="../tests/pass/ForStatements.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
 

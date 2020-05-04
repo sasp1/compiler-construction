@@ -4,6 +4,8 @@ package jminusminus;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import static jminusminus.TokenKind.*;
 
 /**
@@ -173,6 +175,7 @@ public class Parser {
 	 */
 
 	private boolean seeCast() {
+
 		scanner.recordPosition();
 		if (!have(LPAREN)) {
 			scanner.returnToPosition();
@@ -730,25 +733,23 @@ public class Parser {
 		} else if (have(FOR)) {
 			mustBe(LPAREN);
 			if (seeForEach()) {
-				JFormalParameter param = formalParameter();
+				Type type = type();
+				JVariableDeclarator init = variableDeclarator(type);
 				mustBe(COLON);
-				JExpression id = expression();
+				JExpression iterable = primary();
 				mustBe(RPAREN);
-				JStatement statement = statement();
-				//return new JForEachStatement(line, param, id, statement);
-				return new JForStatement(line, param, id, null, null, null, statement);
+				JStatement body = statement();
+				return new JForEachStatement(line, init, iterable, body);
 			} else {
 				JVariableDeclaration init = localVariableDeclarationStatement();
-				JExpression expr = expression();
+				JExpression condition = expression();
 				mustBe(SEMI);
 				JStatement upd = statementExpression();
 				mustBe(RPAREN);
 				JStatement statement = statement();
-				//return new JForLoopStatement(line, init, expr, upd, statement);
-				return new JForStatement(line, null, null, init, expr, upd, statement);
+				return new JForLoopStatement(line, init, condition, upd, statement);
 			}
 		}
-
 		else if (have(IF)) {
 			JExpression test = parExpression();
 			JStatement consequent = statement();
@@ -912,6 +913,7 @@ public class Parser {
 		int line = scanner.token().line();
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
+
 		JExpression initial = have(ASSIGN) ? variableInitializer(type) : null;
 		return new JVariableDeclarator(line, name, type, initial);
 	}
@@ -1219,6 +1221,8 @@ public class Parser {
 		JExpression lhs = shiftExpression();
 		if (have(GT)) {
 			return new JGreaterThanOp(line, lhs, shiftExpression());
+		} else if (have(LT)) {
+			return new JLessThanOp(line, lhs, shiftExpression());
 		} else if (have(LE)) {
 			return new JLessEqualOp(line, lhs, shiftExpression());
 		} else if (have(INSTANCEOF)) {
