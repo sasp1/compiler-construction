@@ -55,6 +55,7 @@ class JCastOp extends JExpression {
 
     public JExpression analyze(Context context) {
         expr = (JExpression) expr.analyze(context);
+
         type = cast = cast.resolve(context);
         if (cast.equals(expr.type())) {
             converter = Converter.Identity;

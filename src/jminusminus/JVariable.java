@@ -86,8 +86,7 @@ class JVariable extends JExpression implements JLhs {
                 return (JExpression) newTree.analyze(context);
             }
         } else {
-            if (!analyzeLhs && iDefn instanceof LocalVariableDefn
-                    && !((LocalVariableDefn) iDefn).isInitialized()) {
+            if (!analyzeLhs && iDefn instanceof LocalVariableDefn && !((LocalVariableDefn) iDefn).isInitialized()) {
                 JAST.compilationUnit.reportSemanticError(line, "Variable "
                         + name + " might not have been initialized");
             }
