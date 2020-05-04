@@ -12,10 +12,10 @@ public class JForEachStatement extends JStatement {
     private JExpression condition;
     private JVariableDeclaration next;
     private boolean isCollection = false;
-    private JVariable iterator;
-    private JVariable incrementer;
     private JExpression incExpr;
     private JVariableDeclaration aPrime;
+    private JVariableDeclaration incrementerInit;
+    private JVariableDeclaration arrayLength;
 
     protected JForEachStatement(int line, JVariableDeclarator init, JExpression list, JStatement body) {
         super(line);
@@ -30,9 +30,9 @@ public class JForEachStatement extends JStatement {
 
         list.analyze(context);
 
-        if (Type.ITERABLE.isJavaAssignableFrom(list.type())){
+        if (Type.ITERABLE.isJavaAssignableFrom(list.type())) {
             isCollection = true;
-        } else if (!list.type().isArray()){
+        } else if (!list.type().isArray()) {
             JAST.compilationUnit.reportSemanticError(line, "Variable must have have type iterable or array: \"%s\"", list.type().toString());
         }
 
@@ -55,51 +55,43 @@ public class JForEachStatement extends JStatement {
             next = new JVariableDeclaration(line, null, vars);
             next.analyze(context);
 
-        } else  {
-//            TODO: Needs to be implemented for regular arrays
-//            JMessageExpression method = new JMessageExpression(line, list, "iterator", new ArrayList<>());
+        } else {
 
-            // T[] a' = Expression
+            // T[] a' = Expression - a': #3, Expression: #2
             ArrayList<JVariableDeclarator> aPrimeVars = new ArrayList<>();
-            JVariable arrayVar = new JVariable(line, "@" + LocalDateTime.now());
+            JVariable arrayVar = new JVariable(line, LocalDateTime.now().toString());
             aPrimeVars.add(new JVariableDeclarator(line, arrayVar.name(), list.type(), list));
             aPrime = new JVariableDeclaration(line, null, aPrimeVars);
             aPrime.analyze(context);
 //            arrayVar.type().resolve(context);
 
-            // int i' = 0;
+            // int i' = 0; #4
             ArrayList<JVariableDeclarator> iPrimeVars = new ArrayList<>();
-            incrementer = new JVariable(line, "@" + LocalDateTime.now());
+            JVariable incrementer = new JVariable(line, "@" + LocalDateTime.now());
             iPrimeVars.add(new JVariableDeclarator(line, incrementer.name(), Type.INT, new JLiteralInt(line, "0")));
-            JVariableDeclaration incrementerInit = new JVariableDeclaration(line, null, iPrimeVars);
-            incrementerInit.analyze(context);
+            initializer = new JVariableDeclaration(line, null, iPrimeVars);
+            initializer.analyze(context);
 
             // Type Identifier = a'[i'];
             ArrayList<JVariableDeclarator> identifierVars = new ArrayList<>();
-            iterator = new JVariable(line, init.name());
+            JVariable iterator = new JVariable(line, init.name());
             identifierVars.add(new JVariableDeclarator(line, iterator.name(), init.type(), new JArrayExpression(line, list, incrementer)));
-            initializer = new JVariableDeclaration(line, null, identifierVars);
-            initializer.analyze(context);
+            next = new JVariableDeclaration(line, null, identifierVars);
+            next.analyze(context);
 
             // i++;
-            incExpr = new JPostIncrementOp(line, incrementer);
+            incExpr = new JPreIncrementOp(line, incrementer);
+            incExpr.isStatementExpression = true; // Because it has side effect
             incExpr.analyze(context);
 
             // Condition
             // i' < a'.length
-            JFieldSelection arrayLength = new JFieldSelection(line, list, "length");
-            condition = new JLessThanOp(line, incrementer, arrayLength);
+            JFieldSelection arrayLengthExpr = new JFieldSelection(line, arrayVar, "length");
+
+            condition = new JLessThanOp(line, incrementer, arrayLengthExpr);
             condition.analyze(context);
-
-//            JArrayExpression arrayAtIndex = new JArrayExpression(line, list, new JLiteralInt(line, ));
-//            init.setInitializer();
-//            JVariable incrementerVar = new JVariable(line, "@" + LocalDateTime.now());
-//
-//            identifierVars.add(new JVariableDeclarator(line, incrementerVar.name(), Type.INT, new JLiteralInt(line, "0")));
-//            JVariableDeclaration incrementerInit = new JVariableDeclaration(line, null, identifierVars);
-//            incrementerInit.analyze(context);
-
         }
+
 
         body.analyze(context);
 //        init.type().mustMatchExpected(line, iterable.type().componentType());
@@ -110,38 +102,24 @@ public class JForEachStatement extends JStatement {
     @Override
     public void codegen(CLEmitter output) {
         // New variable I i = Expression.iterator(); with type iterable.iterator()
+        if (!isCollection)
+            aPrime.codegen(output);
+
         String start = output.createLabel();
         String end = output.createLabel();
-//        initializer.codegen(output);
-        aPrime.codegen(output);
+
+        initializer.codegen(output);
         output.addLabel(start);
-
         condition.codegen(output, end, false);
-        if (isCollection){
-            next.codegen(output);
-        } else {
-            // Load array ref onto the stack
-            list.codegen(output);
-            // Load int i value onto the stack.
-            incrementer.codegen(output);
-            // aaload, to load value of array at index i to the stack
-            output.addNoArgInstruction(CLConstants.AALOAD);
-            // astore to store value from stack into identifier
-            iterator.codegenStore(output);
-        }
-
+        next.codegen(output);
         body.codegen(output);
-        if (!isCollection){
-            // i++;
-//            incExpr.codegen(output);
-        }
+
+        if (!isCollection)
+            incExpr.codegen(output);
+
         output.addBranchInstruction(CLConstants.GOTO, start);
         output.addLabel(end);
 
-
-//			TODO: I would assume it is something like this, but it keeps loading from the array and goes out of bounds:
-//			 "foreach signature: (I)I) Expecting to find integer on stack". Need to find out how to stop it when the
-//			 empty
     }
 
     @Override
