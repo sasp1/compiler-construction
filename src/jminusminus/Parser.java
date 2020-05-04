@@ -750,7 +750,6 @@ public class Parser {
 				return new JForLoopStatement(line, init, condition, upd, statement);
 			}
 		}
-
 		else if (have(IF)) {
 			JExpression test = parExpression();
 			JStatement consequent = statement();
@@ -1222,6 +1221,8 @@ public class Parser {
 		JExpression lhs = shiftExpression();
 		if (have(GT)) {
 			return new JGreaterThanOp(line, lhs, shiftExpression());
+		} else if (have(LT)) {
+			return new JLessThanOp(line, lhs, shiftExpression());
 		} else if (have(LE)) {
 			return new JLessEqualOp(line, lhs, shiftExpression());
 		} else if (have(INSTANCEOF)) {

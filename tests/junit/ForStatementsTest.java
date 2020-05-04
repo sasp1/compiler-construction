@@ -17,7 +17,6 @@ public class ForStatementsTest extends TestCase {
 		super.tearDown();
 	}
 	public void testForEachCollection() {
-
 		ArrayList<String> numbers = new ArrayList<>();
 		numbers.add("1");
 		numbers.add("2");
@@ -28,5 +27,15 @@ public class ForStatementsTest extends TestCase {
 	public void testForEachArray(){
 		int n = forStatement.forEachArray(0, new int[] {1,2, 3});
 		assertEquals(6, n);
+	}
+
+	public void testSumArray(){
+		int n = forStatement.sumArray(0, new int[] {3, 14, 21});
+		assertEquals(n, 3+14+21);
+	}
+
+	public void testStringBuilderArray(){
+		String str = forStatement.stringBuilderArray("vi", new String[] {" ", "får", " ", "tolv"} );
+		assertEquals(str, "vi får tolv");
 	}
 }

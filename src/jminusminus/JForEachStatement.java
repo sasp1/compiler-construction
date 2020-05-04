@@ -14,8 +14,6 @@ public class JForEachStatement extends JStatement {
     private boolean isCollection = false;
     private JExpression incExpr;
     private JVariableDeclaration aPrime;
-    private JVariableDeclaration incrementerInit;
-    private JVariableDeclaration arrayLength;
 
     protected JForEachStatement(int line, JVariableDeclarator init, JExpression list, JStatement body) {
         super(line);
