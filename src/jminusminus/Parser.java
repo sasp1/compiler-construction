@@ -735,7 +735,6 @@ public class Parser {
 			if (seeForEach()) {
 				Type type = type();
 				JVariableDeclarator init = variableDeclarator(type);
-//				JExpression expression = variableDeclarator();
 				mustBe(COLON);
 				JExpression iterable = primary();
 				mustBe(RPAREN);
