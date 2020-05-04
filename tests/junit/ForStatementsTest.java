@@ -35,7 +35,7 @@ public class ForStatementsTest extends TestCase {
 	}
 
 	public void testStringBuilderArray(){
-		String str = forStatement.stringBuilderArray("vi", new String[] {" ", "får", " ", "tolv"} );
-		assertEquals(str, "vi får tolv");
+		String str = forStatement.stringBuilderArray("vi", new String[] {" ", "faar", " ", "tolv"} );
+		assertEquals(str, "vi faar tolv");
 	}
 }
