@@ -2,6 +2,8 @@ package jminusminus;
 
 import java.util.function.Function;
 
+import static jminusminus.CLConstants.*;
+
 public class JPreDecrementOp extends JUnaryExpression {
 
     /**
@@ -36,6 +38,26 @@ public class JPreDecrementOp extends JUnaryExpression {
 
     @Override
     public void codegen(CLEmitter output) {
-
+        if (arg instanceof JVariable) {
+            // A local variable; otherwise analyze() would
+            // have replaced it with an explicit field selection.
+            int offset = ((LocalVariableDefn) ((JVariable) arg).iDefn())
+                    .offset();
+            output.addIINCInstruction(offset, -1);
+            if (!isStatementExpression) {
+                // Loading its original rvalue
+                arg.codegen(output);
+            }
+        } else {
+            ((JLhs) arg).codegenLoadLhsLvalue(output);
+            ((JLhs) arg).codegenLoadLhsRvalue(output);
+            output.addNoArgInstruction(ICONST_1);
+            output.addNoArgInstruction(ISUB);
+            if (!isStatementExpression) {
+                // Loading its original rvalue
+                ((JLhs) arg).codegenDuplicateRvalue(output);
+            }
+            ((JLhs) arg).codegenStore(output);
+        }
     }
 }
