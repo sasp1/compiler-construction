@@ -5,4 +5,13 @@ public class PreDecrement {
         --a;
         return a;
     }
+
+    public int preDecInExpressionReturnsX(int i) {
+        return --i;
+    }
+
+    public int preDecInt(int i) {
+        --i;
+        return i;
+    }
 }
