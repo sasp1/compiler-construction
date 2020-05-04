@@ -68,7 +68,7 @@ public class JTryCatchStatement extends JStatement{
         output.addLabel(endLabel);
 //        output.addBranchInstruction(CLConstants.GOTO, handlerLabel);
         if (finallyBody != null) {
-
+            finallyBody.codegen(output);
         }
 
         output.addExceptionHandler(tryStartLabel, tryEndLabel, handlerLabel, exceptionDeclaration.type().jvmName());
