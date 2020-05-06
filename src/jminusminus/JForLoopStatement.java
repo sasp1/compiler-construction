@@ -16,13 +16,22 @@ public class JForLoopStatement extends JStatement {
         this.update = update;
         this.statement = statement;
     }
+
     @Override
     public JAST analyze(Context context) {
-        init = (JVariableDeclaration) init.analyze(context);
-        cond = cond.analyze(context);
-        cond.type().mustMatchExpected(line, Type.BOOLEAN);
-        update = (JStatement) update.analyze(context);
-        statement = (JStatement) statement.analyze(context);
+        Context localContext = new LocalContext(context);
+        if (init != null)
+            init.analyze(localContext);
+
+        if (cond != null) {
+            cond.analyze(localContext);
+            cond.type().mustMatchExpected(line, Type.BOOLEAN);
+        }
+
+        if (update != null)
+            update.analyze(localContext);
+
+        statement.analyze(localContext);
         return this;
     }
 
@@ -31,11 +40,19 @@ public class JForLoopStatement extends JStatement {
         String endLabel = output.createLabel();
         String topLabel = output.createLabel();
 
-        init.codegen(output);
+        if (init != null)
+            init.codegen(output);
+
         output.addLabel(topLabel);
-        cond.codegen(output, endLabel, false); // maybe more?
+
+        if (cond != null)
+            cond.codegen(output, endLabel, false); // maybe more?
+
         statement.codegen(output);
-        update.codegen(output);
+
+        if (update != null)
+            update.codegen(output);
+
         output.addBranchInstruction(GOTO, topLabel);
         output.addLabel(endLabel);
     }

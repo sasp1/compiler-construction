@@ -37,6 +37,20 @@ public class ExceptionHandling {
         return 0;
     }
 
+    public void testLocalContext(){
+        try {
+            int i = 3;
+        } catch (Exception e){
+            int i = 3;
+        }
+
+        try {
+            int i = 3;
+        } catch (Exception e ) {
+            int i = 3;
+        }
+    }
+
     public int finallyMethodReturns2(int i) {
 
         try {

@@ -741,11 +741,22 @@ public class Parser {
 				JStatement body = statement();
 				return new JForEachStatement(line, init, iterable, body);
 			} else {
-				JVariableDeclaration init = localVariableDeclarationStatement();
-				JExpression condition = expression();
-				mustBe(SEMI);
-				JStatement upd = statementExpression();
-				mustBe(RPAREN);
+				JVariableDeclaration init = null;
+				if (!have(SEMI)) {
+					init = localVariableDeclarationStatement();
+				}
+
+				JExpression condition = null;
+				if (!have(SEMI)) {
+					condition = expression();
+					mustBe(SEMI);
+				}
+				JStatement upd = null;
+				if (!have(RPAREN)) {
+					upd = statementExpression();
+					mustBe(RPAREN);
+				}
+
 				JStatement statement = statement();
 				return new JForLoopStatement(line, init, condition, upd, statement);
 			}
@@ -1079,7 +1090,7 @@ public class Parser {
 				|| expr instanceof JPostIncrementOp || expr instanceof JPreDecrementOp
 				|| expr instanceof JMessageExpression || expr instanceof JSuperConstruction
 				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp
-				|| expr instanceof JThrowExpression) {
+				|| expr instanceof JThrowExpression || expr instanceof JBreak) {
 			// So as not to save on stack
 			expr.isStatementExpression = true;
 		} else {
