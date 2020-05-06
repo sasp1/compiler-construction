@@ -80,6 +80,7 @@
         <java classname="jminusminus/Main"
               dir="classes"
               fork="true">
+
 <!--              <arg value="-a"/> &lt;!&ndash; Change the argument &ndash;&gt;-->
               <arg value="../tests/pass/ForStatements.java"/> <!-- Change the Division to other file name -->
         </java>
