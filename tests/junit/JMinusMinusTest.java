@@ -81,7 +81,13 @@ public class JMinusMinusTest extends TestCase {
 
                 // true only if all tests fail
 
+                if (!Main.errorHasOccurred()) {
+                    System.out.println("ERROR HERE");
+                    System.out.println(files[i]);
+                }
+
                 errorHasOccurred &= Main.errorHasOccurred();
+
 
             }
         }
