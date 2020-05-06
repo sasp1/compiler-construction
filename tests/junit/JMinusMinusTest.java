@@ -99,6 +99,7 @@ public class JMinusMinusTest extends TestCase {
 
         // We want all tests to fail
         assertTrue(errorHasOccurred);
+
     }
 
     /**
