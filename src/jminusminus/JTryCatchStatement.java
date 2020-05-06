@@ -72,7 +72,6 @@ public class JTryCatchStatement extends JStatement{
         }
 
         output.addExceptionHandler(tryStartLabel, tryEndLabel, handlerLabel, exceptionDeclaration.type().jvmName());
-
     }
 
     @Override

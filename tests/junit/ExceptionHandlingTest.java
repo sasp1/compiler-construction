@@ -8,6 +8,7 @@ import java.io.IOException;
 public class ExceptionHandlingTest extends TestCase {
 
     String testMsg;
+
     private ExceptionHandling eh;
 
     protected void setUp() throws Exception {
@@ -42,7 +43,6 @@ public class ExceptionHandlingTest extends TestCase {
         } catch (Exception e) {
             eMsg = e.getMessage();
         }
-
         assertEquals("hej", eMsg);
     }
 
