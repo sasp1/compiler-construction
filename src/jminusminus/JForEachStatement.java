@@ -25,8 +25,10 @@ public class JForEachStatement extends JStatement {
 
     @Override
     public JAST analyze(Context context) {
+        Context localContext = new LocalContext(context);
 
-        list.analyze(context);
+
+        list.analyze(localContext);
 
         if (Type.ITERABLE.isJavaAssignableFrom(list.type())) {
             isCollection = true;
@@ -37,21 +39,21 @@ public class JForEachStatement extends JStatement {
         if (isCollection) {
             JMessageExpression method = new JMessageExpression(line, list, "iterator", new ArrayList<>());
             ArrayList<JVariableDeclarator> variables = new ArrayList<>();
-            method.analyze(context);
+            method.analyze(localContext);
             JVariable iterator = new JVariable(line, "@" + LocalDateTime.now()); // Unique name since variable name @ is not allowed
             variables.add(new JVariableDeclarator(line, iterator.name(), method.type(), method));
             initializer = new JVariableDeclaration(line, null, variables);
-            initializer.analyze(context);
+            initializer.analyze(localContext);
 
             condition = new JMessageExpression(line, iterator,
                     "hasNext", new ArrayList<>());
-            condition.analyze(context);
+            condition.analyze(localContext);
 
             init.setInitializer(new JMessageExpression(line, iterator, "next", new ArrayList<>()));
             ArrayList<JVariableDeclarator> vars = new ArrayList<>();
             vars.add(init);
             next = new JVariableDeclaration(line, null, vars);
-            next.analyze(context);
+            next.analyze(localContext);
 
         } else {
 
@@ -60,38 +62,38 @@ public class JForEachStatement extends JStatement {
             JVariable arrayVar = new JVariable(line, LocalDateTime.now().toString());
             aPrimeVars.add(new JVariableDeclarator(line, arrayVar.name(), list.type(), list));
             aPrime = new JVariableDeclaration(line, null, aPrimeVars);
-            aPrime.analyze(context);
-//            arrayVar.type().resolve(context);
+            aPrime.analyze(localContext);
+//            arrayVar.type().resolve(localContext);
 
             // int i' = 0; #4
             ArrayList<JVariableDeclarator> iPrimeVars = new ArrayList<>();
             JVariable incrementer = new JVariable(line, "@" + LocalDateTime.now());
             iPrimeVars.add(new JVariableDeclarator(line, incrementer.name(), Type.INT, new JLiteralInt(line, "0")));
             initializer = new JVariableDeclaration(line, null, iPrimeVars);
-            initializer.analyze(context);
+            initializer.analyze(localContext);
 
             // Type Identifier = a'[i'];
             ArrayList<JVariableDeclarator> identifierVars = new ArrayList<>();
             JVariable iterator = new JVariable(line, init.name());
             identifierVars.add(new JVariableDeclarator(line, iterator.name(), init.type(), new JArrayExpression(line, list, incrementer)));
             next = new JVariableDeclaration(line, null, identifierVars);
-            next.analyze(context);
+            next.analyze(localContext);
 
             // i++;
             incExpr = new JPreIncrementOp(line, incrementer);
             incExpr.isStatementExpression = true; // Because it has side effect
-            incExpr.analyze(context);
+            incExpr.analyze(localContext);
 
             // Condition
             // i' < a'.length
             JFieldSelection arrayLengthExpr = new JFieldSelection(line, arrayVar, "length");
 
             condition = new JLessThanOp(line, incrementer, arrayLengthExpr);
-            condition.analyze(context);
+            condition.analyze(localContext);
         }
 
 
-        body.analyze(context);
+        body.analyze(localContext);
 //        init.type().mustMatchExpected(line, iterable.type().componentType());
 
         return this;

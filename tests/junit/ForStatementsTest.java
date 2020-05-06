@@ -38,4 +38,21 @@ public class ForStatementsTest extends TestCase {
 		String str = forStatement.stringBuilderArray("vi", new String[] {" ", "faar", " ", "tolv"} );
 		assertEquals(str, "vi faar tolv");
 	}
+
+//	public void testForWithoutCondition(){
+//		assertEquals(10, forStatement.forLoopWithoutCondition_adds10(0));
+//	}
+	public void testForWithoutIncrementer(){
+		assertEquals(10, forStatement.foriLoopWithoutIncrementer_adds10(0));
+	}
+
+	public void testForiWithoutInitializer(){
+		assertEquals(10, forStatement.foriWithoutIncrementer_adds10(0));
+	}
+
+	public void testForiWithoutBody(){
+		assertEquals(10, forStatement.foriWithoutBody_adds10(0));
+	}
+
+
 }
