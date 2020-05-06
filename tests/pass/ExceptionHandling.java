@@ -1,33 +1,52 @@
 package pass;
 
-import java.io.IOException;
 import java.lang.Exception;
+import java.lang.System;
+import java.lang.Throwable;
 
 public class ExceptionHandling {
-    public void throwMethod() throws Exception{
-        throw new Exception("hej");
+
+    public void throwMethod(String msg) throws Exception{
+        throw new Exception(msg);
     }
 
-    public int catchMethod() {
-        String hey;
-        hey = new String("hej");
+    int i;
+    public ExceptionHandling() {
+        i = 2;
+    }
 
-        int heey;
-        heey = 3;
-        boolean hej;
+
+    public int catchMethod() {
+        i = 0;
 
         try {
-            int j = 0;
-            int jk = 0;
+            i = 1;
+            i = 3;
+            throw new Exception("");
         } catch (Exception e) {
-            hej = 2==3;
-            heey = 2;
-            return 1;
-        }
-        finally {
-            hej = false;
+           i = 1;
+           i =2;
+
         }
 
+        return i;
+    }
+
+    public int throwsMethod(String msg) throws Exception {
+        throw new Exception(msg);
         return 0;
+    }
+
+    public int finallyMethodReturns2(int i) {
+
+        try {
+            throw new Exception("");
+            i = -1;
+        } catch (Exception e) {
+            i = -2;
+        } finally {
+            i = 2;
+        }
+        return i;
     }
 }

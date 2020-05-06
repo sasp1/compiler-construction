@@ -1,5 +1,6 @@
 package junit;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import pass.LogicalOr;
 
@@ -16,10 +17,14 @@ public class LogicalOrTest extends TestCase {
     }
 
     public void testLogicalOr() {
-    	this.assertEquals(true, logicalOr.logicalOr(true, true));
-        this.assertEquals(false, logicalOr.logicalOr(false , false));
-        this.assertEquals(true, logicalOr.logicalOr(true, false));
-        this.assertEquals(true, logicalOr.logicalOr(false, true));
+        assertTrue(logicalOr.logicalOr(true, true));
+        assertFalse(logicalOr.logicalOr(false, false));
+        assertTrue(logicalOr.logicalOr(true, false));
+        assertTrue(logicalOr.logicalOr(false, true));
+    }
+
+    public void testSecondConditionIsNotReached(){
+        assertEquals(2,  logicalOr.testOnlyFirstConditionReturns2());
     }
 }
 

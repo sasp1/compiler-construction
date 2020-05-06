@@ -1,20 +1,35 @@
 package pass;
+import java.util.ArrayList;
 
 public class ForStatements {
-	public int forLoop(int acc) {
-		acc = 0;
-		for (int i = 5; i > 0; i--) {
-			acc = acc + i;
+
+	public String forEachCollection(String acc, ArrayList numbers) {
+		for (Object i : numbers){
+			acc = acc + (String)i;
 		}
 		return acc;
 	}
-	
-	public int foreach(int acc) {
-		int[] array = {0,1,2,3,4};
-		for (int i : array) {
-			acc = acc + i;
+
+	public int forEachArray(int n, int[] nArray) {
+		for (int item : nArray){
+			n = item + n;
 		}
-		return acc;
+
+		return n;
+	}
+
+	public int sumArray(int n, int[] intArray) {
+		for (int i = 0; i < intArray.length; ++i) {
+			n += intArray[i];
+		}
+		return n;
+	}
+
+	public String stringBuilderArray(String n, String[] stringArray) {
+		for (int i = 0; i < stringArray.length; ++i) {
+			n += stringArray[i];
+		}
+		return n;
 	}
 
 }

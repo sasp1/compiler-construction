@@ -7,7 +7,7 @@ public class JTryCatchStatement extends JStatement{
     private JBlock tryBody;
 
     /** Declaration of exception "catch (Exception e) { }"*/
-    private JFormalParameter exceptionDeclaration;
+    private JVariableDeclarator exceptionDeclaration;
 
     /** Body of catch block*/
     private JBlock catchBody;
@@ -22,7 +22,7 @@ public class JTryCatchStatement extends JStatement{
      *@param catchBody body of catch block
      * @param finallyBody body of optional finally body
      */
-    protected JTryCatchStatement(int line, JBlock tryBody, JFormalParameter exceptionDeclaration, JBlock catchBody, JBlock finallyBody) {
+    protected JTryCatchStatement(int line, JBlock tryBody, JVariableDeclarator exceptionDeclaration, JBlock catchBody, JBlock finallyBody) {
         super(line);
         this.tryBody = tryBody;
         this.exceptionDeclaration = exceptionDeclaration;
@@ -49,17 +49,29 @@ public class JTryCatchStatement extends JStatement{
 
     @Override
     public void codegen(CLEmitter output) {
-//        String tryStartLabel = output.createLabel();
-//        String tryEndLabel = output.createLabel();
-//        String catchLabel = output.createLabel();
-//        String finallyLabel = output.createLabel();
-        System.out.println(exceptionDeclaration.type().toString());
-        System.out.println("HEEEEJ");
-//        output.addLabel(tryStartLabel);
-//        output.addLabel(tryEndLabel);
-//        output.addLabel(catchLabel);
-//        output.addExceptionHandler(tryStartLabel, tryEndLabel, catchLabel, exceptionDeclaration.type().jvmName());
-//        tryBody.codegen(output);
+        String tryStartLabel = output.createLabel();
+        String tryEndLabel = output.createLabel();
+        String handlerLabel = output.createLabel();
+        String endLabel = output.createLabel();
+
+        output.addLabel(tryStartLabel);
+        tryBody.codegen(output);
+        output.addLabel(tryEndLabel);
+        output.addBranchInstruction(CLConstants.GOTO, endLabel);
+
+        output.addLabel(handlerLabel);
+        exceptionDeclaration.codegen(output);
+        output.addNoArgInstruction(CLConstants.POP);
+
+        catchBody.codegen(output);
+
+        output.addLabel(endLabel);
+//        output.addBranchInstruction(CLConstants.GOTO, handlerLabel);
+        if (finallyBody != null) {
+            finallyBody.codegen(output);
+        }
+
+        output.addExceptionHandler(tryStartLabel, tryEndLabel, handlerLabel, exceptionDeclaration.type().jvmName());
     }
 
     @Override

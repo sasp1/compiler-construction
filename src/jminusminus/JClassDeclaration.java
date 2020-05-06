@@ -29,8 +29,6 @@ class JClassDeclaration extends JAST implements JTypeDecl {
     /** This class type. */
     private Type thisType;
 
-
-    
     /** Context for this class. */
     private ClassContext context;
 
@@ -42,7 +40,13 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 
     /** Static (class) fields of this class. */
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
-    
+
+    /** Static (class) blocks of this class. */
+    private ArrayList<JBlockDeclaration> staticBlockInitializations;
+
+    /** Instance blocks of this class. */
+    private ArrayList<JBlockDeclaration> instanceBlockInitializations;
+
     /** Added */
     private ArrayList<Type> interfaceList;
 
@@ -71,9 +75,11 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         this.superType = superType;
         this.classBlock = classBlock;
         this.interfaceList = interfaceList;
-        hasExplicitConstructor = false;
-        instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
-        staticFieldInitializations = new ArrayList<JFieldDeclaration>();
+        this.hasExplicitConstructor = false;
+        this.instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
+        this.staticFieldInitializations = new ArrayList<JFieldDeclaration>();
+        this.instanceBlockInitializations = new ArrayList<JBlockDeclaration>();
+        this.staticBlockInitializations = new ArrayList<JBlockDeclaration>();
     }
 
     /**
@@ -216,6 +222,12 @@ class JClassDeclaration extends JAST implements JTypeDecl {
                 } else {
                     instanceFieldInitializations.add(fieldDecl);
                 }
+            } else if (member instanceof JBlockDeclaration) {
+                if (((JBlockDeclaration) member).isStatic) {
+                    staticBlockInitializations.add((JBlockDeclaration) member);
+                } else {
+                    instanceBlockInitializations.add((JBlockDeclaration) member);
+                }
             }
         }
 
@@ -258,10 +270,12 @@ class JClassDeclaration extends JAST implements JTypeDecl {
             ((JAST) member).codegen(output);
         }
 
+
         // Generate a class initialization method?
         if (staticFieldInitializations.size() > 0) {
             codegenClassInit(output);
         }
+
     }
 
     /**
@@ -313,6 +327,9 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         partial.addMemberAccessInstruction(INVOKESPECIAL, superType.jvmName(),
                 "<init>", "()V");
 
+//        for (JBlockDeclaration instanceBlock : instanceBlockInitializations) {
+//            instanceBlock.codegen(partial);
+//        }
         // Return
         partial.addNoArgInstruction(RETURN);
     }
@@ -334,13 +351,13 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         output.addNoArgInstruction(ALOAD_0);
         output.addMemberAccessInstruction(INVOKESPECIAL, superType.jvmName(),
                 "<init>", "()V");
-
-        // If there are instance field initializations, generate
-        // code for them
         for (JFieldDeclaration instanceField : instanceFieldInitializations) {
             instanceField.codegenInitializations(output);
         }
 
+        for (JBlockDeclaration instanceBlock : instanceBlockInitializations) {
+            instanceBlock.codegen(output);
+        }
         // Return
         output.addNoArgInstruction(RETURN);
     }
@@ -355,18 +372,19 @@ class JClassDeclaration extends JAST implements JTypeDecl {
      */
 
     private void codegenClassInit(CLEmitter output) {
+
         ArrayList<String> mods = new ArrayList<String>();
         mods.add("public");
         mods.add("static");
         output.addMethod(mods, "<clinit>", "()V", null, false);
 
-        // If there are instance initializations, generate code
-        // for them
         for (JFieldDeclaration staticField : staticFieldInitializations) {
             staticField.codegenInitializations(output);
         }
 
-        // Return
+        for (JBlockDeclaration staticBlock : staticBlockInitializations) {
+            staticBlock.codegen(output);
+        }
         output.addNoArgInstruction(RETURN);
     }
 
