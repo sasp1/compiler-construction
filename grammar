@@ -26,6 +26,8 @@ interfaceDeclaration ::= INTERFACE IDENTIFIER
 
 classBody ::= LCURLY {[modifiers] memberDecl} RCURLY
 
+typeIdentifiers ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
+
 memberDecl ::= IDENTIFIER            // constructor
                  formalParameters block
              | (VOID | type) IDENTIFIER  // method
@@ -126,9 +128,7 @@ simpleUnaryExpression ::= LNOT unaryExpression
 
 
 
-postfixExpression ::= throwExpression {selector} {DEC | INC}
-
-throwExpression ::= {THROW} primary
+postfixExpression ::= primary {selector} {DEC | INC}
 
 selector ::= DOT qualifiedIdentifier [arguments]
            | LBRACK expression RBRACK

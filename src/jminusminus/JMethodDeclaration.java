@@ -69,9 +69,8 @@ class JMethodDeclaration
     /**
      * Types of errors that method can throw.
      */
-    private Type[] throwTypes;
 
-    private ArrayList<TypeName> throwTypeNames;
+    private ArrayList<Type> throwTypes;
 
 
     /**
@@ -86,12 +85,12 @@ class JMethodDeclaration
      * @param returnType     return type.
      * @param params         the formal parameters.
      * @param body           method body.
-     * @param throwTypeNames Exception types that the method could throw
+     * @param throwTypes Exception types that the method could throw
      */
 
     public JMethodDeclaration(int line, ArrayList<String> mods,
                               String name, Type returnType,
-                              ArrayList<JFormalParameter> params, JBlock body, ArrayList<TypeName> throwTypeNames) {
+                              ArrayList<JFormalParameter> params, JBlock body, ArrayList<Type> throwTypes) {
         super(line);
         this.mods = mods;
         this.name = name;
@@ -103,7 +102,7 @@ class JMethodDeclaration
         this.isPrivate = mods.contains("private");
         this.isPublic = mods.contains("public"); 
         this.isProtected = mods.contains("protected");
-        this.throwTypeNames = throwTypeNames;
+        this.throwTypes = throwTypes;
     }
 
     /**
@@ -182,8 +181,8 @@ class JMethodDeclaration
             this.context.addEntry(param.line(), param.name(), defn);
         }
 
-        if (throwTypeNames != null)
-            for (Type throwType : throwTypeNames) {
+        if (throwTypes != null)
+            for (Type throwType : throwTypes) {
                 throwType.mustInheritFromType(this.line(), Throwable.class, this.context);
             }
 
@@ -277,10 +276,10 @@ class JMethodDeclaration
             }
             p.println("</FormalParameters>");
         }
-        if (throwTypeNames != null && throwTypeNames.size() > 0) {
+        if (throwTypes != null && throwTypes.size() > 0) {
             p.println("<ThrowTypes>");
             p.indentRight();
-            for (TypeName throwType : throwTypeNames) {
+            for (Type throwType : throwTypes) {
                 p.printf("<ThrowType type=\"%s\">\n", throwType);
                 p.println("</ThrowType>");
             }
