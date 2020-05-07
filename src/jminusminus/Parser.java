@@ -2,9 +2,7 @@
 
 package jminusminus;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import static jminusminus.TokenKind.*;
 
@@ -791,7 +789,11 @@ public class Parser {
 				finallyBody = block();
 			}
 			return new JTryCatchStatement(line, tryBody, exceptionDecl, catchBody, finallyBody);
-		} else if (have(SEMI)) {
+		}
+		else if (have(THROW)){
+			return new JThrowStatement(line, primary());
+		}
+		else if (have(SEMI)) {
 			return new JEmptyStatement(line);
 		} else { // Must be a statementExpression
 			JStatement statement = statementExpression();
@@ -1090,7 +1092,7 @@ public class Parser {
 				|| expr instanceof JPostIncrementOp || expr instanceof JPreDecrementOp
 				|| expr instanceof JMessageExpression || expr instanceof JSuperConstruction
 				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp
-				|| expr instanceof JThrowExpression || expr instanceof JBreak) {
+				|| expr instanceof JBreak) {
 			// So as not to save on stack
 			expr.isStatementExpression = true;
 		} else {
@@ -1150,7 +1152,7 @@ public class Parser {
 
 	private JExpression conditionalExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = conditionalAndExpression();
+		JExpression lhs = conditionalOrExpression();
 		if (have(COND)) {
 			JExpression consequent = conditionalExpression(); // I'm unsure what kind of expression it should be
 			mustBe(COLON);
@@ -1175,12 +1177,24 @@ public class Parser {
 	private JExpression conditionalAndExpression() {
 		int line = scanner.token().line();
 		boolean more = true;
-		JExpression lhs = equalityExpression();
+		JExpression lhs = bitwiseInclusiveOr();
 		while (more) {
 			if (have(LAND)) {
-				lhs = new JLogicalAndOp(line, lhs, equalityExpression());
-			} else if (have(LOR)) {
-				lhs = new JLogicalOrOp(line, lhs, equalityExpression());
+				lhs = new JLogicalAndOp(line, lhs, bitwiseInclusiveOr());
+			} else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression conditionalOrExpression() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = conditionalAndExpression();
+		while (more) {
+			if (have(LOR)) {
+				lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
 			} else {
 				more = false;
 			}
@@ -1252,8 +1266,6 @@ public class Parser {
 			return new JShiftRightOp(line, lhs, additiveExpression());
 		} else if (have(SHIFT_RIGHT_UNSIGN)) {
 			return new JShiftRightUnsignOp(line, lhs, additiveExpression());
-		} else if (have(INSTANCEOF)) {
-			return new JInstanceOfOp(line, lhs, referenceType());
 		} else {
 			return lhs;
 		}
@@ -1308,13 +1320,49 @@ public class Parser {
 				lhs = new JDivideOp(line, lhs, unaryExpression());
 			} else if (have(REM)) {
 				lhs = new JRemainderOp(line, lhs, unaryExpression());
-			} else if (have(AND)) {
-				lhs = new JIAndOp(line, lhs, unaryExpression());
-			} else if (have(OR)) {
-				lhs = new JIOrOp(line, lhs, unaryExpression());
-			} else if (have(XOR)) {
-				lhs = new JIXorOp(line, lhs, unaryExpression());
 			} else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression bitwiseInclusiveOr() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = bitwiseExclusiveOr();
+		while (more) {
+			if (have(OR)) {
+				lhs = new JIOrOp(line, lhs, bitwiseExclusiveOr());
+			}  else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression bitwiseExclusiveOr() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = bitwiseAnd();
+		while (more) {
+			if (have(XOR)) {
+				lhs = new JIXorOp(line, lhs, bitwiseAnd());
+			}  else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression bitwiseAnd() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = equalityExpression();
+		while (more) {
+			if (have(AND)) {
+				lhs = new JIAndOp(line, lhs, equalityExpression());
+			}  else {
 				more = false;
 			}
 		}
@@ -1396,27 +1444,27 @@ public class Parser {
 	private JExpression postfixExpression() {
 		int line = scanner.token().line();
 
-		JExpression throwExpression = throwExpression();
+		JExpression primary = primary();
 		while (see(DOT) || see(LBRACK)) {
-			throwExpression = selector(throwExpression);
+			primary = selector(primary);
 		}
 		while (have(DEC)) {
-			throwExpression = new JPostDecrementOp(line, throwExpression);
+			primary = new JPostDecrementOp(line, primary);
 		}
 		while (have(INC)) {
-			throwExpression = new JPostIncrementOp(line, throwExpression);
+			primary = new JPostIncrementOp(line, primary);
 		}
-		return throwExpression;
+		return primary;
 	}
 
-	private JExpression throwExpression() {
-		int line = scanner.token().line();
-
-		if (have(THROW)) {
-			return new JThrowExpression(line, primary());
-		}
-		return primary();
-	}
+//	private JExpression throwExpression() {
+//		int line = scanner.token().line();
+//
+//		if (have(THROW)) {
+//			return new JThrowExpression(line, primary());
+//		}
+//		return primary();
+//	}
 
 	/**
 	 * Parse a selector.

@@ -81,8 +81,8 @@
               dir="classes"
               fork="true">
 
-              <arg value="-t"/> <!-- Change the argument -->
-              <arg value="../tests/pass/MultilineComment.java"/> <!-- Change the Division to other file name -->
+              <arg value="-a"/> <!-- Change the argument -->
+              <arg value="../tests/pass/ExceptionHandling.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
 

@@ -2,16 +2,16 @@ package jminusminus;
 
 import static jminusminus.CLConstants.ATHROW;
 
-public class JThrowExpression extends JExpression {
+public class JThrowStatement extends JStatement {
     private JExpression primary;
 
-    public JThrowExpression(int line, JExpression primary) {
+    public JThrowStatement(int line, JExpression primary) {
         super(line);
         this.primary = primary;
     }
 
     @Override
-    public JExpression analyze(Context context) {
+    public JStatement analyze(Context context) {
         primary.analyze(context);
 
 //        TODO: Check that exception is handled (either that method throws it or that it is try catch block
