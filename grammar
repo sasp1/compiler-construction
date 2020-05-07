@@ -44,7 +44,7 @@ statement ::= block
             | IF parExpression statement [ELSE statement]
             | WHILE parExpression statement 
             | RETURN [expression] SEMI
-            | TRY statement CATCH formalParameters statement
+            | TRY statement CATCH variableDeclarator statement [FINALLY statement]
             | SEMI 
             | statementExpression SEMI
 

@@ -1,13 +1,17 @@
 package fail;
+
 import java.lang.Exception;
 
 public class ExceptionHandling {
 
-
-    public void tryWithoutCatch(){
+    public void tryWithoutCatch() {
         int i = 0;
-        try{
+        try {
             i--;
         }
+    }
+
+    public void throwAssignment() {
+        int i = throw new Exception("");
     }
 }
