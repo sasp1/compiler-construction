@@ -404,7 +404,7 @@ public class Parser {
 	 * @return an instance of TypeName.
 	 */
 
-	private ArrayList<Type> interfaceIdentifiers(ArrayList<Type> interfaceList) {
+	private ArrayList<TypeName> interfaceIdentifiers(ArrayList<TypeName> interfaceList) {
 		int line = scanner.token().line();
 
 		interfaceList.add(qualifiedIdentifier());
@@ -530,7 +530,7 @@ public class Parser {
 		mustBe(INTERFACE);
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
-		ArrayList<Type> interfaceList = new ArrayList<Type>();
+		ArrayList<TypeName> interfaceList = new ArrayList<>();
 		Type superClass = Type.OBJECT;
 		if (have(EXTENDS)) {
 			interfaceIdentifiers(interfaceList);
@@ -561,7 +561,7 @@ public class Parser {
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
 		Type superClass;
-		ArrayList<Type> interfaceList = new ArrayList<Type>();
+		ArrayList<TypeName> interfaceList = new ArrayList<>();
 		if (have(EXTENDS)) {
 			superClass = qualifiedIdentifier();
 		} else {
