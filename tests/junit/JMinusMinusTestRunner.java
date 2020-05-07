@@ -45,8 +45,9 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(ForStatementsTest.class);
 		suite.addTestSuite(ExceptionHandlingTest.class);
 		suite.addTestSuite(ConditionalTest.class);
-    suite.addTestSuite(MultilineCommentTest.class);
+    	suite.addTestSuite(MultilineCommentTest.class);
 		suite.addTestSuite(PreDecrementTest.class);
+		suite.addTestSuite(PrecedenceTest.class);
 		return suite;
 	}
 

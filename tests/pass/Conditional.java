@@ -12,4 +12,8 @@ public class Conditional {
 	public String nestedConditionalString(boolean x, boolean y, String returnVal1, String returnVal2) {
 		return x ? returnVal1 : (y ? returnVal2 : "else else" );
 	}
+
+	public String conditionalOnLeftHandSide () {
+		return ((10 == 10) ? true : false) ? "here" : "there";
+	}
 }

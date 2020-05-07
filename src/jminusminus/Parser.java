@@ -1150,7 +1150,7 @@ public class Parser {
 
 	private JExpression conditionalExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = conditionalAndExpression();
+		JExpression lhs = conditionalOrExpression();
 		if (have(COND)) {
 			JExpression consequent = conditionalExpression(); // I'm unsure what kind of expression it should be
 			mustBe(COLON);
@@ -1175,12 +1175,24 @@ public class Parser {
 	private JExpression conditionalAndExpression() {
 		int line = scanner.token().line();
 		boolean more = true;
-		JExpression lhs = equalityExpression();
+		JExpression lhs = bitwiseInclusiveOr();
 		while (more) {
 			if (have(LAND)) {
-				lhs = new JLogicalAndOp(line, lhs, equalityExpression());
-			} else if (have(LOR)) {
-				lhs = new JLogicalOrOp(line, lhs, equalityExpression());
+				lhs = new JLogicalAndOp(line, lhs, bitwiseInclusiveOr());
+			} else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression conditionalOrExpression() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = conditionalAndExpression();
+		while (more) {
+			if (have(LOR)) {
+				lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
 			} else {
 				more = false;
 			}
@@ -1252,8 +1264,6 @@ public class Parser {
 			return new JShiftRightOp(line, lhs, additiveExpression());
 		} else if (have(SHIFT_RIGHT_UNSIGN)) {
 			return new JShiftRightUnsignOp(line, lhs, additiveExpression());
-		} else if (have(INSTANCEOF)) {
-			return new JInstanceOfOp(line, lhs, referenceType());
 		} else {
 			return lhs;
 		}
@@ -1308,13 +1318,49 @@ public class Parser {
 				lhs = new JDivideOp(line, lhs, unaryExpression());
 			} else if (have(REM)) {
 				lhs = new JRemainderOp(line, lhs, unaryExpression());
-			} else if (have(AND)) {
-				lhs = new JIAndOp(line, lhs, unaryExpression());
-			} else if (have(OR)) {
-				lhs = new JIOrOp(line, lhs, unaryExpression());
-			} else if (have(XOR)) {
-				lhs = new JIXorOp(line, lhs, unaryExpression());
 			} else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression bitwiseInclusiveOr() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = bitwiseExclusiveOr();
+		while (more) {
+			if (have(OR)) {
+				lhs = new JIOrOp(line, lhs, bitwiseExclusiveOr());
+			}  else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression bitwiseExclusiveOr() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = bitwiseAnd();
+		while (more) {
+			if (have(XOR)) {
+				lhs = new JIXorOp(line, lhs, bitwiseAnd());
+			}  else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression bitwiseAnd() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = equalityExpression();
+		while (more) {
+			if (have(AND)) {
+				lhs = new JIAndOp(line, lhs, equalityExpression());
+			}  else {
 				more = false;
 			}
 		}
