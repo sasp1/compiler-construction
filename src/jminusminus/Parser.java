@@ -2,9 +2,7 @@
 
 package jminusminus;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import static jminusminus.TokenKind.*;
 
@@ -791,7 +789,11 @@ public class Parser {
 				finallyBody = block();
 			}
 			return new JTryCatchStatement(line, tryBody, exceptionDecl, catchBody, finallyBody);
-		} else if (have(SEMI)) {
+		}
+		else if (have(THROW)){
+			return new JThrowStatement(line, primary());
+		}
+		else if (have(SEMI)) {
 			return new JEmptyStatement(line);
 		} else { // Must be a statementExpression
 			JStatement statement = statementExpression();
@@ -1090,7 +1092,7 @@ public class Parser {
 				|| expr instanceof JPostIncrementOp || expr instanceof JPreDecrementOp
 				|| expr instanceof JMessageExpression || expr instanceof JSuperConstruction
 				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp
-				|| expr instanceof JThrowExpression || expr instanceof JBreak) {
+				|| expr instanceof JBreak) {
 			// So as not to save on stack
 			expr.isStatementExpression = true;
 		} else {
@@ -1396,27 +1398,27 @@ public class Parser {
 	private JExpression postfixExpression() {
 		int line = scanner.token().line();
 
-		JExpression throwExpression = throwExpression();
+		JExpression primary = primary();
 		while (see(DOT) || see(LBRACK)) {
-			throwExpression = selector(throwExpression);
+			primary = selector(primary);
 		}
 		while (have(DEC)) {
-			throwExpression = new JPostDecrementOp(line, throwExpression);
+			primary = new JPostDecrementOp(line, primary);
 		}
 		while (have(INC)) {
-			throwExpression = new JPostIncrementOp(line, throwExpression);
+			primary = new JPostIncrementOp(line, primary);
 		}
-		return throwExpression;
+		return primary;
 	}
 
-	private JExpression throwExpression() {
-		int line = scanner.token().line();
-
-		if (have(THROW)) {
-			return new JThrowExpression(line, primary());
-		}
-		return primary();
-	}
+//	private JExpression throwExpression() {
+//		int line = scanner.token().line();
+//
+//		if (have(THROW)) {
+//			return new JThrowExpression(line, primary());
+//		}
+//		return primary();
+//	}
 
 	/**
 	 * Parse a selector.
