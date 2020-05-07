@@ -26,11 +26,13 @@ interfaceDeclaration ::= INTERFACE IDENTIFIER
 
 classBody ::= LCURLY {[modifiers] memberDecl} RCURLY
 
+typeIdentifiers ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
+
 memberDecl ::= IDENTIFIER            // constructor
                  formalParameters block
              | (VOID | type) IDENTIFIER  // method
                  formalParameters	
-                 [THROWS throwTypes]
+                 [THROWS typeIdentifiers]
                  (block | SEMI)
              | type variableDeclarators SEMI // field
              | block 				// Static block
