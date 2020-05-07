@@ -415,8 +415,8 @@ public class Parser {
 		return interfaceList;
 	}
 
-	private ArrayList<TypeName> typeIdentifiers() {
-		ArrayList<TypeName> types = new ArrayList<>();
+	private ArrayList<Type> typeIdentifiers() {
+		ArrayList<Type> types = new ArrayList<>();
 		types.add(qualifiedIdentifier());
 
 		while (have(COMMA)) {
@@ -625,7 +625,7 @@ public class Parser {
 			mustBe(IDENTIFIER);
 			String name = scanner.previousToken().image();
 			ArrayList<JFormalParameter> params = formalParameters();
-			ArrayList<TypeName> throwTypes = null;
+			ArrayList<Type> throwTypes = null;
 			if (have(THROWS)) {
 				throwTypes = typeIdentifiers();
 			}
@@ -640,7 +640,7 @@ public class Parser {
 				mustBe(IDENTIFIER);
 				String name = scanner.previousToken().image();
 				ArrayList<JFormalParameter> params = formalParameters();
-				ArrayList<TypeName> throwTypes = null;
+				ArrayList<Type> throwTypes = null;
 				if (have(THROWS)) {
 					throwTypes = typeIdentifiers();
 				}
@@ -653,7 +653,7 @@ public class Parser {
 					mustBe(IDENTIFIER);
 					String name = scanner.previousToken().image();
 					ArrayList<JFormalParameter> params = formalParameters();
-					ArrayList<TypeName> throwTypes = null;
+					ArrayList<Type> throwTypes = null;
 					if (have(THROWS)) {
 						throwTypes = typeIdentifiers();
 					}
