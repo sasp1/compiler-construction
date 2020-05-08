@@ -38,6 +38,8 @@ class Type {
 
     public final static Type ITERABLE = typeFor(java.lang.Iterable.class);
 
+    public final static Type THROWABLE = typeFor(java.lang.Throwable.class);
+
     /** The primitive type, double. */ 
     public final static Type DOUBLE = typeFor(double.class); 
 

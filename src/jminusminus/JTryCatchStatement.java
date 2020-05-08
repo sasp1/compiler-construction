@@ -1,5 +1,7 @@
 package jminusminus;
 
+import java.util.ArrayList;
+
 public class JTryCatchStatement extends JStatement{
 
 
@@ -34,14 +36,21 @@ public class JTryCatchStatement extends JStatement{
     public JAST analyze(Context context) {
         tryBody.analyze(context);
 
-        Type exceptionType = exceptionDeclaration.type().resolve(context);
+        Context localContext = new LocalContext(context);
+        Type exceptionType = exceptionDeclaration.type().resolve(localContext);
 
-        exceptionDeclaration.setType(exceptionType);
-        exceptionType.mustInheritFromType(line, Throwable.class, context);
-        catchBody.analyze(context);
+        ArrayList<JVariableDeclarator> exceptionList = new ArrayList<>();
+        exceptionList.add(exceptionDeclaration);
+        JVariableDeclaration exceptionDecl = new JVariableDeclaration(line, null, exceptionList);
+        exceptionDecl.analyze(localContext);
+        Type.ITERABLE.isJavaAssignableFrom(exceptionType);
+
+        exceptionDeclaration.analyze(localContext);
+//        exceptionType.mustInheritFromType(line, Throwable.class, localContext);
+        catchBody.analyze(localContext);
 
         if (finallyBody != null) {
-            finallyBody.analyze(context);
+            finallyBody.analyze(localContext);
         }
 
         return this;

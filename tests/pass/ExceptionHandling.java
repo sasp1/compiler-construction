@@ -51,6 +51,20 @@ public class ExceptionHandling {
         }
     }
 
+    public String catchExceptionInLocalContext(String str) {
+        try {
+
+        } catch (Exception e) {
+            str += e.getMessage();
+        }
+        try {
+
+        } catch (Exception e) {
+            str += e.getMessage();
+        }
+        return str;
+    }
+
     public int finallyMethodReturns2(int i) {
 
         try {
