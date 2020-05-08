@@ -7,7 +7,7 @@ public class JTryCatchStatement extends JStatement{
     private JBlock tryBody;
 
     /** Declaration of exception "catch (Exception e) { }"*/
-    private JFormalParameter exceptionParam;
+    private JVariableDeclarator exceptionParam;
 
     /** Body of catch block*/
     private JBlock catchBody;
@@ -22,7 +22,7 @@ public class JTryCatchStatement extends JStatement{
      *@param catchBody body of catch block
      * @param finallyBody body of optional finally body
      */
-    protected JTryCatchStatement(int line, JBlock tryBody, JFormalParameter exceptionParam, JBlock catchBody, JBlock finallyBody) {
+    protected JTryCatchStatement(int line, JBlock tryBody, JVariableDeclarator exceptionParam, JBlock catchBody, JBlock finallyBody) {
         super(line);
         this.tryBody = tryBody;
         this.exceptionParam = exceptionParam;
@@ -35,11 +35,18 @@ public class JTryCatchStatement extends JStatement{
         tryBody.analyze(context);
 
 //      Local context for catch exception declaration
-        LocalContext localContext = new LocalContext(context);
+        LocalContext localContext = (LocalContext)context;
+
+        int nextOffset = localContext.nextOffset();
+        System.out.println(nextOffset);
+        System.out.println(nextOffset);
+        System.out.println(nextOffset);
+
+
 
         exceptionParam.setType(exceptionParam.type().resolve(localContext));
         LocalVariableDefn defn = new LocalVariableDefn(exceptionParam.type(),
-                localContext.nextOffset());
+                nextOffset);
         defn.initialize();
         localContext.addEntry(exceptionParam.line(), exceptionParam.name(), defn);
 
@@ -70,7 +77,8 @@ public class JTryCatchStatement extends JStatement{
 
         output.addLabel(handlerLabel);
         exceptionParam.codegen(output);
-        output.addNoArgInstruction(CLConstants.POP);
+
+//        output.addNoArgInstruction(CLConstants.POP);
 
         catchBody.codegen(output);
 

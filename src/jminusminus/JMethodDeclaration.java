@@ -183,7 +183,8 @@ class JMethodDeclaration
 
         if (throwTypes != null)
             for (Type throwType : throwTypes) {
-                throwType.mustInheritFromType(this.line(), Throwable.class, this.context);
+                throwType = throwType.resolve(context);
+                Type.THROWABLE.isJavaAssignableFrom(throwType);
             }
 
         if (body != null) {
