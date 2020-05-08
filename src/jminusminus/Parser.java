@@ -780,8 +780,8 @@ public class Parser {
 			JBlock tryBody = block();
 			mustBe(CATCH);
 			mustBe(LPAREN);
-			Type exceptionType = type();
-			JVariableDeclarator exceptionDecl = variableDeclarator(exceptionType);
+//			Type exceptionType = type();
+			JFormalParameter exceptionDecl = formalParameter();
 			mustBe(RPAREN);
 			JBlock catchBody = block();
 			JBlock finallyBody = null;

@@ -1,7 +1,5 @@
 package jminusminus;
 
-import java.util.ArrayList;
-
 public class JTryCatchStatement extends JStatement{
 
 
@@ -9,7 +7,7 @@ public class JTryCatchStatement extends JStatement{
     private JBlock tryBody;
 
     /** Declaration of exception "catch (Exception e) { }"*/
-    private JVariableDeclarator exceptionDeclaration;
+    private JFormalParameter exceptionParam;
 
     /** Body of catch block*/
     private JBlock catchBody;
@@ -20,14 +18,14 @@ public class JTryCatchStatement extends JStatement{
      *  @param line line in which the statement occurs in the source file.
      *
      * @param tryBody body of try
-     *@param exceptionDeclaration declaration of exception
+     *@param exceptionParam declaration of exception
      *@param catchBody body of catch block
      * @param finallyBody body of optional finally body
      */
-    protected JTryCatchStatement(int line, JBlock tryBody, JVariableDeclarator exceptionDeclaration, JBlock catchBody, JBlock finallyBody) {
+    protected JTryCatchStatement(int line, JBlock tryBody, JFormalParameter exceptionParam, JBlock catchBody, JBlock finallyBody) {
         super(line);
         this.tryBody = tryBody;
-        this.exceptionDeclaration = exceptionDeclaration;
+        this.exceptionParam = exceptionParam;
         this.catchBody = catchBody;
         this.finallyBody = finallyBody;
     }
@@ -36,21 +34,23 @@ public class JTryCatchStatement extends JStatement{
     public JAST analyze(Context context) {
         tryBody.analyze(context);
 
-        Context localContext = new LocalContext(context);
-        Type exceptionType = exceptionDeclaration.type().resolve(localContext);
+//      Local context for catch exception declaration
+        LocalContext localContext = new LocalContext(context);
 
-        ArrayList<JVariableDeclarator> exceptionList = new ArrayList<>();
-        exceptionList.add(exceptionDeclaration);
-        JVariableDeclaration exceptionDecl = new JVariableDeclaration(line, null, exceptionList);
-        exceptionDecl.analyze(localContext);
-        Type.ITERABLE.isJavaAssignableFrom(exceptionType);
+        exceptionParam.setType(exceptionParam.type().resolve(localContext));
+        LocalVariableDefn defn = new LocalVariableDefn(exceptionParam.type(),
+                localContext.nextOffset());
+        defn.initialize();
+        localContext.addEntry(exceptionParam.line(), exceptionParam.name(), defn);
 
-        exceptionDeclaration.analyze(localContext);
-//        exceptionType.mustInheritFromType(line, Throwable.class, localContext);
+        Type.ITERABLE.isJavaAssignableFrom(exceptionParam.type());
+
+        exceptionParam.analyze(localContext);
+
         catchBody.analyze(localContext);
 
         if (finallyBody != null) {
-            finallyBody.analyze(localContext);
+            finallyBody.analyze(context);
         }
 
         return this;
@@ -69,7 +69,7 @@ public class JTryCatchStatement extends JStatement{
         output.addBranchInstruction(CLConstants.GOTO, endLabel);
 
         output.addLabel(handlerLabel);
-        exceptionDeclaration.codegen(output);
+        exceptionParam.codegen(output);
         output.addNoArgInstruction(CLConstants.POP);
 
         catchBody.codegen(output);
@@ -80,7 +80,7 @@ public class JTryCatchStatement extends JStatement{
             finallyBody.codegen(output);
         }
 
-        output.addExceptionHandler(tryStartLabel, tryEndLabel, handlerLabel, exceptionDeclaration.type().jvmName());
+        output.addExceptionHandler(tryStartLabel, tryEndLabel, handlerLabel, exceptionParam.type().jvmName());
     }
 
     @Override
@@ -94,13 +94,13 @@ public class JTryCatchStatement extends JStatement{
         p.printf("</TryPart>\n");
 
 //        TODO: Might have to be refactored as exception declaration is mandatory
-        if (exceptionDeclaration.type().classRep() != null) {
+//        if (exceptionDeclaration.type().classRep() != null) {
             p.printf("<ExceptionDeclaration>\n");
             p.indentRight();
-            exceptionDeclaration.writeToStdOut(p);
+            exceptionParam.writeToStdOut(p);
             p.indentLeft();
             p.printf("</ExceptionDeclaration>\n");
-        }
+//        }
 
         p.printf("<CatchPart>\n");
         p.indentRight();

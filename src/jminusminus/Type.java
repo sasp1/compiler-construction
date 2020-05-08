@@ -323,21 +323,6 @@ class Type {
                 Arrays.toString(expectedTypes));
     }
 
-    public void mustInheritFromType(int line, Class<?> expectedType, Context context) {
-        Type type = this.resolve(context);
-
-        if (type == Type.ANY) return;
-
-        while (!type.classRep().getName().equals(expectedType.getName())) {
-            if (type.superClass() == null) {
-                JAST.compilationUnit.reportSemanticError(line,
-                        "Method throw type: " + this + " is not of type Throwable");
-                break;
-            }
-            type = type.superClass().resolve(context);
-        }
-    }
-
     /**
      * An assertion that this type matches the specified type. If there is no
      * match, an error message is written.

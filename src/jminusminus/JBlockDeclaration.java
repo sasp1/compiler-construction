@@ -33,7 +33,7 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
 
     public JBlockDeclaration(int line, ArrayList<String> mods, JBlock body)
     {
-        super(line, mods, "block " + ((int)(Math.random() * 10000000)), Type.ANY, new ArrayList<JFormalParameter>(), body, new ArrayList<TypeName>());
+        super(line, mods, "block " + ((int)(Math.random() * 10000000)), Type.ANY, new ArrayList<JFormalParameter>(), body, new ArrayList<>());
     }
 
     /**
