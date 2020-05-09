@@ -330,7 +330,6 @@ public class Parser {
 		return false;
 	}
 
-
 	// ////////////////////////////////////////////////
 	// Parser Proper /////////////////////////////////
 	// ////////////////////////////////////////////////
@@ -394,8 +393,7 @@ public class Parser {
 	}
 
 	/**
-	 * Added
-	 * Parse a interface identifier.
+	 * Added Parse a interface identifier.
 	 *
 	 * <pre>
 	 *   interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
@@ -413,6 +411,15 @@ public class Parser {
 			interfaceList.add(qualifiedIdentifier());
 		}
 		return interfaceList;
+	}
+
+	private ArrayList<TypeName> intefaceTypeIdentifiers() {
+		ArrayList<TypeName> types = new ArrayList<>();
+		types.add(qualifiedIdentifier());
+		while (have(COMMA)) {
+			types.add(qualifiedIdentifier());
+		}
+		return types;
 	}
 
 	private ArrayList<Type> typeIdentifiers() {
@@ -437,7 +444,7 @@ public class Parser {
 
 	private JAST typeDeclaration() {
 		ArrayList<String> mods = modifiers();
-		if(see(INTERFACE)) {
+		if (see(INTERFACE)) {
 			return interfaceDeclaration(mods);
 		} else {
 			return classDeclaration(mods);
@@ -512,12 +519,11 @@ public class Parser {
 		return mods;
 	}
 
-	/** ADDED
-	 * Parse a interface declaration.
+	/**
+	 * ADDED Parse a interface declaration.
 	 *
-	 *	interfaceDeclaration ::= INTERFACE IDENTIFIER 
-	 *						[EXTENDS interfaceIdentifier]
-	 *						classBody 
+	 * interfaceDeclaration ::= INTERFACE IDENTIFIER [EXTENDS interfaceIdentifier]
+	 * classBody
 	 * </pre>
 	 *
 	 *
@@ -536,7 +542,33 @@ public class Parser {
 			interfaceIdentifiers(interfaceList);
 		}
 
-		return new JInterfaceDeclaration(line, mods, name, superClass, classBody(), interfaceList);
+		return new JInterfaceDeclaration(line, mods, name, superClass, interfaceBody(), interfaceList);	
+	}	
+		
+	/**	
+	 * Parse a interface body.	
+	 *	
+	 * <pre>	
+	 *   interfaceBody ::= LCURLY	
+	 *                   {modifiers memberDecl}	
+	 *                 RCURLY	
+	 * </pre>	
+	 *	
+	 * @return list of members in the class body.	
+	 */	
+	
+	private ArrayList<JMember> interfaceBody() {	
+		ArrayList<JMember> members = new ArrayList<JMember>();	
+		mustBe(LCURLY);	
+		while (!see(RCURLY) && !see(EOF)) {	
+			ArrayList<String> modsTmp = modifiers(); 	
+			if (!modsTmp.contains("abstract")) { 	
+				modsTmp.add("abstract");	
+			}	
+			members.add(memberDecl(modsTmp));	
+		}	
+		mustBe(RCURLY);	
+		return members;	
 	}
 
 	/**
@@ -567,7 +599,7 @@ public class Parser {
 		} else {
 			superClass = Type.OBJECT;
 		}
-		if(have(IMPLEMENTS)) {
+		if (have(IMPLEMENTS)) {
 			interfaceIdentifiers(interfaceList);
 		}
 
@@ -617,7 +649,7 @@ public class Parser {
 		int line = scanner.token().line();
 		JMember memberDecl = null;
 
-		if(see(LCURLY)) {
+		if (see(LCURLY)) {
 			JBlock body = block();
 			memberDecl = new JBlockDeclaration(line, mods, body);
 		} else if (seeIdentLParen()) {
@@ -758,8 +790,7 @@ public class Parser {
 				JStatement statement = statement();
 				return new JForLoopStatement(line, init, condition, upd, statement);
 			}
-		}
-		else if (have(IF)) {
+		} else if (have(IF)) {
 			JExpression test = parExpression();
 			JStatement consequent = statement();
 			JStatement alternate = have(ELSE) ? statement() : null;
@@ -789,11 +820,9 @@ public class Parser {
 				finallyBody = block();
 			}
 			return new JTryCatchStatement(line, tryBody, exceptionDecl, catchBody, finallyBody);
-		}
-		else if (have(THROW)){
+		} else if (have(THROW)) {
 			return new JThrowStatement(line, primary());
-		}
-		else if (have(SEMI)) {
+		} else if (have(SEMI)) {
 			return new JEmptyStatement(line);
 		} else { // Must be a statementExpression
 			JStatement statement = statementExpression();
@@ -888,7 +917,6 @@ public class Parser {
 		mustBe(SEMI);
 		return new JVariableDeclaration(line, mods, vdecls);
 	}
-
 
 	/**
 	 * Parse variable declarators.
@@ -1334,7 +1362,7 @@ public class Parser {
 		while (more) {
 			if (have(OR)) {
 				lhs = new JIOrOp(line, lhs, bitwiseExclusiveOr());
-			}  else {
+			} else {
 				more = false;
 			}
 		}
@@ -1348,7 +1376,7 @@ public class Parser {
 		while (more) {
 			if (have(XOR)) {
 				lhs = new JIXorOp(line, lhs, bitwiseAnd());
-			}  else {
+			} else {
 				more = false;
 			}
 		}
@@ -1362,7 +1390,7 @@ public class Parser {
 		while (more) {
 			if (have(AND)) {
 				lhs = new JIAndOp(line, lhs, equalityExpression());
-			}  else {
+			} else {
 				more = false;
 			}
 		}
