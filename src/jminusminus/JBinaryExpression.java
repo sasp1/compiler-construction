@@ -123,6 +123,10 @@ class JPlusOp extends JBinaryExpression {
 			lhs.codegen(output);
 			rhs.codegen(output);
 			output.addNoArgInstruction(IADD);
+		} else if (type == Type.DOUBLE) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(DADD);
 		}
 	}
 
@@ -174,9 +178,15 @@ class JSubtractOp extends JBinaryExpression {
 	 */
 
 	public void codegen(CLEmitter output) {
-		lhs.codegen(output);
-		rhs.codegen(output);
-		output.addNoArgInstruction(ISUB);
+		if (type == Type.INT) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(ISUB);
+		} else if (type == Type.DOUBLE) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(DSUB);
+		}
 	}
 
 }
@@ -227,9 +237,15 @@ class JMultiplyOp extends JBinaryExpression {
 	 */
 
 	public void codegen(CLEmitter output) {
-		lhs.codegen(output);
-		rhs.codegen(output);
-		output.addNoArgInstruction(IMUL);
+		if (type == Type.INT) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(IMUL);
+		} else if (type == Type.DOUBLE) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(DMUL);
+		}
 	}
 
 }
@@ -249,9 +265,15 @@ class JDivideOp extends JBinaryExpression {
 	}
 
 	public void codegen(CLEmitter output) {
-		lhs.codegen(output);
-		rhs.codegen(output);
-		output.addNoArgInstruction(IDIV);
+		if (type == Type.INT) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(IDIV);
+		} else if (type == Type.DOUBLE) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(DDIV);
+		}
 	}
 
 }
@@ -271,9 +293,15 @@ class JRemainderOp extends JBinaryExpression {
 	}
 
 	public void codegen(CLEmitter output) {
-		lhs.codegen(output);
-		rhs.codegen(output);
-		output.addNoArgInstruction(IREM);
+		if (type == Type.INT) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(IREM);
+		} else if (type == Type.DOUBLE) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(DREM);
+		}
 	}
 }
 
@@ -293,9 +321,11 @@ class JShiftLeftOp extends JBinaryExpression {
 	}
 
 	public void codegen(CLEmitter output) {
-		lhs.codegen(output);
-		rhs.codegen(output);
-		output.addNoArgInstruction(ISHL);
+		if (type == Type.INT) {
+			lhs.codegen(output);
+			rhs.codegen(output);
+			output.addNoArgInstruction(ISHL);
+		}
 	}
 }
 

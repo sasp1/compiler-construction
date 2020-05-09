@@ -4,7 +4,7 @@ package pass;
 interface InterfacePass { 
 	public int method1(int x);
 	public String stringMethod(int x);
-//	public double doubleMethod(double x); 
+	public double doubleMethod(double x); 
 }
 
 interface ThirdInterface { 
@@ -29,9 +29,9 @@ public class InterfaceExtendingClass implements pass.InterfacePass, SecondInterf
 		return "" + x; 
 	}
 
-//	public double doubleMethod(double x) { 
-//		return x; 
-//	}
+	public double doubleMethod(double x) { 
+		return x; 
+	}
 	
 	public int method2(int x) { 
 		return x + 2; 

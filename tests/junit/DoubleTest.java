@@ -24,5 +24,17 @@ public class DoubleTest extends TestCase {
 		this.assertEquals(doubleTest.doubleTest(4d), 4.0);
 		
 		this.assertEquals(doubleTest.doubleTest(1632.0331e122d), 1632.0331e122d);
+
+		this.assertEquals(doubleTest.doublePlus(4.0, 4.0), 8.0);
+		this.assertEquals(doubleTest.doubleSub(4.0, 4.0), 0.0);
+		this.assertEquals(doubleTest.doubleMult(4.0, 4.0), 16.0);
+		this.assertEquals(doubleTest.doubleDiv(4.0, 4.0), 1.0);
+		this.assertEquals(doubleTest.doubleRem(4.0, 4.0), 0.0);
+		
+		this.assertEquals(doubleTest.doubleMinusAssignment(4.0), 1.0);
+		this.assertEquals(doubleTest.doubleAddAssignment(4.0), 7.0);
+		this.assertEquals(doubleTest.doubleMultAssignment(4.0), 12.0);
+		this.assertEquals(doubleTest.doubleDivAssignment(4.0), 2.0);
+		this.assertEquals(doubleTest.doubleModAssignment(4.0), 1.0);
 	}
 }
