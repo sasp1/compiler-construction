@@ -18,7 +18,7 @@ public class InterfaceExtendingClassTest extends TestCase {
 	public void testDivide() {
 		this.assertEquals(interfaceExtendingClass.method1(4), 4);
 		this.assertEquals(interfaceExtendingClass.stringMethod(4), "4");
-		this.assertEquals(interfaceExtendingClass.doubleMethod(4.0), 4.0);
+//		this.assertEquals(interfaceExtendingClass.doubleMethod(4.0), 4.0);
 		this.assertEquals(interfaceExtendingClass.method2(4), 6);
 		this.assertEquals(interfaceExtendingClass.method3(4), 7);
 	}

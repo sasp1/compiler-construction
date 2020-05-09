@@ -34,7 +34,7 @@ public class ExceptionHandling {
 
     public int throwsMethod(String msg) throws Exception {
         throw new Exception(msg);
-//        return 0;
+        return 0;
     }
 
     public void testLocalContext(){
