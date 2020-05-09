@@ -384,35 +384,9 @@ private TypeName qualifiedIdentifier(): {
          new TypeName( line, qualifiedIdentifier ); }
 }
 
-	/**	
-	 * Added	
-	 * Parse a interface identifier.	
-	 * 	
-	 * <pre>	
-	 *   interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}	
-	 * </pre>	
-	 * 	
-	 * @return an instance of TypeName.	
-	 */	
-		
-	private ArrayList<Type> interfaceIdentifiers(ArrayList<Type> interfaceList): {	
-		int line = 0;	
-		interfaceList.add(qualifiedIdentifier());	
-        }	
-        {
-        try { 	
-        ( 	
-            <COMMA> { interfaceList.add(qualifiedIdentifier()); }	
-        )*	
-        } catch(ParseException e ) {	
-            recoverFromError( new int[] { SEMI, EOF }, e );	
-        }	
-        { return interfaceList; }	
-	}	
-
-private ArrayList<TypeName> typeIdentifiers(): {
+private ArrayList<Type> typeIdentifiers(): {
     int line = 0;
-    ArrayList<TypeName> types = new ArrayList<TypeName>();
+    ArrayList<Type> types = new ArrayList<Type>();
     types.add(qualifiedIdentifier());
 }
 {
@@ -548,14 +522,14 @@ private ArrayList<String> modifiers(): {
     	int line = 0;
     	String name = ""; 
     	Type superClass = Type.OBJECT;
-		ArrayList<Type> interfaceList = new ArrayList<Type>();
+		ArrayList<Type> interfaceList = null;
     }	
     {	
         try {	
             {line = token.beginLine; }
             <IDENTIFIER> { name = token.image; }
             [	
-            	<EXTENDS> {interfaceIdentifiers(interfaceList);}	
+            	<EXTENDS> {interfaceList = typeIdentifiers();}
             ]	
         }	
         catch ( ParseException e) { 	
@@ -587,7 +561,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     int line = 0;
     String name = "";
     Type superClass = Type.OBJECT;
-    ArrayList<Type> interfaceList = new ArrayList<Type>();
+    ArrayList<Type> interfaceList = null;
     ArrayList<JMember> classBody = null;
 }
 {
@@ -598,7 +572,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
             <EXTENDS> superClass = qualifiedIdentifier() 
         ]
         [	
-            <IMPLEMENTS> {interfaceIdentifiers(interfaceList);}	
+            <IMPLEMENTS> {interfaceList = typeIdentifiers();}
         ]
         classBody = classBody()           
     } 
@@ -669,7 +643,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
     JBlock body = null;
     ArrayList<JVariableDeclarator> variableDeclarators = null;
     JMember memberDecl = null;
-    ArrayList<TypeName> throwTypes = null;
+    ArrayList<Type> throwTypes = null;
 }
 {
     try {
@@ -823,9 +797,13 @@ private JStatement statement(): {
     JVariableDeclaration vdecl = null;
     JExpression id = null;
     
-    JFormalParameter formalParameter = null;
+    JVariableDeclarator exceptionDecl = null;
     JBlock catchBody = null;
     JBlock finallyBody = null;
+    JFormalParameter formalParameter;
+
+    JExpression primary = null;
+    Type exceptionType = null;
 }
 {       
     try {
@@ -874,12 +852,18 @@ private JStatement statement(): {
         <TRY> { line = token.beginLine; }
 
         tryBody = block()
-        <CATCH> <LPAREN> formalParameter = formalParameter() <RPAREN> catchBody = block()
+        <CATCH> <LPAREN>
+        exceptionType = type()
+        exceptionDecl = variableDeclarator(exceptionType)
+        <RPAREN> catchBody = block()
         [
             LOOKAHEAD(<FINALLY>)
             <FINALLY> finallyBody = block()
         ]
-        { statement = new JTryCatchStatement(line, tryBody, formalParameter, catchBody, finallyBody);} |
+        { statement = new JTryCatchStatement(line, tryBody, exceptionDecl, catchBody, finallyBody);} |
+        <THROW>  { line = token.beginLine; }
+        primary = primary()
+        { statement = new JThrowStatement(line, primary);} |
         <SEMI> 
         { statement = new JEmptyStatement( line ); } |
         // Must be a statementExpression
@@ -1284,8 +1268,7 @@ private JStatement statementExpression(): {
               || expr instanceof JSuperConstruction
               || expr instanceof JThisConstruction 
               || expr instanceof JNewOp
-              || expr instanceof JNewArrayOp
-              || expr instanceof JThrowExpression) {
+              || expr instanceof JNewArrayOp) {
                 // So as not to save on stack
                 expr.isStatementExpression = true;
             }
@@ -1660,7 +1643,7 @@ private JExpression postfixExpression(): {
 }
 {
     try {
-        throwExpr = throwExpression() { line = throwExpr.line(); }
+        throwExpr = primary() { line = throwExpr.line(); }
         (
             throwExpr = selector( throwExpr )
         )*
@@ -1678,23 +1661,6 @@ private JExpression postfixExpression(): {
     }
     { return throwExpr; }
 }
-
-private JExpression throwExpression(): {
-        int line = 0;
-        JExpression expr = null;
-        JExpression primary = null;
-        }
-    {
-        try {
-        <THROW> { line = token.beginLine; }
-        primary = primary()
-        { expr = new JThrowExpression(line, primary);} |
-        expr = primary()
-        } catch ( ParseException e) {
-            recoverFromError( new int[] { SEMI, EOF }, e );
-        }
-        { return expr;}
-    }
 
 /**
  * Parse a selector.
