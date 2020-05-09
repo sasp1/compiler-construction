@@ -205,6 +205,7 @@ class JMinusAssignOp extends JAssignment {
 
     public void codegen(CLEmitter output) {
 
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         rhs.codegen(output);
         output.addNoArgInstruction(ISUB);
@@ -245,6 +246,7 @@ class JMultAssignOp extends JAssignment {
 
     @Override
     public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         rhs.codegen(output);
         output.addNoArgInstruction(IMUL);
@@ -287,6 +289,7 @@ class JDivAssignOp extends JAssignment {
 
     @Override
     public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         rhs.codegen(output);
         output.addNoArgInstruction(IDIV);
@@ -328,6 +331,7 @@ class JRemAssignOp extends JAssignment {
 
     @Override
     public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
         rhs.codegen(output);
         output.addNoArgInstruction(IREM);
