@@ -328,7 +328,7 @@ class JRemAssignOp extends JAssignment {
 
     @Override
     public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
         rhs.codegen(output);
         output.addNoArgInstruction(IREM);
 

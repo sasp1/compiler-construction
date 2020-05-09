@@ -17,8 +17,8 @@ public class RemAssignTest extends TestCase {
 
     public void testRemAssign() {
         assertEquals(2, remAssign.remAssign(20, 3));
-		assertEquals(remAssign.remAssign(33, 13), 7);
-		assertEquals(remAssign.remAssign(10, 10), 0);
+		assertEquals(7, remAssign.remAssign(33, 13));
+		assertEquals(0, remAssign.remAssign(10, 10));
     }
 
 }
