@@ -1154,7 +1154,7 @@ public class Parser {
 		int line = scanner.token().line();
 		JExpression lhs = conditionalOrExpression();
 		if (have(COND)) {
-			JExpression consequent = conditionalExpression(); // I'm unsure what kind of expression it should be
+			JExpression consequent = conditionalExpression();
 			mustBe(COLON);
 			JExpression alternate = conditionalExpression();
 			return new JConditionalExpression(line, lhs, consequent, alternate);
