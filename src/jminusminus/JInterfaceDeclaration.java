@@ -5,6 +5,8 @@ import static jminusminus.CLConstants.INVOKESPECIAL;
 import static jminusminus.CLConstants.RETURN;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class JInterfaceDeclaration extends JAST implements JTypeDecl {
 
