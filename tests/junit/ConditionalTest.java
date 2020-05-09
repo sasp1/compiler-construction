@@ -26,6 +26,11 @@ public class ConditionalTest extends TestCase {
 		assertEquals(20, conditional.nestedConditional(false, true,10, 20));
 	}
 
+	public void testNestedExtreme() {
+		int returnVal = 2;
+		assertEquals(returnVal, conditional.nestedConditionalExtreme(false,true,10,2));
+	}
+
 	public void testNestedConditionalString() {
 		assertEquals("hey", conditional.nestedConditionalString(true, true,"hey", "ho"));
 		assertEquals("ho", conditional.nestedConditionalString(false, true,"hey", "ho"));
