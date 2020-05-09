@@ -38,7 +38,7 @@ public class JInterfaceDeclaration extends JAST implements JTypeDecl {
     /** Static (class) fields of this class. */
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
     
-    private ArrayList<Type> interfaceList;
+    private ArrayList<TypeName> interfaceList;
 
     /**
      * Construct an AST node for a class declaration given the line number, list
@@ -58,7 +58,7 @@ public class JInterfaceDeclaration extends JAST implements JTypeDecl {
      */
 
     public JInterfaceDeclaration(int line, ArrayList<String> mods, String name,
-            Type superType, ArrayList<JMember> classBlock, ArrayList<Type> interfaceList) {
+            Type superType, ArrayList<JMember> classBlock, ArrayList<TypeName> interfaceList) {
         super(line);
         this.mods = mods;
         this.name = name;
