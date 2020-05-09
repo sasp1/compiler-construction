@@ -13,7 +13,7 @@ public class ExceptionHandlingTest extends TestCase {
 
     protected void setUp() throws Exception {
         testMsg = "testMessage";
-        eh = new ExceptionHandling();
+//        eh = new ExceptionHandling();
         super.setUp();
     }
 
@@ -46,9 +46,9 @@ public class ExceptionHandlingTest extends TestCase {
 //        assertEquals("hej", eMsg);
 //    }
 
-    public void testFinally(){
-        assertEquals(2, eh.finallyMethodReturns2(0));
-    }
+//    public void testFinally(){
+//        assertEquals(2, eh.finallyMethodReturns2(0));
+//    }
 
     public void testExceptionDeclaration(){
 //        String testMsg = "hey";

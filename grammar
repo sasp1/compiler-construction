@@ -47,6 +47,7 @@ statement ::= block
             | WHILE parExpression statement 
             | RETURN [expression] SEMI
             | TRY statement CATCH variableDeclarator statement [FINALLY statement]
+            | THROW primary
             | SEMI 
             | statementExpression SEMI
 
