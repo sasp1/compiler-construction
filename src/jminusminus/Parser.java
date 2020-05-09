@@ -393,28 +393,6 @@ public class Parser {
 		return new TypeName(line, qualifiedIdentifier);
 	}
 
-	/**
-	 * Added
-	 * Parse a interface identifier.
-	 *
-	 * <pre>
-	 *   interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
-	 * </pre>
-	 *
-	 * @return an instance of TypeName.
-	 */
-
-	private ArrayList<Type> interfaceIdentifiers(ArrayList<Type> interfaceList) {
-		int line = scanner.token().line();
-
-		interfaceList.add(qualifiedIdentifier());
-
-		while (have(COMMA)) {
-			interfaceList.add(qualifiedIdentifier());
-		}
-		return interfaceList;
-	}
-
 	private ArrayList<Type> typeIdentifiers() {
 		ArrayList<Type> types = new ArrayList<>();
 		types.add(qualifiedIdentifier());
@@ -530,10 +508,10 @@ public class Parser {
 		mustBe(INTERFACE);
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
-		ArrayList<Type> interfaceList = new ArrayList<Type>();
+		ArrayList<Type> interfaceList = null;
 		Type superClass = Type.OBJECT;
 		if (have(EXTENDS)) {
-			interfaceIdentifiers(interfaceList);
+			interfaceList = typeIdentifiers();
 		}
 
 		return new JInterfaceDeclaration(line, mods, name, superClass, classBody(), interfaceList);
@@ -561,14 +539,14 @@ public class Parser {
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
 		Type superClass;
-		ArrayList<Type> interfaceList = new ArrayList<Type>();
+		ArrayList<Type> interfaceList = null;
 		if (have(EXTENDS)) {
 			superClass = qualifiedIdentifier();
 		} else {
 			superClass = Type.OBJECT;
 		}
 		if(have(IMPLEMENTS)) {
-			interfaceIdentifiers(interfaceList);
+			interfaceList = typeIdentifiers();
 		}
 
 		return new JClassDeclaration(line, mods, name, superClass, classBody(), interfaceList);
