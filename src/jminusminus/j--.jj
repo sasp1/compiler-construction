@@ -793,14 +793,17 @@ private JStatement statement(): {
     JBlock blockBody = null;
     JBlock tryBody = null;
     JExpression expr = null;
-    JStatement upd = null;
-    JVariableDeclaration vdecl = null;
-    JExpression id = null;
     
     JVariableDeclarator exceptionDecl = null;
     JBlock catchBody = null;
     JBlock finallyBody = null;
-    JFormalParameter formalParameter;
+    
+    Type initType = null;
+    JVariableDeclarator initDecl = null;
+    JExpression iterable = null;
+    JVariableDeclaration vdecl = null;
+    JExpression cond = null;
+    JStatement upd = null;
 
     JExpression primary = null;
     Type exceptionType = null;
@@ -834,21 +837,22 @@ private JStatement statement(): {
         { statement = new JReturnStatement( line, expr ); } |
         LOOKAHEAD(<FOR> <LPAREN> (basicType() | referenceType()) <IDENTIFIER> <COLON>)
         <FOR> { line = token.beginLine; } <LPAREN>
-        formalParameter = formalParameter()
+        initType = type()
+        initDecl = variableDeclarator(type())
         <COLON>
-        id = expression()
+        iterable = primary()
         <RPAREN>
         body = statement()
-        { statement = new JForStatement(line, formalParameter, id, null, null, null, body); } | //For each
+        { statement = new JForEachStatement(line, initDecl, iterable, body); } | //For each
         <FOR> { line = token.beginLine; }
         <LPAREN>
         vdecl = localVariableDeclarationStatement()
-        expr = expression()
+        cond = expression()
         <SEMI>
         upd = statementExpression()
         <RPAREN>
         body = statement()
-        { statement = new JForStatement(line, null, null, vdecl, expr, upd, body); } | //For loop
+        { statement = new JForLoopStatement(line, vdecl, cond, upd, body); } | //For loop
         <TRY> { line = token.beginLine; }
 
         tryBody = block()
