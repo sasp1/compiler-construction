@@ -413,15 +413,6 @@ public class Parser {
 		return interfaceList;
 	}
 
-	private ArrayList<TypeName> intefaceTypeIdentifiers() {
-		ArrayList<TypeName> types = new ArrayList<>();
-		types.add(qualifiedIdentifier());
-		while (have(COMMA)) {
-			types.add(qualifiedIdentifier());
-		}
-		return types;
-	}
-
 	private ArrayList<Type> typeIdentifiers() {
 		ArrayList<Type> types = new ArrayList<>();
 		types.add(qualifiedIdentifier());

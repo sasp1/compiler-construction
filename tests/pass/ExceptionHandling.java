@@ -33,7 +33,9 @@ public class ExceptionHandling {
     }
 
     public int throwsMethod(String msg) throws Exception {
-        throw new Exception(msg);
+    	if (true) {
+    		throw new Exception(msg);
+    	}
         return 0;
     }
 

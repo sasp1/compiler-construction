@@ -156,9 +156,11 @@ public class JInterfaceDeclaration extends JAST implements JTypeDecl {
 		CLEmitter partial = new CLEmitter(false);
 
 		// interface
-		this.jvmNames = new ArrayList<>();
-		for (TypeName interfaceName : this.interfaceList) {
-			jvmNames.add(interfaceName.resolve(this.context).jvmName());
+		if (this.interfaceList != null) {
+			this.jvmNames = new ArrayList<>();
+			for (TypeName interfaceName : this.interfaceList) {
+				jvmNames.add(interfaceName.resolve(this.context).jvmName());
+			}
 		}
 
 		// Add the class header to the partial class

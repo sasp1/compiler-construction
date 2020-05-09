@@ -136,9 +136,10 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 		CLEmitter partial = new CLEmitter(false);
 		partial.addClass(mods, qualifiedName, Type.OBJECT.jvmName(), null, false); // Object for superClass, just for
 																					// now
-
-		for (TypeName type : this.interfaceList) {
-			interfaceNames.add(type.jvmName());
+		if (this.interfaceList != null) {
+			for (TypeName type : this.interfaceList) {
+				interfaceNames.add(type.jvmName());
+			}
 		}
 
 		thisType = Type.typeFor(partial.toClass());
@@ -172,9 +173,11 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 		CLEmitter partial = new CLEmitter(false);
 
 		// interface
-		this.jvmNames = new ArrayList<>();
-		for (TypeName interfaceName : this.interfaceList) {
-			jvmNames.add(interfaceName.resolve(this.context).jvmName());
+		if (this.interfaceList != null) {
+			this.jvmNames = new ArrayList<>();
+			for (TypeName interfaceName : this.interfaceList) {
+				jvmNames.add(interfaceName.resolve(this.context).jvmName());
+			}
 		}
 
 		// Add the class header to the partial class
@@ -241,22 +244,24 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 			}
 		}
 
-		for (TypeName inf : this.interfaceList) {
-			Type infs = inf.resolve(this.context);
-			ArrayList<Method> methods = infs.abstractMethods();
-			int nrOfMethods = methods.size();
-			int foundMethods = 0;
-			for (Method meth : methods) {
-				for (JMethodDeclaration localMethod : localMethods) {
-					if (localMethod.returnType.simpleName().equals(meth.returnType().simpleName())
-							&& localMethod.name.equals(meth.name())
-							&& localMethod.descriptor.equals(meth.toDescriptor())) {
-						foundMethods++;
+		if (this.interfaceList != null) {
+			for (TypeName inf : this.interfaceList) {
+				Type infs = inf.resolve(this.context);
+				ArrayList<Method> methods = infs.abstractMethods();
+				int nrOfMethods = methods.size();
+				int foundMethods = 0;
+				for (Method meth : methods) {
+					for (JMethodDeclaration localMethod : localMethods) {
+						if (localMethod.returnType.simpleName().equals(meth.returnType().simpleName())
+								&& localMethod.name.equals(meth.name())
+								&& localMethod.descriptor.equals(meth.toDescriptor())) {
+							foundMethods++;
+						}
 					}
 				}
-			}
-			if (nrOfMethods != foundMethods) {
-				JAST.compilationUnit.reportSemanticError(line, "Missing methods from: %s", inf.toString());
+				if (nrOfMethods != foundMethods) {
+					JAST.compilationUnit.reportSemanticError(line, "Missing methods from: %s", inf.toString());
+				}
 			}
 		}
 
@@ -306,20 +311,19 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 	}
 
 	/**
-     * @inheritDoc
-     */
+	 * @inheritDoc
+	 */
 
-    public void writeToStdOut(PrettyPrinter p) {
-        p.printf("<JClassDeclaration line=\"%d\" name=\"%s\""
-                + " super=\"%s\">\n", line(), name, superType.toString());
-        p.indentRight();
-        if (context != null) {
-            context.writeToStdOut(p);
-        }	        
-        if(interfaceNames.size()!=0) {
-        	p.println("<Interfaces>");
-        	p.indentRight();
-        }
+	public void writeToStdOut(PrettyPrinter p) {
+		p.printf("<JClassDeclaration line=\"%d\" name=\"%s\"" + " super=\"%s\">\n", line(), name, superType.toString());
+		p.indentRight();
+		if (context != null) {
+			context.writeToStdOut(p);
+		}
+		if (interfaceNames.size() != 0) {
+			p.println("<Interfaces>");
+			p.indentRight();
+		}
 		for (String interfaces : interfaceNames) {
 			p.printf("<Interface name=\"%s\"/>\n", interfaces);
 		}

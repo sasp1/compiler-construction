@@ -384,6 +384,20 @@ private TypeName qualifiedIdentifier(): {
          new TypeName( line, qualifiedIdentifier ); }
 }
 
+private ArrayList<TypeName> interfaceTypeIdentifiers(): {
+    int line = 0;
+    ArrayList<TypeName> types = new ArrayList<TypeName>();
+    types.add(qualifiedIdentifier());
+}
+{
+    try {
+        (<COMMA> {types.add(qualifiedIdentifier());})*
+    } catch(ParseException e ) {
+        recoverFromError( new int[] { SEMI, EOF }, e );
+    }
+    { return types; }
+}
+
 private ArrayList<Type> typeIdentifiers(): {
     int line = 0;
     ArrayList<Type> types = new ArrayList<Type>();
@@ -522,24 +536,60 @@ private ArrayList<String> modifiers(): {
     	int line = 0;
     	String name = ""; 
     	Type superClass = Type.OBJECT;
-		ArrayList<Type> interfaceList = null;
+		ArrayList<TypeName> interfaceList = null;
     }	
     {	
         try {	
             {line = token.beginLine; }
             <IDENTIFIER> { name = token.image; }
             [	
-            	<EXTENDS> {interfaceList = typeIdentifiers();}
+            	<EXTENDS> {interfaceList = interfaceTypeIdentifiers();}
             ]	
         }	
-        catch ( ParseException e) { 	
-                recoverFromError( new int[] {SEMI, EOF}, e); 	
+        catch (ParseException e) { 	
+                recoverFromError(new int[] {SEMI, EOF}, e); 	
         }	
         {	
-		return new JInterfaceDeclaration(line, mods, name, superClass, classBody(), interfaceList);	
+		return new JInterfaceDeclaration(line, mods, name, superClass, interfaceBody(), interfaceList);	
         }	
     }	
 
+/**
+ * Parse a interface body.
+ * 
+ * <pre>
+ *   classBody : LCURLY
+ *                   {modifiers memberDecl}
+ *                 RCURLY
+ * </pre>
+ * 
+ * @return list of members in the class body.
+ */
+
+private ArrayList<JMember> interfaceBody(): {
+    ArrayList<String> mods = null;
+    JMember aMember = null;
+    ArrayList<JMember> members = new ArrayList<JMember>();
+}
+{
+    try {
+        <LCURLY>
+        ( 
+            mods = modifiers()
+            {
+            if (!mods.contains("abstract")) {
+            mods.add("abstract");
+            }
+            }
+            aMember = memberDecl( mods ) { members.add( aMember ); } 
+        )*
+        <RCURLY>
+    } 
+    catch ( ParseException e ) { 
+        recoverFromError( new int[] { SEMI, EOF }, e ); 
+    }
+    { return members; }
+}
 
 /**
  * Parse a class declaration.
@@ -561,7 +611,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     int line = 0;
     String name = "";
     Type superClass = Type.OBJECT;
-    ArrayList<Type> interfaceList = null;
+    ArrayList<TypeName> interfaceList = null;
     ArrayList<JMember> classBody = null;
 }
 {
@@ -572,7 +622,7 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
             <EXTENDS> superClass = qualifiedIdentifier() 
         ]
         [	
-            <IMPLEMENTS> {interfaceList = typeIdentifiers();}
+            <IMPLEMENTS> {interfaceList = interfaceTypeIdentifiers();}
         ]
         classBody = classBody()           
     } 
