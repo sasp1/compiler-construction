@@ -6,7 +6,11 @@ public class MultilineComment {
         /*
         res += a;
         res += b;
-         */
+        */
+
+        /**/
+
+        /**=*/
         return res;
     }
 }

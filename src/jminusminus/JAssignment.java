@@ -204,14 +204,11 @@ class JMinusAssignOp extends JAssignment {
     }
 
     public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        if (lhs.type().equals(Type.STRING)) {
-            rhs.codegen(output);
-        } else {
-            ((JLhs) lhs).codegenLoadLhsRvalue(output);
-            rhs.codegen(output);
-            output.addNoArgInstruction(ISUB);
-        }
+
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISUB);
+
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
             ((JLhs) lhs).codegenDuplicateRvalue(output);
@@ -248,14 +245,10 @@ class JMultAssignOp extends JAssignment {
 
     @Override
     public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        if (lhs.type().equals(Type.STRING)) {
-            rhs.codegen(output);
-        } else {
-            ((JLhs) lhs).codegenLoadLhsRvalue(output);
-            rhs.codegen(output);
-            output.addNoArgInstruction(IMUL);
-        }
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IMUL);
+
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
             ((JLhs) lhs).codegenDuplicateRvalue(output);
@@ -294,14 +287,10 @@ class JDivAssignOp extends JAssignment {
 
     @Override
     public void codegen(CLEmitter output) {
-        ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        if (lhs.type().equals(Type.STRING)) {
-            rhs.codegen(output);
-        } else {
-            ((JLhs) lhs).codegenLoadLhsRvalue(output);
-            rhs.codegen(output);
-            output.addNoArgInstruction(IDIV);
-        }
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IDIV);
+
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
             ((JLhs) lhs).codegenDuplicateRvalue(output);
@@ -340,13 +329,9 @@ class JRemAssignOp extends JAssignment {
     @Override
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        if (lhs.type().equals(Type.STRING)) {
-            rhs.codegen(output);
-        } else {
-            ((JLhs) lhs).codegenLoadLhsRvalue(output);
-            rhs.codegen(output);
-            output.addNoArgInstruction(IREM);
-        }
+        rhs.codegen(output);
+        output.addNoArgInstruction(IREM);
+
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
             ((JLhs) lhs).codegenDuplicateRvalue(output);
