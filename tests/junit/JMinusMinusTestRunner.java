@@ -34,7 +34,7 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IUComTest.class);
 
 		// assignment
-//		suite.addTestSuite(DoubleTest.class);
+		suite.addTestSuite(DoubleTest.class);
 		suite.addTestSuite(PlusAssignTest.class);
 		suite.addTestSuite(RemAssignTest.class); // step 5
 		suite.addTestSuite(MinusAssignTest.class); // step 5

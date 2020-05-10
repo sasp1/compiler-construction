@@ -110,8 +110,10 @@ class JReturnStatement
             if (expr.type() == Type.INT
                 || expr.type() == Type.BOOLEAN
                 || expr.type() == Type.CHAR
-                || expr.type() == Type.DOUBLE) {
+                ) {
                 output.addNoArgInstruction(IRETURN);
+            } else if (expr.type() == Type.DOUBLE) {
+               output.addNoArgInstruction(DRETURN);
             } else {
                 output.addNoArgInstruction(ARETURN);
             }
