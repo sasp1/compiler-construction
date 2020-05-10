@@ -142,8 +142,8 @@ SKIP: {" "|"\t"|"\n"|"\r"|"\f"}
 // Single line comment -- ignored
 SKIP: {<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>}
 
-// TODO: below doesn't work :(
-SKIP : { <MULTI_LINE_COMMENT: "/*" (~["s"])* ("*/")* "*/"> }
+// Multiline comment
+SKIP : { <MULTI_LINE_COMMENT: "/*" (~["*"])* "*" (~["*","/"] (~["*"])* "*" | "*")* "/"> }
 
 // Reserved words
 TOKEN:
@@ -887,12 +887,12 @@ private JStatement statement(): {
         { statement = new JForEachStatement(line, initDecl, iterable, body); } | //For each
         <FOR> { line = token.beginLine; }
         <LPAREN>
-        [
-            LOOKAHEAD(localVariableDeclarationStatement())
-            vdecl = localVariableDeclarationStatement()
-            |
-            <SEMI>
-        ]
+
+        (LOOKAHEAD(localVariableDeclarationStatement())
+        vdecl = localVariableDeclarationStatement()
+        |
+        <SEMI>)
+
 
         [
             LOOKAHEAD(expression())
