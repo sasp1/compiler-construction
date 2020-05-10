@@ -23,6 +23,7 @@ public class JForLoopStatement extends JStatement {
         if (init != null)
             init.analyze(localContext);
 
+
         if (cond != null) {
             cond.analyze(localContext);
             cond.type().mustMatchExpected(line, Type.BOOLEAN);

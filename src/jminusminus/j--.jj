@@ -832,7 +832,7 @@ private JStatement statement(): {
     JBlock tryBody = null;
     JExpression expr = null;
     
-    JVariableDeclarator exceptionDecl = null;
+    JFormalParameter exceptionDecl = null;
     JBlock catchBody = null;
     JBlock finallyBody = null;
     
@@ -844,7 +844,6 @@ private JStatement statement(): {
     JStatement upd = null;
 
     JExpression primary = null;
-    Type exceptionType = null;
 }
 {       
     try {
@@ -883,7 +882,6 @@ private JStatement statement(): {
 
         body = statement()
 
-
         { statement = new JForEachStatement(line, initDecl, iterable, body); } | //For each
         <FOR> { line = token.beginLine; }
         <LPAREN>
@@ -899,24 +897,19 @@ private JStatement statement(): {
             cond = expression()
         ]
         <SEMI>
-        [
+        (
             LOOKAHEAD(statementExpression())
             upd = statementExpression()
-            |
-            <SEMI>
-        ]
+        )
         <RPAREN>
-
-            body = statement()
-
+        body = statement()
 
         { statement = new JForLoopStatement(line, vdecl, cond, upd, body); } | //For loop
         <TRY> { line = token.beginLine; }
 
         tryBody = block()
         <CATCH> <LPAREN>
-        exceptionType = type()
-        exceptionDecl = variableDeclarator(exceptionType)
+        exceptionDecl = formalParameter()
         <RPAREN> catchBody = block()
         [
             LOOKAHEAD(<FINALLY>)

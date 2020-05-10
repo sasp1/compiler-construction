@@ -39,30 +39,69 @@ public class ExceptionHandling {
         return 0;
     }
 
-    public void testLocalContext(){
+    public int testLocalContext_adds2(int i){
         try {
-            int i = 3;
+            i++;
         } catch (Exception e){
-            int i = 3;
+
         }
 
         try {
-            int i = 3;
-        } catch (Exception e ) {
-            int i = 3;
+            i++;
+        } catch (Exception e) {
+
         }
+        return i;
     }
 
-    public int finallyMethodReturns2(int i) {
+    public int alotOfVariablesTest(int i, int m) {
+        int k = 3;
+        m = k + 4;
 
         try {
             throw new Exception("");
 //            i = -1;
         } catch (Exception e) {
-            i = -2;
+            int l = 4;
+            e.getMessage();
+            ++i;
         } finally {
-            i = 2;
+            ++i;
         }
         return i;
     }
+
+    public String returningExceptionMessage(String msg){
+        try {
+            throw new Exception(msg);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+
+    public String simpleTryCatch_returns123(String msg){
+        try {
+            msg += "1";
+            throw new Exception("hej");
+        } catch (Exception e) {
+            msg += "2";
+        }finally {
+            msg += "3";
+        }
+
+        return msg;
+    }
+
+    public String simpleTryCatchFinally_returns13(String msg){
+        try {
+            msg += "1";
+        } catch (Exception e) {
+            msg += "2";
+        }finally {
+            msg += "3";
+        }
+
+        return msg;
+    }
+
 }

@@ -7,7 +7,7 @@ package jminusminus;
  * generation is done in a parent AST.
  */
 
-class JFormalParameter extends JAST {
+class  JFormalParameter extends JAST {
 
     /** Parameter name. */
     private String name;

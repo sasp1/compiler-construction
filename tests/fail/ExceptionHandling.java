@@ -4,14 +4,11 @@ import java.lang.Exception;
 
 public class ExceptionHandling {
 
-    public void tryWithoutCatch() {
-        int i = 0;
+    public void tryCatchWithNonThrowable(){
         try {
-            i--;
-        }
-    }
 
-    public void throwAssignment() {
-        int i = throw new Exception("");
+        }catch (String s) {
+
+        }
     }
 }
