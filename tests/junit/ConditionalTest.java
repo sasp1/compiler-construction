@@ -37,7 +37,13 @@ public class ConditionalTest extends TestCase {
 		assertEquals("else else", conditional.nestedConditionalString(false, false,"hey", "ho"));
 	}
 
-	public void testLeftHandSide(){
-		assertEquals("here", conditional.conditionalOnLeftHandSide());
+	public void testExampleFromReport(){
+		assertEquals(-2, conditional.conditionalExampleFromReport());
 	}
+
+	public void testAnother(){
+		assertEquals(-1, conditional.anotherTest());
+	}
+
+
 }

@@ -17,7 +17,11 @@ public class Conditional {
 		return x ? returnVal1 : (y ? returnVal2 : "else else" );
 	}
 
-	public String conditionalOnLeftHandSide () {
-		return ((10 == 10) ? true : false) ? "here" : "there";
+	public int conditionalExampleFromReport () {
+		return false ? true ? 0 : -1 : true ? -2 : -3;
+	}
+
+	public int anotherTest () {
+		return true ? false ? 0 : -1 : true ? -2 : -3;
 	}
 }
