@@ -890,17 +890,16 @@ private JStatement statement(): {
         vdecl = localVariableDeclarationStatement()
         |
         <SEMI>)
-
-
         [
             LOOKAHEAD(expression())
             cond = expression()
         ]
         <SEMI>
-        (
+        [
             LOOKAHEAD(statementExpression())
             upd = statementExpression()
-        )
+        ]
+
         <RPAREN>
         body = statement()
 
