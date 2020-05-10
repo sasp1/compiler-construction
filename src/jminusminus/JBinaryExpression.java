@@ -31,6 +31,8 @@ abstract class JBinaryExpression extends JExpression {
 	 * @param rhs      the rhs operand.
 	 */
 
+
+
 	protected JBinaryExpression(int line, String operator, JExpression lhs, JExpression rhs) {
 		super(line);
 		this.operator = operator;
@@ -221,14 +223,7 @@ class JMultiplyOp extends JBinaryExpression {
 		super(line, "*", lhs, rhs);
 	}
 
-	/**
-	 * Analyzing the * operation involves analyzing its operands, checking types,
-	 * and determining the result type.
-	 * 
-	 * @param context context in which names are resolved.
-	 * @return the analyzed (and possibly rewritten) AST subtree.
-	 */
-
+	@Override
 	public JExpression analyze(Context context) {
 		return analyzeNumbers(context);
 	}
