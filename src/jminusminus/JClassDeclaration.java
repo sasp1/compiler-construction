@@ -124,6 +124,10 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 		return instanceFieldInitializations;
 	}
 
+	public ArrayList<JBlockDeclaration> instanceBlockInitializations() {
+		return instanceBlockInitializations;
+	}
+
 	/**
 	 * Declare this class in the parent (compilation unit) context.
 	 * 
