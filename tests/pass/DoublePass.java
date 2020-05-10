@@ -3,6 +3,14 @@ package pass;
 
 import java.lang.System;
 public class DoublePass {
+
+	public static double doubleTest() {
+		double e = 2.0 + 3.0;
+		double a = 2.0 + 3.0;
+		double b = 2.0 + 3.0;
+		double k = 2.0 + 3.0;
+		return e;
+	}
 	public static double doubleTest(double d) {
 		double e = 2.0 + 3.0;
 		return d;
@@ -31,22 +39,27 @@ public class DoublePass {
 		return d % e;
 	}
 	public static double doubleMinusAssignment(double d) {
-		return d -= 3.0;
+		d -= 3.0;
+		return d;
 	}
 
 	public static double doubleAddAssignment(double d) {
-		return d += 3.0;
+		d += 3.0;
+		return d;
 	}
 
 	public static double doubleMultAssignment(double d) {
-		return d *= 3.0;
+		d *= 3.0;
+		return d;
 	}
 
 	public static double doubleDivAssignment(double d) {
-		return d /= 2.0;
+		 d /= 2.0;
+		return d;
 	}
 
 	public static double doubleModAssignment(double d) {
-		return d %= 3.0;
+		d %= 3.0;
+		return d;
 	}
 }

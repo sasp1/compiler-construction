@@ -16,6 +16,8 @@ public class DoubleTest extends TestCase {
 	}
 
 	public void testDivide() {
+		assertEquals(5.0, DoublePass.doubleTest());
+
 		assertEquals(DoublePass.doubleTest(0.0), 0.0);
 		assertEquals(DoublePass.doubleTest(15.0), 15.0);
 		assertEquals(DoublePass.doubleTest(3e2), 3e2);

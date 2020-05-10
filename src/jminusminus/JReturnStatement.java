@@ -109,9 +109,10 @@ class JReturnStatement
             expr.codegen(output);
             if (expr.type() == Type.INT
                 || expr.type() == Type.BOOLEAN
-                || expr.type() == Type.CHAR
-                || expr.type() == Type.DOUBLE) {
+                || expr.type() == Type.CHAR) {
                 output.addNoArgInstruction(IRETURN);
+            } else if (expr.type() == Type.DOUBLE) {
+                output.addNoArgInstruction(DRETURN);
             } else {
                 output.addNoArgInstruction(ARETURN);
             }
