@@ -232,13 +232,6 @@ class Type {
      */
 
     public boolean isJavaAssignableFrom(Type that) {
-
-        if (that.classRep == null) {
-            that.simpleName();
-            System.out.println("EEERRRROOOOORRRR");
-            System.out.println("EEERRRROOOOORRRR");
-            System.out.println("EEERRRROOOOORRRR");
-        }
         return this.classRep.isAssignableFrom(that.classRep);
     }
 

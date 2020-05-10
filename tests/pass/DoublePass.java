@@ -34,10 +34,6 @@ public class DoublePass {
 		return d -= 3.0;
 	}
 
-    public static void main(String[] args) {
-        System.out.println(doubleMinusAssignment(4.0));
-    }
-
 	public static double doubleAddAssignment(double d) {
 		return d += 3.0;
 	}
