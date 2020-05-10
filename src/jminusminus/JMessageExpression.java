@@ -135,11 +135,6 @@ class JMessageExpression extends JExpression {
         // Find appropriate Method for this message expression
         method = target.type().methodFor(messageName, argTypes);
         if (method == null) {
-            System.out.println(messageName);
-            System.out.println(messageName);
-            System.out.println(messageName);
-            System.out.println(messageName);
-            System.out.println(messageName);
             JAST.compilationUnit.reportSemanticError(line(),
                     "Cannot find method for: "
                             + Type.signatureFor(messageName, argTypes));
