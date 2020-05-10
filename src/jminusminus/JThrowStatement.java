@@ -1,5 +1,6 @@
 package jminusminus;
 
+import static jminusminus.CLConstants.ASTORE;
 import static jminusminus.CLConstants.ATHROW;
 
 public class JThrowStatement extends JStatement {
@@ -16,6 +17,7 @@ public class JThrowStatement extends JStatement {
 
 //        TODO: Check that exception is handled (either that method throws it or that it is try catch block
         primary.type().mustInheritFromType(line(), Throwable.class, context);
+
 
         return this;
     }

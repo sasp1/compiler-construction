@@ -1,5 +1,7 @@
 package jminusminus;
 
+import java.util.ArrayList;
+
 public class JTryCatchStatement extends JStatement{
 
 
@@ -12,6 +14,7 @@ public class JTryCatchStatement extends JStatement{
     /** Body of catch block*/
     private JBlock catchBody;
     private final JBlock finallyBody;
+    private JVariableDeclaration vd;
 
     /**
      * Construct an AST node for a statement given its line number.
@@ -35,9 +38,20 @@ public class JTryCatchStatement extends JStatement{
         tryBody.analyze(context);
 
         Type exceptionType = exceptionDeclaration.type().resolve(context);
-
         exceptionDeclaration.setType(exceptionType);
-        exceptionType.mustInheritFromType(line, Throwable.class, context);
+//
+        exceptionDeclaration.analyze(context);
+
+//        ArrayList<JVariableDeclarator> list = new ArrayList<>();
+//        list.add(exceptionDeclaration);
+//        exceptionDeclaration.setInitializer(new JLiteralNull(line));
+//
+//        vd = new JVariableDeclaration(line, null, list);
+//
+//        vd.analyze(context);
+
+
+//        exceptionType.mustInheritFromType(line, Throwable.class, context);
         catchBody.analyze(context);
 
         if (finallyBody != null) {
@@ -57,21 +71,25 @@ public class JTryCatchStatement extends JStatement{
         output.addLabel(tryStartLabel);
         tryBody.codegen(output);
         output.addLabel(tryEndLabel);
+
+
         output.addBranchInstruction(CLConstants.GOTO, endLabel);
 
         output.addLabel(handlerLabel);
+//        vd.codegen(output);
         exceptionDeclaration.codegen(output);
-        output.addNoArgInstruction(CLConstants.POP);
+//        output.addNoArgInstruction(CLConstants.POP);
 
         catchBody.codegen(output);
 
         output.addLabel(endLabel);
-//        output.addBranchInstruction(CLConstants.GOTO, handlerLabel);
         if (finallyBody != null) {
             finallyBody.codegen(output);
         }
+//        output.addBranchInstruction(CLConstants.GOTO, handlerLabel);
 
         output.addExceptionHandler(tryStartLabel, tryEndLabel, handlerLabel, exceptionDeclaration.type().jvmName());
+
     }
 
     @Override

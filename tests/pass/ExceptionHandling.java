@@ -10,48 +10,48 @@ public class ExceptionHandling {
         throw new Exception(msg);
     }
 
-    int i;
-    public ExceptionHandling() {
-        i = 2;
-    }
-
-
-    public int catchMethod() {
-        i = 0;
-
-        try {
-            i = 1;
-            i = 3;
-            throw new Exception("");
-        } catch (Exception e) {
-           i = 1;
-           i =2;
-
-        }
-
-        return i;
-    }
-
-    public int throwsMethod(String msg) throws Exception {
-    	if (true) {
-    		throw new Exception(msg);
-    	}
-        return 0;
-    }
-
-    public void testLocalContext(){
-        try {
-            int i = 3;
-        } catch (Exception e){
-            int i = 3;
-        }
-
-        try {
-            int i = 3;
-        } catch (Exception e ) {
-            int i = 3;
-        }
-    }
+//    int i;
+//    public ExceptionHandling() {
+//        i = 2;
+//    }
+//
+//
+//    public int catchMethod() {
+//        i = 0;
+//
+//        try {
+//            i = 1;
+//            i = 3;
+//            throw new Exception("");
+//        } catch (Exception e) {
+//           i = 1;
+//           i =2;
+//
+//        }
+//
+//        return i;
+//    }
+//
+//    public int throwsMethod(String msg) throws Exception {
+//    	if (true) {
+//    		throw new Exception(msg);
+//    	}
+//        return 0;
+//    }
+//
+//    public void testLocalContext(){
+//        try {
+//            int i = 3;
+//        } catch (Exception e){
+//            int i = 3;
+//        }
+//
+//        try {
+//            int i = 3;
+//        } catch (Exception e ) {
+//            int i = 3;
+//        }
+//    }
 
     public int finallyMethodReturns2(int i) {
 
@@ -59,9 +59,10 @@ public class ExceptionHandling {
             throw new Exception("");
 //            i = -1;
         } catch (Exception e) {
-            i = -2;
+            e.getMessage();
+            ++i;
         } finally {
-            i = 2;
+            ++i;
         }
         return i;
     }
