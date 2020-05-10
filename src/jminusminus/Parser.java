@@ -355,12 +355,12 @@ public class Parser {
 			packageName = qualifiedIdentifier();
 			mustBe(SEMI);
 		}
-		ArrayList<TypeName> imports = new ArrayList<TypeName>();
+		ArrayList<TypeName> imports = new ArrayList<>();
 		while (have(IMPORT)) {
 			imports.add(qualifiedIdentifier());
 			mustBe(SEMI);
 		}
-		ArrayList<JAST> typeDeclarations = new ArrayList<JAST>();
+		ArrayList<JAST> typeDeclarations = new ArrayList<>();
 		while (!see(EOF)) {
 			JAST typeDeclaration = typeDeclaration();
 			if (typeDeclaration != null) {
@@ -392,29 +392,8 @@ public class Parser {
 		return new TypeName(line, qualifiedIdentifier);
 	}
 
-	/**
-	 * Added Parse a interface identifier.
-	 *
-	 * <pre>
-	 *   interfaceIdentifier ::= qualifiedIdentifier {COMMA qualifiedIdentifier}
-	 * </pre>
-	 *
-	 * @return an instance of TypeName.
-	 */
-
-	private ArrayList<TypeName> interfaceIdentifiers(ArrayList<TypeName> interfaceList) {
-		int line = scanner.token().line();
-
-		interfaceList.add(qualifiedIdentifier());
-
-		while (have(COMMA)) {
-			interfaceList.add(qualifiedIdentifier());
-		}
-		return interfaceList;
-	}
-
-	private ArrayList<Type> typeIdentifiers() {
-		ArrayList<Type> types = new ArrayList<>();
+	private ArrayList<TypeName> typeIdentifiers() {
+		ArrayList<TypeName> types = new ArrayList<>();
 		types.add(qualifiedIdentifier());
 
 		while (have(COMMA)) {
@@ -457,7 +436,7 @@ public class Parser {
 	 */
 
 	private ArrayList<String> modifiers() {
-		ArrayList<String> mods = new ArrayList<String>();
+		ArrayList<String> mods = new ArrayList<>();
 		boolean scannedPUBLIC = false;
 		boolean scannedPROTECTED = false;
 		boolean scannedPRIVATE = false;
@@ -527,10 +506,10 @@ public class Parser {
 		mustBe(INTERFACE);
 		mustBe(IDENTIFIER);
 		String name = scanner.previousToken().image();
-		ArrayList<TypeName> interfaceList = new ArrayList<>();
+		ArrayList<TypeName> interfaceList = null;
 		Type superClass = Type.OBJECT;
 		if (have(EXTENDS)) {
-			interfaceIdentifiers(interfaceList);
+			interfaceList = typeIdentifiers();
 		}
 
 		return new JInterfaceDeclaration(line, mods, name, superClass, interfaceBody(), interfaceList);	
@@ -549,7 +528,7 @@ public class Parser {
 	 */	
 	
 	private ArrayList<JMember> interfaceBody() {	
-		ArrayList<JMember> members = new ArrayList<JMember>();	
+		ArrayList<JMember> members = new ArrayList<>();
 		mustBe(LCURLY);	
 		while (!see(RCURLY) && !see(EOF)) {	
 			ArrayList<String> modsTmp = modifiers(); 	
@@ -591,7 +570,7 @@ public class Parser {
 			superClass = Type.OBJECT;
 		}
 		if (have(IMPLEMENTS)) {
-			interfaceIdentifiers(interfaceList);
+			interfaceList = typeIdentifiers();
 		}
 
 		return new JClassDeclaration(line, mods, name, superClass, classBody(), interfaceList);
@@ -610,7 +589,7 @@ public class Parser {
 	 */
 
 	private ArrayList<JMember> classBody() {
-		ArrayList<JMember> members = new ArrayList<JMember>();
+		ArrayList<JMember> members = new ArrayList<>();
 		mustBe(LCURLY);
 		while (!see(RCURLY) && !see(EOF)) {
 			members.add(memberDecl(modifiers()));
@@ -638,7 +617,7 @@ public class Parser {
 
 	private JMember memberDecl(ArrayList<String> mods) {
 		int line = scanner.token().line();
-		JMember memberDecl = null;
+		JMember memberDecl;
 
 		if (see(LCURLY)) {
 			JBlock body = block();
@@ -648,7 +627,7 @@ public class Parser {
 			mustBe(IDENTIFIER);
 			String name = scanner.previousToken().image();
 			ArrayList<JFormalParameter> params = formalParameters();
-			ArrayList<Type> throwTypes = null;
+			ArrayList<TypeName> throwTypes = null;
 			if (have(THROWS)) {
 				throwTypes = typeIdentifiers();
 			}
@@ -656,14 +635,14 @@ public class Parser {
 			JBlock body = block();
 			memberDecl = new JConstructorDeclaration(line, mods, name, params, body, throwTypes);
 		} else {
-			Type type = null;
+			Type type;
 			if (have(VOID)) {
 				// void method
 				type = Type.VOID;
 				mustBe(IDENTIFIER);
 				String name = scanner.previousToken().image();
 				ArrayList<JFormalParameter> params = formalParameters();
-				ArrayList<Type> throwTypes = null;
+				ArrayList<TypeName> throwTypes = null;
 				if (have(THROWS)) {
 					throwTypes = typeIdentifiers();
 				}
@@ -676,7 +655,7 @@ public class Parser {
 					mustBe(IDENTIFIER);
 					String name = scanner.previousToken().image();
 					ArrayList<JFormalParameter> params = formalParameters();
-					ArrayList<Type> throwTypes = null;
+					ArrayList<TypeName> throwTypes = null;
 					if (have(THROWS)) {
 						throwTypes = typeIdentifiers();
 					}
@@ -704,7 +683,7 @@ public class Parser {
 
 	private JBlock block() {
 		int line = scanner.token().line();
-		ArrayList<JStatement> statements = new ArrayList<JStatement>();
+		ArrayList<JStatement> statements = new ArrayList<>();
 		mustBe(LCURLY);
 		while (!see(RCURLY) && !see(EOF)) {
 			statements.add(blockStatement());
@@ -836,7 +815,7 @@ public class Parser {
 	 */
 
 	private ArrayList<JFormalParameter> formalParameters() {
-		ArrayList<JFormalParameter> parameters = new ArrayList<JFormalParameter>();
+		ArrayList<JFormalParameter> parameters = new ArrayList<>();
 		mustBe(LPAREN);
 		if (have(RPAREN))
 			return parameters; // ()
@@ -903,7 +882,7 @@ public class Parser {
 
 	private JVariableDeclaration localVariableDeclarationStatement() {
 		int line = scanner.token().line();
-		ArrayList<String> mods = new ArrayList<String>();
+		ArrayList<String> mods = new ArrayList<>();
 		ArrayList<JVariableDeclarator> vdecls = variableDeclarators(type());
 		mustBe(SEMI);
 		return new JVariableDeclaration(line, mods, vdecls);
@@ -922,7 +901,7 @@ public class Parser {
 	 */
 
 	private ArrayList<JVariableDeclarator> variableDeclarators(Type type) {
-		ArrayList<JVariableDeclarator> variableDeclarators = new ArrayList<JVariableDeclarator>();
+		ArrayList<JVariableDeclarator> variableDeclarators = new ArrayList<>();
 		do {
 			variableDeclarators.add(variableDeclarator(type));
 		} while (have(COMMA));
@@ -985,7 +964,7 @@ public class Parser {
 
 	private JArrayInitializer arrayInitializer(Type type) {
 		int line = scanner.token().line();
-		ArrayList<JExpression> initials = new ArrayList<JExpression>();
+		ArrayList<JExpression> initials = new ArrayList<>();
 		mustBe(LCURLY);
 		if (have(RCURLY)) {
 			return new JArrayInitializer(line, type, initials);
@@ -1009,7 +988,7 @@ public class Parser {
 	 */
 
 	private ArrayList<JExpression> arguments() {
-		ArrayList<JExpression> args = new ArrayList<JExpression>();
+		ArrayList<JExpression> args = new ArrayList<>();
 		mustBe(LPAREN);
 		if (have(RPAREN)) {
 			return args;
@@ -1041,7 +1020,7 @@ public class Parser {
 
 	/**
 	 * Parse a basic type.
-	 *
+	 *$
 	 * <pre>
 	 *   basicType ::= BOOLEAN | CHAR | INT
 	 * </pre>
@@ -1076,7 +1055,7 @@ public class Parser {
 	 */
 
 	private Type referenceType() {
-		Type type = null;
+		Type type;
 		if (!see(IDENTIFIER)) {
 			type = basicType();
 			mustBe(LBRACK);
@@ -1110,8 +1089,7 @@ public class Parser {
 		if (expr instanceof JAssignment || expr instanceof JPreIncrementOp || expr instanceof JPostDecrementOp
 				|| expr instanceof JPostIncrementOp || expr instanceof JPreDecrementOp
 				|| expr instanceof JMessageExpression || expr instanceof JSuperConstruction
-				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp
-				|| expr instanceof JBreak) {
+				|| expr instanceof JThisConstruction || expr instanceof JNewOp || expr instanceof JNewArrayOp) {
 			// So as not to save on stack
 			expr.isStatementExpression = true;
 		} else {
@@ -1182,6 +1160,20 @@ public class Parser {
 		}
 	}
 
+	private JExpression conditionalOrExpression() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = conditionalAndExpression();
+		while (more) {
+			if (have(LOR)) {
+				lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+			} else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
 	/**
 	 * Parse a conditional-and expression.
 	 *
@@ -1207,13 +1199,41 @@ public class Parser {
 		return lhs;
 	}
 
-	private JExpression conditionalOrExpression() {
+	private JExpression bitwiseInclusiveOr() {
 		int line = scanner.token().line();
 		boolean more = true;
-		JExpression lhs = conditionalAndExpression();
+		JExpression lhs = bitwiseExclusiveOr();
 		while (more) {
-			if (have(LOR)) {
-				lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+			if (have(OR)) {
+				lhs = new JIOrOp(line, lhs, bitwiseExclusiveOr());
+			} else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression bitwiseExclusiveOr() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = bitwiseAnd();
+		while (more) {
+			if (have(XOR)) {
+				lhs = new JIXorOp(line, lhs, bitwiseAnd());
+			} else {
+				more = false;
+			}
+		}
+		return lhs;
+	}
+
+	private JExpression bitwiseAnd() {
+		int line = scanner.token().line();
+		boolean more = true;
+		JExpression lhs = equalityExpression();
+		while (more) {
+			if (have(AND)) {
+				lhs = new JIAndOp(line, lhs, equalityExpression());
 			} else {
 				more = false;
 			}
@@ -1339,48 +1359,6 @@ public class Parser {
 				lhs = new JDivideOp(line, lhs, unaryExpression());
 			} else if (have(REM)) {
 				lhs = new JRemainderOp(line, lhs, unaryExpression());
-			} else {
-				more = false;
-			}
-		}
-		return lhs;
-	}
-
-	private JExpression bitwiseInclusiveOr() {
-		int line = scanner.token().line();
-		boolean more = true;
-		JExpression lhs = bitwiseExclusiveOr();
-		while (more) {
-			if (have(OR)) {
-				lhs = new JIOrOp(line, lhs, bitwiseExclusiveOr());
-			} else {
-				more = false;
-			}
-		}
-		return lhs;
-	}
-
-	private JExpression bitwiseExclusiveOr() {
-		int line = scanner.token().line();
-		boolean more = true;
-		JExpression lhs = bitwiseAnd();
-		while (more) {
-			if (have(XOR)) {
-				lhs = new JIXorOp(line, lhs, bitwiseAnd());
-			} else {
-				more = false;
-			}
-		}
-		return lhs;
-	}
-
-	private JExpression bitwiseAnd() {
-		int line = scanner.token().line();
-		boolean more = true;
-		JExpression lhs = equalityExpression();
-		while (more) {
-			if (have(AND)) {
-				lhs = new JIAndOp(line, lhs, equalityExpression());
 			} else {
 				more = false;
 			}
@@ -1627,7 +1605,7 @@ public class Parser {
 	 */
 
 	private JNewArrayOp newArrayDeclarator(int line, Type type) {
-		ArrayList<JExpression> dimensions = new ArrayList<JExpression>();
+		ArrayList<JExpression> dimensions = new ArrayList<>();
 		mustBe(LBRACK);
 		dimensions.add(expression());
 		mustBe(RBRACK);

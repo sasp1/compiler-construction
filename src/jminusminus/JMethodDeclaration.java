@@ -70,7 +70,7 @@ class JMethodDeclaration
      * Types of errors that method can throw.
      */
 
-    private ArrayList<Type> throwTypes;
+    private final ArrayList<TypeName> throwTypes;
 
 
     /**
@@ -90,7 +90,7 @@ class JMethodDeclaration
 
     public JMethodDeclaration(int line, ArrayList<String> mods,
                               String name, Type returnType,
-                              ArrayList<JFormalParameter> params, JBlock body, ArrayList<Type> throwTypes) {
+                              ArrayList<JFormalParameter> params, JBlock body, ArrayList<TypeName> throwTypes) {
         super(line);
         this.mods = mods;
         this.name = name;

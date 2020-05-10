@@ -23,21 +23,17 @@ class JBlockDeclaration extends JMethodDeclaration implements JMember {
      *            file.
      * @param mods
      *            modifiers.
-     * @param name
-     *            constructor name.
-     * @param params
-     *            the formal parameters.
      * @param body
      *            constructor body.
      */
 
     public JBlockDeclaration(int line, ArrayList<String> mods, JBlock body)
     {
-        super(line, mods, null, Type.ANY, new ArrayList<JFormalParameter>(), body, new ArrayList<Type>());
+        super(line, mods, null, Type.ANY, new ArrayList<JFormalParameter>(), body, new ArrayList<>());
     }
 
     /**
-     * Declare this block in the parent (class) context.
+     * Declare this block in the parent (class) context.O
      * 
      * @param context
      *            the parent (class) context.
