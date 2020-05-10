@@ -20,6 +20,22 @@ abstract class JBinaryExpression extends JExpression {
 	/** The rhs operand. */
 	protected JExpression rhs;
 
+	// Standard way of analyzing JBinaryExpression. Will differ in certain cases (like JPlusOp with Strings)
+	public JExpression analyzeNumbers(Context context){
+		lhs.analyze(context);
+		rhs.analyze(context);
+
+		if (lhs.type() == Type.INT || rhs.type() == Type.INT) {
+			type = Type.INT;
+		} else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+			type = Type.DOUBLE;
+		} else {
+			type = Type.ANY;
+			JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types");
+		}
+		return this;
+	}
+
 	/**
 	 * Construct an AST node for a binary expression given its line number, the
 	 * binary operator, and lhs and rhs operands.
@@ -30,6 +46,8 @@ abstract class JBinaryExpression extends JExpression {
 	 * @param lhs      the lhs operand.
 	 * @param rhs      the rhs operand.
 	 */
+
+
 
 	protected JBinaryExpression(int line, String operator, JExpression lhs, JExpression rhs) {
 		super(line);
@@ -93,14 +111,15 @@ class JPlusOp extends JBinaryExpression {
 	 */
 
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
+		lhs = lhs.analyze(context);
+		rhs = rhs.analyze(context);
 		if (lhs.type() == Type.STRING || rhs.type() == Type.STRING) {
 			return (new JStringConcatenationOp(line, lhs, rhs)).analyze(context);
 		} else if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
 			type = Type.INT;
 		} else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
 			type = Type.DOUBLE;
+
 		} else {
 			type = Type.ANY;
 			JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for +");
@@ -160,15 +179,6 @@ class JSubtractOp extends JBinaryExpression {
 	 * @return the analyzed (and possibly rewritten) AST subtree.
 	 */
 
-	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
-	}
-
 	/**
 	 * Generating code for the - operation involves generating code for the two
 	 * operands, and then the subtraction instruction.
@@ -189,6 +199,10 @@ class JSubtractOp extends JBinaryExpression {
 		}
 	}
 
+	@Override
+	public JExpression analyze(Context context) {
+		return analyzeNumbers(context);
+	}
 }
 
 /**
@@ -211,23 +225,10 @@ class JMultiplyOp extends JBinaryExpression {
 		super(line, "*", lhs, rhs);
 	}
 
-	/**
-	 * Analyzing the * operation involves analyzing its operands, checking types,
-	 * and determining the result type.
-	 * 
-	 * @param context context in which names are resolved.
-	 * @return the analyzed (and possibly rewritten) AST subtree.
-	 */
-
+	@Override
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
-
 	/**
 	 * Generating code for the * operation involves generating code for the two
 	 * operands, and then the multiplication instruction.
@@ -235,7 +236,6 @@ class JMultiplyOp extends JBinaryExpression {
 	 * @param output the code emitter (basically an abstraction for producing the
 	 *               .class file).
 	 */
-
 	public void codegen(CLEmitter output) {
 		if (type == Type.INT) {
 			lhs.codegen(output);
@@ -255,13 +255,9 @@ class JDivideOp extends JBinaryExpression {
 		super(line, "/", lhs, rhs);
 	}
 
+	@Override
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	public void codegen(CLEmitter output) {
@@ -283,13 +279,9 @@ class JRemainderOp extends JBinaryExpression {
 		super(line, "%", lhs, rhs);
 	}
 
+	@Override
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	public void codegen(CLEmitter output) {
@@ -311,13 +303,9 @@ class JShiftLeftOp extends JBinaryExpression {
 		super(line, "<<", lhs, rhs);
 	}
 
+	@Override
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	public void codegen(CLEmitter output) {
@@ -335,13 +323,9 @@ class JShiftRightOp extends JBinaryExpression {
 		super(line, ">>", lhs, rhs);
 	}
 
+	@Override
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	public void codegen(CLEmitter output) {
@@ -357,13 +341,10 @@ class JShiftRightUnsignOp extends JBinaryExpression {
 		super(line, ">>>", lhs, rhs);
 	}
 
+
+	@Override
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	public void codegen(CLEmitter output) {
@@ -379,8 +360,8 @@ class JIAndOp extends JBinaryExpression {
 	}
 
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
+		lhs = lhs.analyze(context);
+		rhs = rhs.analyze(context);
 		lhs.type().mustMatchExpected(line(), Type.INT);
 		rhs.type().mustMatchExpected(line(), Type.INT);
 		type = Type.INT;

@@ -1,11 +1,18 @@
 package pass;
 
+import java.lang.System;
+
 public class DoublePass {
-//	public static double doubleTest(double d) {
-//		double e = 2.0 + 3.0;
-//		return d;
-//	}
-//
+	public static double doubleTest(double d) {
+		double e = 2.0 + 3.0;
+		return d;
+	}
+
+	public static int intTest(int i) {
+		int e = 2+4;
+		return i;
+	}
+
 //	public static double doubleSubtract(double d, double e) {
 //		return d - e;
 //	}
