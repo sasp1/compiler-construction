@@ -38,6 +38,21 @@ abstract class JBinaryExpression extends JExpression {
 		this.rhs = rhs;
 	}
 
+	public JExpression analyzeNumbers(Context context) {
+		lhs = (JExpression) lhs.analyze(context);
+		rhs = (JExpression) rhs.analyze(context);
+
+		if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+			type = Type.INT;
+		} else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+			type = Type.DOUBLE;
+		} else {
+			type = Type.ANY;
+			JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for " + operator);
+		}
+		return this;
+	}
+
 	/**
 	 * @inheritDoc
 	 */
@@ -161,12 +176,7 @@ class JSubtractOp extends JBinaryExpression {
 	 */
 
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	/**
@@ -220,12 +230,7 @@ class JMultiplyOp extends JBinaryExpression {
 	 */
 
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	/**
@@ -256,12 +261,7 @@ class JDivideOp extends JBinaryExpression {
 	}
 
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	public void codegen(CLEmitter output) {
@@ -284,12 +284,7 @@ class JRemainderOp extends JBinaryExpression {
 	}
 
 	public JExpression analyze(Context context) {
-		lhs = (JExpression) lhs.analyze(context);
-		rhs = (JExpression) rhs.analyze(context);
-		lhs.type().mustMatchExpected(line(), Type.INT);
-		rhs.type().mustMatchExpected(line(), Type.INT);
-		type = Type.INT;
-		return this;
+		return analyzeNumbers(context);
 	}
 
 	public void codegen(CLEmitter output) {
