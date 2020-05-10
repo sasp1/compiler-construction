@@ -63,7 +63,7 @@
               dir="classes"
               fork="true">
 <!--              <arg value="-p"/> &lt;!&ndash; Change the argument &ndash;&gt;-->
-              <arg value="../tests/pass/MultilineComment.java"/> <!-- Change the Division to other file name -->
+              <arg value="../tests/pass/ForStatements.java"/> <!-- Change the Division to other file name -->
         </java>
     </target>
 

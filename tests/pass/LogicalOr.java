@@ -16,4 +16,18 @@ public class LogicalOr {
         return true;
     }
 
+    public boolean multipleConditions_returnsTrue(){
+        boolean b = true && (false || true);
+        return b;
+    }
+
+    public boolean multipleConditions_returnsTrue2(){
+        boolean b = true && false || true;
+        return b;
+    }
+    public boolean multipleConditions_returnsFalse(){
+        boolean b = true && false || false;
+        return b;
+    }
+
 }

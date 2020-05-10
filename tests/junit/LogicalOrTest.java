@@ -26,5 +26,11 @@ public class LogicalOrTest extends TestCase {
     public void testSecondConditionIsNotReached(){
         assertEquals(2,  logicalOr.testOnlyFirstConditionReturns2());
     }
+
+    public void testMultipleConditions(){
+        assertEquals(true, logicalOr.multipleConditions_returnsTrue());
+        assertEquals(true, logicalOr.multipleConditions_returnsTrue2());
+        assertEquals(false, logicalOr.multipleConditions_returnsFalse());
+    }
 }
 

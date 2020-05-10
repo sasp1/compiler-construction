@@ -142,6 +142,9 @@ SKIP: {" "|"\t"|"\n"|"\r"|"\f"}
 // Single line comment -- ignored
 SKIP: {<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>}
 
+// TODO: below doesn't work :(
+SKIP : { <MULTI_LINE_COMMENT: "/*" (~["s"])* ("*/")* "*/"> }
+
 // Reserved words
 TOKEN:
 {
@@ -384,9 +387,9 @@ private TypeName qualifiedIdentifier(): {
          new TypeName( line, qualifiedIdentifier ); }
 }
 
-private ArrayList<Type> typeIdentifiers(): {
+private ArrayList<TypeName> typeIdentifiers(): {
     int line = 0;
-    ArrayList<Type> types = new ArrayList<Type>();
+    ArrayList<TypeName> types = new ArrayList<TypeName>();
     types.add(qualifiedIdentifier());
 }
 {
@@ -678,7 +681,7 @@ private JMember memberDecl( ArrayList<String>  mods ): {
     JBlock body = null;
     ArrayList<JVariableDeclarator> variableDeclarators = null;
     JMember memberDecl = null;
-    ArrayList<Type> throwTypes = null;
+    ArrayList<TypeName> throwTypes = null;
 }
 {
     try {
@@ -873,20 +876,40 @@ private JStatement statement(): {
         LOOKAHEAD(<FOR> <LPAREN> (basicType() | referenceType()) <IDENTIFIER> <COLON>)
         <FOR> { line = token.beginLine; } <LPAREN>
         initType = type()
-        initDecl = variableDeclarator(type())
+        initDecl = variableDeclarator(initType)
         <COLON>
         iterable = primary()
         <RPAREN>
+
         body = statement()
+
+
         { statement = new JForEachStatement(line, initDecl, iterable, body); } | //For each
         <FOR> { line = token.beginLine; }
         <LPAREN>
-        vdecl = localVariableDeclarationStatement()
-        cond = expression()
+        [
+            LOOKAHEAD(localVariableDeclarationStatement())
+            vdecl = localVariableDeclarationStatement()
+            |
+            <SEMI>
+        ]
+
+        [
+            LOOKAHEAD(expression())
+            cond = expression()
+        ]
         <SEMI>
-        upd = statementExpression()
+        [
+            LOOKAHEAD(statementExpression())
+            upd = statementExpression()
+            |
+            <SEMI>
+        ]
         <RPAREN>
-        body = statement()
+
+            body = statement()
+
+
         { statement = new JForLoopStatement(line, vdecl, cond, upd, body); } | //For loop
         <TRY> { line = token.beginLine; }
 
@@ -1412,7 +1435,7 @@ int line = 0;
 }
 {
     try {
-        lhs = conditionalAndExpression() { line = lhs.line(); }
+        lhs = conditionalOrExpression() { line = lhs.line(); }
         (
             LOOKAHEAD(<COND> conditionalExpression() <COLON> conditionalExpression() )
             <COND>
@@ -1428,20 +1451,37 @@ int line = 0;
     { return lhs; }
 }
 
+
+private JExpression conditionalOrExpression(): {
+    int line = 0;
+    JExpression lhs = null, rhs = null;
+}
+{
+    try {
+        lhs = conditionalAndExpression() { line = lhs.line(); }
+        (
+            <LOR>
+            rhs = conditionalAndExpression()
+            { lhs = new JLogicalOrOp( line, lhs, rhs ); }
+        )*
+    }
+    catch ( ParseException e ) {
+        recoverFromError( new int[] { SEMI, EOF }, e );
+    }
+    { return lhs; }
+}
+
 private JExpression conditionalAndExpression(): {
     int line = 0;
     JExpression lhs = null, rhs = null;
 }
 {
     try {
-        lhs = equalityExpression() { line = lhs.line(); }
+        lhs = bitwiseInclusiveOr() { line = lhs.line(); }
         (
             <LAND>
-            rhs = equalityExpression()
-            { lhs = new JLogicalAndOp( line, lhs, rhs ); } |
-            <LOR>
-            rhs = equalityExpression()
-            { lhs = new JLogicalOrOp( line, lhs, rhs ); }
+            rhs = bitwiseInclusiveOr()
+            { lhs = new JLogicalAndOp( line, lhs, rhs ); }
         )*
     } 
     catch ( ParseException e ) { 
@@ -1449,6 +1489,64 @@ private JExpression conditionalAndExpression(): {
     }
     { return lhs; }
 }
+
+private JExpression bitwiseInclusiveOr(): {
+    int line = 0;
+    JExpression lhs = null, rhs = null;
+}
+{
+    try {
+        lhs = bitwiseExclusiveOr() { line = lhs.line(); }
+        (
+            <OR>
+            rhs = bitwiseExclusiveOr()
+            { lhs = new JIOrOp( line, lhs, rhs ); }
+        )*
+    }
+    catch ( ParseException e ) {
+        recoverFromError( new int[] { SEMI, EOF }, e );
+    }
+    { return lhs; }
+}
+
+private JExpression bitwiseExclusiveOr(): {
+    int line = 0;
+    JExpression lhs = null, rhs = null;
+}
+{
+    try {
+        lhs = bitwiseAnd() { line = lhs.line(); }
+        (
+            <XOR>
+            rhs = bitwiseAnd()
+            { lhs = new JIXorOp( line, lhs, rhs ); }
+        )*
+    }
+    catch ( ParseException e ) {
+        recoverFromError( new int[] { SEMI, EOF }, e );
+    }
+    { return lhs; }
+}
+
+private JExpression bitwiseAnd(): {
+    int line = 0;
+    JExpression lhs = null, rhs = null;
+}
+{
+    try {
+        lhs = equalityExpression() { line = lhs.line(); }
+        (
+            <AND>
+            rhs = equalityExpression()
+            { lhs = new JIAndOp( line, lhs, rhs ); }
+        )*
+    }
+    catch ( ParseException e ) {
+        recoverFromError( new int[] { SEMI, EOF }, e );
+    }
+    { return lhs; }
+}
+
 
 /**
  * Parse an equality expression.
@@ -1504,6 +1602,9 @@ private JExpression relationalExpression(): {
             <GT>
             rhs = shiftExpression()
             { lhs = new JGreaterThanOp( line, lhs, rhs ); } |
+            <LT>
+            rhs = shiftExpression()
+            { lhs = new JLessThanOp( line, lhs, rhs ); } |
             <LE> 
             rhs = shiftExpression()
             { lhs = new JLessEqualOp( line, lhs, rhs ); } |
@@ -1617,33 +1718,6 @@ private JExpression multiplicativeExpression(): {
     { return lhs; }
 }
 
-private JExpression bitwiseInclusiveOr(): {
-    int line = 0;
-    JExpression lhs = null, rhs = null;
-}
-{
-    try {
-        lhs = unaryExpression() { line = lhs.line(); }
-        (
-            <STAR>
-            rhs = unaryExpression()
-            { lhs = new JMultiplyOp( line, lhs, rhs ); }
-            |
-            <DIV>
-            rhs = unaryExpression()
-            { lhs = new JDivideOp( line, lhs, rhs ); }
-            |
-            <REM>
-            rhs = unaryExpression()
-            { lhs = new JRemainderOp( line, lhs, rhs ); }
-        )*
-    }
-    catch ( ParseException e ) {
-        recoverFromError( new int[] { SEMI, EOF }, e );
-    }
-    { return lhs; }
-}
-
 /**
  * Parse an unary expression.
  * 
@@ -1671,6 +1745,12 @@ private JExpression unaryExpression(): {
         <MINUS> { line = token.beginLine; }
         unaryExpr = unaryExpression()
         { expr = new JNegateOp( line, unaryExpr ); } |
+        <PLUS> { line = token.beginLine; }
+        unaryExpr = unaryExpression()
+        { expr = new JPosOp( line, unaryExpr ); } |
+        <UCOM> { line = token.beginLine; }
+        unaryExpr = unaryExpression()
+        { expr = new JIUComOp( line, unaryExpr ); } |
         expr = simpleUnaryExpression()
     } 
     catch ( ParseException e ) { 
