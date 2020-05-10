@@ -6,15 +6,15 @@ public class JTryCatchStatement extends JStatement{
 
 
     /** Body of try block*/
-    private JBlock tryBody;
+    private final JBlock tryBody;
 
     /** Declaration of exception "catch (Exception e) { }"*/
-    private JVariableDeclarator exceptionDeclaration;
+    private final JFormalParameter exceptionDeclaration;
 
     /** Body of catch block*/
-    private JBlock catchBody;
+    private final JBlock catchBody;
     private final JBlock finallyBody;
-    private JVariableDeclaration vd;
+    private int offset;
 
     /**
      * Construct an AST node for a statement given its line number.
@@ -25,7 +25,7 @@ public class JTryCatchStatement extends JStatement{
      *@param catchBody body of catch block
      * @param finallyBody body of optional finally body
      */
-    protected JTryCatchStatement(int line, JBlock tryBody, JVariableDeclarator exceptionDeclaration, JBlock catchBody, JBlock finallyBody) {
+    protected JTryCatchStatement(int line, JBlock tryBody, JFormalParameter exceptionDeclaration, JBlock catchBody, JBlock finallyBody) {
         super(line);
         this.tryBody = tryBody;
         this.exceptionDeclaration = exceptionDeclaration;
@@ -37,22 +37,21 @@ public class JTryCatchStatement extends JStatement{
     public JAST analyze(Context context) {
         tryBody.analyze(context);
 
-        Type exceptionType = exceptionDeclaration.type().resolve(context);
+        LocalContext localContext = new LocalContext(context);
+
+        Type exceptionType = exceptionDeclaration.type().resolve(localContext);
         exceptionDeclaration.setType(exceptionType);
-//
-        exceptionDeclaration.analyze(context);
 
-//        ArrayList<JVariableDeclarator> list = new ArrayList<>();
-//        list.add(exceptionDeclaration);
-//        exceptionDeclaration.setInitializer(new JLiteralNull(line));
-//
-//        vd = new JVariableDeclaration(line, null, list);
-//
-//        vd.analyze(context);
+        offset = localContext.nextOffset();
 
+        exceptionDeclaration.analyze(localContext);
+        LocalVariableDefn defn = new LocalVariableDefn(exceptionDeclaration.type(),
+                offset);
+        defn.initialize();
+        localContext.addEntry(exceptionDeclaration.line(), exceptionDeclaration.name(), defn);
 
-//        exceptionType.mustInheritFromType(line, Throwable.class, context);
-        catchBody.analyze(context);
+        exceptionType.mustInheritFromType(line, Throwable.class, context);
+        catchBody.analyze(localContext);
 
         if (finallyBody != null) {
             finallyBody.analyze(context);
@@ -72,21 +71,18 @@ public class JTryCatchStatement extends JStatement{
         tryBody.codegen(output);
         output.addLabel(tryEndLabel);
 
-
         output.addBranchInstruction(CLConstants.GOTO, endLabel);
 
         output.addLabel(handlerLabel);
-//        vd.codegen(output);
-        exceptionDeclaration.codegen(output);
-//        output.addNoArgInstruction(CLConstants.POP);
+        output.addOneArgInstruction(CLConstants.ASTORE, offset);
 
+        exceptionDeclaration.codegen(output);
         catchBody.codegen(output);
 
         output.addLabel(endLabel);
         if (finallyBody != null) {
             finallyBody.codegen(output);
         }
-//        output.addBranchInstruction(CLConstants.GOTO, handlerLabel);
 
         output.addExceptionHandler(tryStartLabel, tryEndLabel, handlerLabel, exceptionDeclaration.type().jvmName());
 

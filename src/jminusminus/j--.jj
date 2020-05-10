@@ -883,7 +883,6 @@ private JStatement statement(): {
 
         body = statement()
 
-
         { statement = new JForEachStatement(line, initDecl, iterable, body); } | //For each
         <FOR> { line = token.beginLine; }
         <LPAREN>
@@ -899,16 +898,14 @@ private JStatement statement(): {
             cond = expression()
         ]
         <SEMI>
-        [
+        (
             LOOKAHEAD(statementExpression())
             upd = statementExpression()
             |
             <SEMI>
-        ]
+        )
         <RPAREN>
-
-            body = statement()
-
+        body = statement()
 
         { statement = new JForLoopStatement(line, vdecl, cond, upd, body); } | //For loop
         <TRY> { line = token.beginLine; }
