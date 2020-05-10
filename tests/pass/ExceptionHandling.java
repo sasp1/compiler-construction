@@ -1,8 +1,8 @@
 package pass;
 
 import java.lang.Exception;
-import java.lang.System;
-import java.lang.Throwable;
+import java.lang.ExceptionInInitializerError;
+import java.util.EmptyStackException;
 
 public class ExceptionHandling {
 
@@ -67,6 +67,21 @@ public class ExceptionHandling {
             ++i;
         } finally {
             ++i;
+        }
+        return i;
+    }
+
+    public int nestedTryCatch_adds2(int i) {
+        try {
+            try {
+                i++;
+                throw new ExceptionInInitializerError();
+            } catch (Exception e) {
+                i = -1;
+            }
+            i = -1;
+        } catch (ExceptionInInitializerError e) {
+            i++;
         }
         return i;
     }

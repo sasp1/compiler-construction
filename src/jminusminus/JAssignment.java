@@ -65,9 +65,13 @@ class JAssignOp extends JAssignment {
 		rhs.type().mustMatchExpected(line(), lhs.type());
 		type = rhs.type();
 		if (lhs instanceof JVariable) {
-			IDefn defn = ((JVariable) lhs).iDefn();
+			IDefn defn;
+			defn = ((JVariable) lhs).iDefn();
+
 			if (defn != null) {
 				// Local variable; consider it to be initialized now.
+
+
 				((LocalVariableDefn) defn).initialize();
 			}
 		}

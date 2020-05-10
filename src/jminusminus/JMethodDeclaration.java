@@ -175,9 +175,11 @@ class JMethodDeclaration
         // Declare the parameters. We consider a formal parameter 
         // to be always initialized, via a function call.
         for (JFormalParameter param : params) {
+
             LocalVariableDefn defn = new LocalVariableDefn(param.type(),
-                    this.context.nextOffset());
+                    this.context.nextOffset(param.type()));
             defn.initialize();
+
             this.context.addEntry(param.line(), param.name(), defn);
         }
 
