@@ -61,7 +61,11 @@ public class ExceptionHandlingTest extends TestCase {
         assertEquals("123", eh.simpleTryCatch_returns123(""));
     }
 
-    public void testTryCatchFinallyWithoutException(){
+    public void testTryCatchFinallyWithoutException() {
+
         assertEquals("13", eh.simpleTryCatchFinally_returns13(""));
+    }
+    public void testNestedTryCatch(){
+        assertEquals(2, eh.nestedTryCatch_adds2(0));
     }
 }
