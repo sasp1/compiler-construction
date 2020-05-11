@@ -113,7 +113,7 @@ class JConstructorDeclaration extends JMethodDeclaration implements JMember {
 
         if (throwTypes != null)
             for (Type throwType : throwTypes) {
-                throwType.resolve(context).isJavaAssignableFrom(Type.THROWABLE);
+                throwType.resolve(context).mustInheritFromType(line, Throwable.class, context);
             }
 
         return this;
