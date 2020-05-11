@@ -11,6 +11,10 @@ public class MultilineComment {
         /**/
 
         /**=*/
+
+        /**/
+        /***/
+        /****/
         return res;
     }
 }

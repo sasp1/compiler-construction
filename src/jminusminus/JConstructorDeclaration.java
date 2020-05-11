@@ -87,7 +87,7 @@ class JConstructorDeclaration extends JMethodDeclaration implements JMember {
 
     public JAST analyze(Context context) {
         // Record the defining class declaration.
-        definingClass = 
+        definingClass =
 	    (JClassDeclaration) context.classContext().definition();
         MethodContext methodContext =
             new MethodContext(context, isStatic, returnType);
@@ -103,7 +103,7 @@ class JConstructorDeclaration extends JMethodDeclaration implements JMember {
         for (JFormalParameter param : params) {
             LocalVariableDefn defn = 
 		new LocalVariableDefn(param.type(),
-				      this.context.nextOffset());
+				      this.context.nextOffset(param.type()));
             defn.initialize();
             this.context.addEntry(param.line(), param.name(), defn);
         }
@@ -158,9 +158,12 @@ class JConstructorDeclaration extends JMethodDeclaration implements JMember {
                             .superType().jvmName(), "<init>", "()V");
         }
         // Field initializations
-        for (JFieldDeclaration field : definingClass
-                .instanceFieldInitializations()) {
+        for (JFieldDeclaration field : definingClass .instanceFieldInitializations()) {
             field.codegenInitializations(output);
+        }
+
+        for (JBlockDeclaration block : definingClass .instanceBlockInitializations()) {
+            block.codegen(output);
         }
         // And then the body
         body.codegen(output);

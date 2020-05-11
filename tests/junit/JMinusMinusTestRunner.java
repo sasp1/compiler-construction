@@ -33,7 +33,6 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(IOrTest.class);
 		suite.addTestSuite(IUComTest.class);
 
-		// assignment
 		suite.addTestSuite(DoubleTest.class);
 		suite.addTestSuite(PlusAssignTest.class);
 		suite.addTestSuite(RemAssignTest.class); // step 5
@@ -41,7 +40,7 @@ public class JMinusMinusTestRunner {
 		suite.addTestSuite(MultAssignTest.class); // step 5
 		suite.addTestSuite(DivisionAssignTest.class); // step 5
 		suite.addTestSuite(PostIncrementTest.class);
-//		suite.addTestSuite(InterfaceExtendingClassTest.class); //step 5
+		suite.addTestSuite(InterfaceExtendingClassTest.class); //step 5
 		suite.addTestSuite(LogicalOrTest.class); // step 5
 		suite.addTestSuite(BlockTest.class); // step 5
 		suite.addTestSuite(ForStatementsTest.class);

@@ -73,8 +73,6 @@ class Type {
     /** The "any" type (denotes wild expressions). */
     public final static Type ANY = new Type(null);
 
-    public static final Type THROWABLE = typeFor(Throwable.class);
-
     /**
      * Construct a Type representation for a type from its Java (Class)
      * representation. Use typeFor() -- that maps types having like classReps to

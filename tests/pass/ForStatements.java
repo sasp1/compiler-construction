@@ -18,6 +18,16 @@ public class ForStatements {
 		return n;
 	}
 
+	public int uglyLoop() {
+		int i = 0;
+		for (;;) {
+			i++;
+			if (i > 9) {
+				return i;
+			}
+		}
+	}
+
 	public void forEachWithSameVariableName(int[] nArray){
 
 		for (int item : nArray){
@@ -56,31 +66,14 @@ public class ForStatements {
 		}
 	}
 
-//	public int forLoopWithBreak_adds10(int x ) {
-//		for (int i = 0; i < 10; i++) {
-//			if (i == 2){
-//				x += 10;
-//				break;
-//			}
-//		}
-//		return x;
-//	}
-//
-//	public void testingWhile(){
-//		while (true){
-//			break;
-//		}
-//	}
-//
-//	public int forLoopWithoutCondition_adds10(int x) {
-//		for (int i = 0; ; i++) {
-//			x++;
-//			if (i == 10) {
-//				break;
-//			}
-//		}
-//		return x;
-//	}
+	public int forLoopWithoutCondition_adds10(int x) {
+		for (int i = 0; ; i++) {
+			x++;
+			if (i == 10) {
+				return x;
+			}
+		}
+	}
 
 	public int foriLoopWithoutIncrementer_adds10(int x){
 		for (int i = 0; i < 10; ) {

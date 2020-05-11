@@ -2,6 +2,9 @@ package pass;
 
 public class Block {
 
+    public Block() {
+    }
+
     public static int i = 3;
     public static int j = 100;
 

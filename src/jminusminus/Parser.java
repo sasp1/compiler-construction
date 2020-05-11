@@ -1149,7 +1149,7 @@ public class Parser {
 
 	private JExpression conditionalExpression() {
 		int line = scanner.token().line();
-		JExpression lhs = conditionalOrExpression();
+		JExpression lhs = logicalOrExpression();
 		if (have(COND)) {
 			JExpression consequent = conditionalExpression();
 			mustBe(COLON);
@@ -1160,13 +1160,13 @@ public class Parser {
 		}
 	}
 
-	private JExpression conditionalOrExpression() {
+	private JExpression logicalOrExpression() {
 		int line = scanner.token().line();
 		boolean more = true;
-		JExpression lhs = conditionalAndExpression();
+		JExpression lhs = logicalAndExpression();
 		while (more) {
 			if (have(LOR)) {
-				lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+				lhs = new JLogicalOrOp(line, lhs, logicalAndExpression());
 			} else {
 				more = false;
 			}
@@ -1185,7 +1185,7 @@ public class Parser {
 	 * @return an AST for a conditionalExpression.
 	 */
 
-	private JExpression conditionalAndExpression() {
+	private JExpression logicalAndExpression() {
 		int line = scanner.token().line();
 		boolean more = true;
 		JExpression lhs = bitwiseInclusiveOr();
