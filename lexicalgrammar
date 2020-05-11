@@ -7,6 +7,9 @@
 // Single line comment -- ignored
 "//" {~("\n"|"\r")} ("\n"|"\r"["\n"])
 
+// Multiline comment -- ignored (javaCC)
+SKIP : { <MULTI_LINE_COMMENT: "/*" (~["*"])* "*" (~["*","/"] (~["*"])* "*" | "*")* "/"> }
+
 // Reserved words
 ABSTRACT		::= "abstract"
 BOOLEAN			::= "boolean"

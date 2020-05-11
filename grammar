@@ -1,6 +1,8 @@
 // A grammar for j--, suitable for parsing by recursive descent
 // Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
 
+// --> THE LOWER THE LEVEL, THE HIGHER THE PRECEDENCE <--
+
 compilationUnit ::= [PACKAGE qualifiedIdentifier SEMI]
                     {IMPORT  qualifiedIdentifier SEMI}
                     {typeDeclaration} EOF 
@@ -83,16 +85,28 @@ statementExpression ::= expression // but must have side-effect, eg i++
 
 expression ::= assignmentExpression
 
-assignmentExpression ::= conditionalCondExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | REM_ASSIGN
-                           | SHIFT_RIGHT_ASSIGN | SHIFT_RIGHT_UNSIGN | SHIFT_RIGHT_UNSIGN_ASSIGN
-                           | SHIFT_LEFT_ASSIGN | XOR_ASSIGN | OR_ASSIGN | ANDEQ) assignmentExpression]
+assignmentExpression ::= conditionalExpression  // must be a valid lhs
+                           [(ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | REM_ASSIGN )
+                           assignmentExpression]
 
-conditionalCondExpression ::= conditionalAndExpression // level 10
-                               {COND conditionalAndExpression COLON conditionalAndExpression}
+conditionalExpression ::= logicalOrExpression // level 11
+                               {COND conditionalExpression COLON conditionalExpression}
 
-conditionalAndExpression ::= equalityExpression // level 10
-                               {(LAND | LOR) equalityExpression}
+logicalOrExpression ::= logicalAndExpression // level 10
+                               {LOR logicalAndExpression}
+
+logicalAndExpression ::= bitwiseOrExpression // level 10
+                               {LAND bitwiseOrExpression}
+
+bitwiseOrExpression ::= bitwiseXorExpression // level 9
+                        {OR bitwiseXorExpression }
+
+bitwiseXorExpression ::= bitwiseAndExpression // level 8
+                        {XOR bitwiseAndExpression }
+
+
+bitwiseAndExpression ::= equalityExpression // level 7
+                        {AND equalityExpression }
 
 equalityExpression ::= relationalExpression  // level 6
                          {(EQUAL | NEQUAL) relationalExpression}                   
@@ -102,14 +116,14 @@ relationalExpression ::= shiftExpression       // level 5
                            | INSTANCEOF referenceType]
                            
 shiftExpression ::= additiveExpression       // level 4
-                           {(SHIFT_LEFT | SHIFT_RIGHT) additiveExpression}
+                           {(SHIFT_LEFT | SHIFT_RIGHT | SHIFT_RIGHT_UNSIGN ) additiveExpression}
                           
 
 additiveExpression ::= multiplicativeExpression // level 3
                          {(PLUS | MINUS) multiplicativeExpression}
 
 multiplicativeExpression ::= unaryExpression       // level 2
-                               {( STAR | DIV | REM | AND | OR | XOR) unaryExpression }
+                               {( STAR | DIV | REM) unaryExpression }
 
 
 unaryExpression ::= INC unaryExpression  // level 1
