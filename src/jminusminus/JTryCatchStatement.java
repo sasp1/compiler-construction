@@ -50,7 +50,8 @@ public class JTryCatchStatement extends JStatement{
         defn.initialize();
         localContext.addEntry(exceptionDeclaration.line(), exceptionDeclaration.name(), defn);
 
-        exceptionType.mustInheritFromType(line, Throwable.class, context);
+        exceptionType.isJavaAssignableFrom(Type.THROWABLE);
+
         catchBody.analyze(localContext);
 
         if (finallyBody != null) {

@@ -24,6 +24,7 @@ import java.util.Hashtable;
 
 class Type {
 
+
     /** The Type's internal (Java) representation. * */
     private Class<?> classRep;
 
@@ -38,8 +39,8 @@ class Type {
 
     public final static Type ITERABLE = typeFor(java.lang.Iterable.class);
 
-    /** The primitive type, double. */ 
-    public final static Type DOUBLE = typeFor(double.class); 
+    /** The primitive type, double. */
+    public final static Type DOUBLE = typeFor(double.class);
 
     public final static Type BOOLEAN = typeFor(boolean.class);
 
@@ -72,11 +73,13 @@ class Type {
     /** The "any" type (denotes wild expressions). */
     public final static Type ANY = new Type(null);
 
+    public static final Type THROWABLE = typeFor(Throwable.class);
+
     /**
      * Construct a Type representation for a type from its Java (Class)
      * representation. Use typeFor() -- that maps types having like classReps to
      * like Types.
-     * 
+     *
      * @param classRep
      *            the Java representation.
      */
@@ -312,21 +315,6 @@ class Type {
         JAST.compilationUnit.reportSemanticError(line,
                 "Type %s doesn't match any of the expected types %s", this,
                 Arrays.toString(expectedTypes));
-    }
-
-    public void mustInheritFromType(int line, Class<?> expectedType, Context context) {
-        Type type = this.resolve(context);
-
-        if (type == Type.ANY) return;
-
-        while (!type.classRep().getName().equals(expectedType.getName())) {
-            if (type.superClass() == null) {
-                JAST.compilationUnit.reportSemanticError(line,
-                        "Method throw type: " + this + " is not of type Throwable");
-                break;
-            }
-            type = type.superClass().resolve(context);
-        }
     }
 
     /**
