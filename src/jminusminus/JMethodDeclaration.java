@@ -70,7 +70,7 @@ class JMethodDeclaration
      * Types of errors that method can throw.
      */
 
-    private final ArrayList<TypeName> throwTypes;
+    protected final ArrayList<TypeName> throwTypes;
 
 
     /**
@@ -185,7 +185,9 @@ class JMethodDeclaration
 
         if (throwTypes != null)
             for (Type throwType : throwTypes) {
-                throwType.mustInheritFromType(this.line(), Throwable.class, this.context);
+//                Type.THROWABLE.isJavaAssignableFrom(throwType.resolve(context));
+//                throwType.resolve(context).isJavaAssignableFrom(T);
+                throwType.resolve(context).mustInheritFromType(line, Throwable.class, context);
             }
 
         if (body != null) {

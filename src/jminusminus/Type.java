@@ -24,6 +24,7 @@ import java.util.Hashtable;
 
 class Type {
 
+
     /** The Type's internal (Java) representation. * */
     private Class<?> classRep;
 
@@ -38,8 +39,8 @@ class Type {
 
     public final static Type ITERABLE = typeFor(java.lang.Iterable.class);
 
-    /** The primitive type, double. */ 
-    public final static Type DOUBLE = typeFor(double.class); 
+    /** The primitive type, double. */
+    public final static Type DOUBLE = typeFor(double.class);
 
     public final static Type BOOLEAN = typeFor(boolean.class);
 
@@ -76,7 +77,7 @@ class Type {
      * Construct a Type representation for a type from its Java (Class)
      * representation. Use typeFor() -- that maps types having like classReps to
      * like Types.
-     * 
+     *
      * @param classRep
      *            the Java representation.
      */
@@ -235,6 +236,21 @@ class Type {
         return this.classRep.isAssignableFrom(that.classRep);
     }
 
+    public void mustInheritFromType(int line, Class<?> expectedType, Context context) {
+        Type type = this.resolve(context);
+
+        if (type == Type.ANY) return;
+
+        while (!type.classRep().getName().equals(expectedType.getName())) {
+            if (type.superClass() == null) {
+                JAST.compilationUnit.reportSemanticError(line,
+                        "Method throw type: " + this + " is not of type " + expectedType.toString());
+                break;
+            }
+            type = type.superClass().resolve(context);
+        }
+    }
+
     /**
      * Return a list of this class' abstract methods? It does has abstract
      * methods if (1) Any method declared in the class is abstract, or (2) Its
@@ -312,21 +328,6 @@ class Type {
         JAST.compilationUnit.reportSemanticError(line,
                 "Type %s doesn't match any of the expected types %s", this,
                 Arrays.toString(expectedTypes));
-    }
-
-    public void mustInheritFromType(int line, Class<?> expectedType, Context context) {
-        Type type = this.resolve(context);
-
-        if (type == Type.ANY) return;
-
-        while (!type.classRep().getName().equals(expectedType.getName())) {
-            if (type.superClass() == null) {
-                JAST.compilationUnit.reportSemanticError(line,
-                        "Method throw type: " + this + " is not of type Throwable");
-                break;
-            }
-            type = type.superClass().resolve(context);
-        }
     }
 
     /**

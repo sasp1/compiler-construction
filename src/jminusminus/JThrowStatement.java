@@ -14,11 +14,7 @@ public class JThrowStatement extends JStatement {
     @Override
     public JStatement analyze(Context context) {
         primary.analyze(context);
-
-//        TODO: Check that exception is handled (either that method throws it or that it is try catch block
-        primary.type().mustInheritFromType(line(), Throwable.class, context);
-
-
+        primary.type().mustInheritFromType(line, Throwable.class, context);
         return this;
     }
 

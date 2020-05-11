@@ -42,6 +42,8 @@ public class JTryCatchStatement extends JStatement{
         Type exceptionType = exceptionDeclaration.type().resolve(localContext);
         exceptionDeclaration.setType(exceptionType);
 
+        exceptionType.mustInheritFromType(line, Throwable.class, localContext);
+
         offset = localContext.nextOffset();
 
         exceptionDeclaration.analyze(localContext);
@@ -50,7 +52,6 @@ public class JTryCatchStatement extends JStatement{
         defn.initialize();
         localContext.addEntry(exceptionDeclaration.line(), exceptionDeclaration.name(), defn);
 
-        exceptionType.mustInheritFromType(line, Throwable.class, context);
         catchBody.analyze(localContext);
 
         if (finallyBody != null) {
