@@ -134,13 +134,14 @@ class Scanner {
 					}
 				} else if (ch == '*'){
 					while (ch != EOFCH) {
-						nextCh();
 						if (ch == '*') {
 							nextCh();
 							if (ch == '/') {
 								nextCh();
 								break;
 							}
+						} else {
+							nextCh();
 						}
 					}
 				} else if (ch == '='){
