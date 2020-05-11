@@ -94,7 +94,7 @@ class JBlockDeclaration extends JAST implements JMember {
      */
 
     public void writeToStdOut(PrettyPrinter p) {
-        p.printf("<JBlockDeclaration line=\"%d\" " + "name=\"%s\">\n",
+        p.printf("<JBlockDeclaration line=\"%d\"",
                 line());
         p.indentRight();
         if (mods != null) {
