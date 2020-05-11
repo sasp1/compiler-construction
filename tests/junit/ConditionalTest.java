@@ -45,5 +45,8 @@ public class ConditionalTest extends TestCase {
 		assertEquals(-1, conditional.anotherTest());
 	}
 
+	public void testIfCanReturnMethod(){
+		assertEquals(1, conditional.checkIfMethodsCanBeUsed(true));
+	}
 
 }
