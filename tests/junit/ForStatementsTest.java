@@ -16,6 +16,7 @@ public class ForStatementsTest extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
+
 	public void testForEachCollection() {
 		ArrayList<String> numbers = new ArrayList<>();
 		numbers.add("1");
@@ -39,9 +40,14 @@ public class ForStatementsTest extends TestCase {
 		assertEquals(str, "vi faar tolv");
 	}
 
-//	public void testForWithoutCondition(){
-//		assertEquals(10, forStatement.forLoopWithoutCondition_adds10(0));
-//	}
+	public void testForWithoutCondition(){
+		assertEquals(11, forStatement.forLoopWithoutCondition_adds10(0));
+	}
+
+	public void testUglyLoopReturns10() {
+		assertEquals(10, forStatement.uglyLoop());
+	}
+
 	public void testForWithoutIncrementer(){
 		assertEquals(10, forStatement.foriLoopWithoutIncrementer_adds10(0));
 	}
