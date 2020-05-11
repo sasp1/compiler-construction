@@ -4,6 +4,16 @@ package pass;
 import java.lang.System;
 public class DoublePass {
 
+	double a;
+	double b;
+	double c;
+
+	public DoublePass(double a, double b, double c){
+		this.a = a;
+		this.b = b;
+		this.c = c;
+	}
+
 	public static double doubleTest() {
 		double e = 2.0 + 3.0;
 		double a = 2.0 + 3.0;
