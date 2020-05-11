@@ -24,4 +24,17 @@ public class Conditional {
 	public int anotherTest () {
 		return true ? false ? 0 : -1 : true ? -2 : -3;
 	}
+
+	public int return1() {
+		return 1;
+	}
+
+	public int return2() {
+		return 2;
+	}
+
+	public int checkIfMethodsCanBeUsed(boolean b){
+		return b ? return1() : return2();
+	}
+
 }

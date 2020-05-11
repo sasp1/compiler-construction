@@ -1,5 +1,4 @@
 package jminusminus;
-
 import java.util.ArrayList;
 
 import static jminusminus.CLConstants.*;
@@ -12,12 +11,12 @@ class JBlockDeclaration extends JAST implements JMember {
      * constructor body.
      * 
      * @param line
-     *            line in which the constructor declaration occurs in the source
+     *            line in which the block declaration occurs in the source
      *            file.
      * @param mods
      *            modifiers.
      * @param body
-     *            constructor body.
+     *            block body.
      */
 
     private ArrayList<String> mods;
@@ -32,16 +31,6 @@ class JBlockDeclaration extends JAST implements JMember {
         this.body = body;
         this.isStatic = mods.contains("static");
     }
-
-    /**
-     * Declare this block in the parent (class) context.O
-     * 
-     * @param context
-     *            the parent (class) context.
-     * @param partial
-     *            the code emitter (basically an abstraction for producing the
-     *            partial class).
-     */
 
     public void preAnalyze(Context context, CLEmitter partial) {
 
@@ -60,10 +49,7 @@ class JBlockDeclaration extends JAST implements JMember {
         }
     }
 
-    /**
-     * Analysis for a block declaration is very much like that for a
-     * method declaration.
-     * 
+    /*
      * @param context
      *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
@@ -117,5 +103,4 @@ class JBlockDeclaration extends JAST implements JMember {
         p.indentLeft();
         p.println("</JBlockDeclaration>");
     }
-	
 }
