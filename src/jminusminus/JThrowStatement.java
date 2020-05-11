@@ -14,7 +14,7 @@ public class JThrowStatement extends JStatement {
     @Override
     public JStatement analyze(Context context) {
         primary.analyze(context);
-        primary.type().isJavaAssignableFrom(Type.THROWABLE);
+        primary.type().mustInheritFromType(line, Throwable.class, context);
         return this;
     }
 

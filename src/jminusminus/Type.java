@@ -238,6 +238,21 @@ class Type {
         return this.classRep.isAssignableFrom(that.classRep);
     }
 
+    public void mustInheritFromType(int line, Class<?> expectedType, Context context) {
+        Type type = this.resolve(context);
+
+        if (type == Type.ANY) return;
+
+        while (!type.classRep().getName().equals(expectedType.getName())) {
+            if (type.superClass() == null) {
+                JAST.compilationUnit.reportSemanticError(line,
+                        "Method throw type: " + this + " is not of type " + expectedType.toString());
+                break;
+            }
+            type = type.superClass().resolve(context);
+        }
+    }
+
     /**
      * Return a list of this class' abstract methods? It does has abstract
      * methods if (1) Any method declared in the class is abstract, or (2) Its
