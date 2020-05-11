@@ -110,6 +110,12 @@ class JConstructorDeclaration extends JMethodDeclaration implements JMember {
         if (body != null) {
             body = body.analyze(this.context);
         }
+
+        if (throwTypes != null)
+            for (Type throwType : throwTypes) {
+                throwType.resolve(context).isJavaAssignableFrom(Type.THROWABLE);
+            }
+
         return this;
 
     }

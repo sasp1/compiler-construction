@@ -70,7 +70,7 @@ class JMethodDeclaration
      * Types of errors that method can throw.
      */
 
-    private final ArrayList<TypeName> throwTypes;
+    protected final ArrayList<TypeName> throwTypes;
 
 
     /**
